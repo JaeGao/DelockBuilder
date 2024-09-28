@@ -16,7 +16,7 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({ characters }) => {
     }
 
     return (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        <div className="grid bg-gray-800 p-4 rounded grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {characters.map((character) => (
                 <div key={character.name} className="flex flex-col items-center">
                     <Image
