@@ -8,22 +8,24 @@ const itemsPath = path.join(process.cwd(), 'app', 'data', 'items.json');
 export async function getCharacters(): Promise<Character[]> {
     try {
         const data = await fs.readFile(charactersPath, 'utf8');
-        console.log('success')
-        return JSON.parse(data);
-
+        const characters = JSON.parse(data);
+        console.log('DataUtils: Read characters:', characters);
+        return characters;
     } catch (error) {
-        console.warn('Characters data not found. Returning empty array.');
-        return [];
+        console.error('DataUtils: Error reading characters:', error);
+        throw error;
     }
 }
 
 export async function getItems(): Promise<Item[]> {
     try {
         const data = await fs.readFile(itemsPath, 'utf8');
-        return JSON.parse(data);
+        const items = JSON.parse(data);
+        console.log('DataUtils: Read items:', items);
+        return items;
     } catch (error) {
-        console.warn('Items data not found. Returning empty array.');
-        return [];
+        console.error('DataUtils: Error reading items:', error);
+        throw error;
     }
 }
 

@@ -21,6 +21,10 @@ const CharacterStats: React.FC<CharacterStatsProps> = ({ characters, items }) =>
         }
     }, [selectedCharacter, resetStats]);
 
+    if (characters.length === 0 || items.length === 0) {
+        return <div>Loading character and item data...</div>;
+    }
+
     return (
         <div className="bg-gray-800 p-4 rounded">
             <select
@@ -41,14 +45,14 @@ const CharacterStats: React.FC<CharacterStatsProps> = ({ characters, items }) =>
                 <>
                     <h3 className="text-xl font-bold mb-2">Weapon Stats</h3>
                     <ul>
-                        {Object.entries(stats.Weapon).map(([key, value]) => (
+                        {Object.entries(selectedCharacter.baseStats.Weapon).map(([key, value]) => (
                             <li key={key}>{key}: {value}</li>
                         ))}
                     </ul>
 
                     <h3 className="text-xl font-bold mt-4 mb-2">Vitality Stats</h3>
                     <ul>
-                        {Object.entries(stats.Vitality).map(([key, value]) => (
+                        {Object.entries(selectedCharacter.baseStats.Vitality).map(([key, value]) => (
                             <li key={key}>{key}: {value}</li>
                         ))}
                     </ul>
