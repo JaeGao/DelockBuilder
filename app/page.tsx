@@ -8,7 +8,7 @@ import { getCharacters, getItems } from './lib/dataUtils';
 export default async function Home() {
   const characters = await getCharacters();
   const items = await getItems();
-
+  characters.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
   return (
     <div className="flex flex-col gap-8">
       <DataInitializer />
