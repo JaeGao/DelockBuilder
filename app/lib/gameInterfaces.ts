@@ -21,10 +21,7 @@ export interface Vitality {
 
 // Spirit stats interface
 export interface Spirit {
-    // Add specific spirit stats here if needed
-    // For example:
-    // SpiritPower: number;
-    // SpiritRegeneration: number;
+    SpiritPower: number
 }
 
 // Ability interface
@@ -86,7 +83,7 @@ export const initialCharacterStats: CharacterStats = {
         Stamina: 100
     },
     Spirit: {
-        // Initialize with default spirit stats if needed
+        SpiritPower: 5
     },
     Abilities: []
 };

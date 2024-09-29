@@ -13,7 +13,7 @@
       },
       "Vitality": {
         "MaxHealth": 120,
-        "HealthRegen": 2.4476983279557216,
+        "HealthRegen": 2,
         "BulletResist": 11,
         "SpiritResist": 20,
         "MoveSpeed": 4,
@@ -38,7 +38,7 @@
       },
       "Vitality": {
         "MaxHealth": 122,
-        "HealthRegen": 2.2901741765051487,
+        "HealthRegen": 2,
         "BulletResist": 15,
         "SpiritResist": 22,
         "MoveSpeed": 3,
@@ -63,7 +63,7 @@
       },
       "Vitality": {
         "MaxHealth": 187,
-        "HealthRegen": 1.5646513775080608,
+        "HealthRegen": 1.5,
         "BulletResist": 10,
         "SpiritResist": 5,
         "MoveSpeed": 5,
@@ -88,7 +88,7 @@
       },
       "Vitality": {
         "MaxHealth": 103,
-        "HealthRegen": 2.1593873850422183,
+        "HealthRegen": 2,
         "BulletResist": 16,
         "SpiritResist": 22,
         "MoveSpeed": 4,
@@ -113,7 +113,7 @@
       },
       "Vitality": {
         "MaxHealth": 172,
-        "HealthRegen": 1.3538268131540878,
+        "HealthRegen": 1,
         "BulletResist": 8,
         "SpiritResist": 9,
         "MoveSpeed": 3,
@@ -138,7 +138,7 @@
       },
       "Vitality": {
         "MaxHealth": 193,
-        "HealthRegen": 2.151083570975647,
+        "HealthRegen": 2,
         "BulletResist": 5,
         "SpiritResist": 19,
         "MoveSpeed": 4,
@@ -163,7 +163,7 @@
       },
       "Vitality": {
         "MaxHealth": 157,
-        "HealthRegen": 1.5599868959412966,
+        "HealthRegen": 1,
         "BulletResist": 6,
         "SpiritResist": 7,
         "MoveSpeed": 5,
@@ -188,7 +188,7 @@
       },
       "Vitality": {
         "MaxHealth": 151,
-        "HealthRegen": 0.7853378252445555,
+        "HealthRegen": 0.7,
         "BulletResist": 8,
         "SpiritResist": 10,
         "MoveSpeed": 5,
@@ -213,7 +213,7 @@
       },
       "Vitality": {
         "MaxHealth": 192,
-        "HealthRegen": 2.079267219491088,
+        "HealthRegen": 2,
         "BulletResist": 8,
         "SpiritResist": 23,
         "MoveSpeed": 4,
@@ -238,7 +238,7 @@
       },
       "Vitality": {
         "MaxHealth": 193,
-        "HealthRegen": 2.1990330956956563,
+        "HealthRegen": 2,
         "BulletResist": 7,
         "SpiritResist": 21,
         "MoveSpeed": 4,
@@ -263,7 +263,7 @@
       },
       "Vitality": {
         "MaxHealth": 141,
-        "HealthRegen": 2.464592214650642,
+        "HealthRegen": 2,
         "BulletResist": 12,
         "SpiritResist": 20,
         "MoveSpeed": 4,
@@ -288,7 +288,7 @@
       },
       "Vitality": {
         "MaxHealth": 106,
-        "HealthRegen": 2.1615166206362915,
+        "HealthRegen": 2,
         "BulletResist": 11,
         "SpiritResist": 8,
         "MoveSpeed": 5,
@@ -313,7 +313,7 @@
       },
       "Vitality": {
         "MaxHealth": 148,
-        "HealthRegen": 1.691640375404122,
+        "HealthRegen": 1,
         "BulletResist": 19,
         "SpiritResist": 22,
         "MoveSpeed": 5,
@@ -338,7 +338,7 @@
       },
       "Vitality": {
         "MaxHealth": 195,
-        "HealthRegen": 0.6347209789595847,
+        "HealthRegen": 0.6,
         "BulletResist": 6,
         "SpiritResist": 7,
         "MoveSpeed": 3,
@@ -363,7 +363,7 @@
       },
       "Vitality": {
         "MaxHealth": 173,
-        "HealthRegen": 1.4254695100547563,
+        "HealthRegen": 1.4,
         "BulletResist": 22,
         "SpiritResist": 5,
         "MoveSpeed": 4,
@@ -388,7 +388,7 @@
       },
       "Vitality": {
         "MaxHealth": 114,
-        "HealthRegen": 2.3744630216809086,
+        "HealthRegen": 2.3,
         "BulletResist": 5,
         "SpiritResist": 9,
         "MoveSpeed": 3,
@@ -413,7 +413,7 @@
       },
       "Vitality": {
         "MaxHealth": 138,
-        "HealthRegen": 0.555371925208306,
+        "HealthRegen": 0.5,
         "BulletResist": 11,
         "SpiritResist": 15,
         "MoveSpeed": 5,
@@ -438,7 +438,7 @@
       },
       "Vitality": {
         "MaxHealth": 158,
-        "HealthRegen": 1.4732681191697914,
+        "HealthRegen": 1.4,
         "BulletResist": 23,
         "SpiritResist": 23,
         "MoveSpeed": 4,
@@ -463,7 +463,7 @@
       },
       "Vitality": {
         "MaxHealth": 110,
-        "HealthRegen": 0.5726069140715229,
+        "HealthRegen": 0.5,
         "BulletResist": 16,
         "SpiritResist": 18,
         "MoveSpeed": 5,
@@ -488,7 +488,7 @@
       },
       "Vitality": {
         "MaxHealth": 153,
-        "HealthRegen": 2.096282103567577,
+        "HealthRegen": 2.0,
         "BulletResist": 12,
         "SpiritResist": 21,
         "MoveSpeed": 4,
@@ -513,7 +513,7 @@
       },
       "Vitality": {
         "MaxHealth": 136,
-        "HealthRegen": 1.4553014087949174,
+        "HealthRegen": 1.4,
         "BulletResist": 21,
         "SpiritResist": 8,
         "MoveSpeed": 5,
@@ -538,7 +538,7 @@
       },
       "Vitality": {
         "MaxHealth": 116,
-        "HealthRegen": 2.2530348609684765,
+        "HealthRegen": 2.2,
         "BulletResist": 10,
         "SpiritResist": 5,
         "MoveSpeed": 5,
