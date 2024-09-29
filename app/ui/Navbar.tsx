@@ -14,11 +14,11 @@ const Navbar: React.FC = () => {
               Home
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link href="/characters" className="text-white hover:text-gray-300 block">
               Characters
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link href="/items" className="text-white hover:text-gray-300 block">
               Items
