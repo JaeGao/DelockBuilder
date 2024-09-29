@@ -1,37 +1,30 @@
 import React from 'react';
-import CharacterGrid from './components/CharacterGrid';
-import ItemGrid from './components/ItemGrid';
-import DynamicCharacterStats from './components/DynamicCharacterStats';
-import DataInitializer from './components/DataInitializer';
-import { getCharacters, getItems } from './lib/dataUtils';
+import Link from 'next/link';
+import Image from 'next/image';
+import { getCharacters } from './lib/dataUtils';
 
 export default async function Home() {
   const characters = await getCharacters();
-  const items = await getItems();
   characters.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
   return (
-    <div className="flex flex-col gap-8">
-      <DataInitializer />
-      {characters.length > 0 ? (
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Characters</h2>
-          <CharacterGrid characters={characters} />
-        </div>
-      ) : (
-        <div>Loading characters...</div>
-      )}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Character Stats</h2>
-        <DynamicCharacterStats />
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Character Selection</h1>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {characters.map((character) => (
+          <Link href={`/builder/${character.name}`} key={character.name}>
+            <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
+              <Image
+                src={character.image}
+                alt={character.name}
+                width={100}
+                height={100}
+                className="mx-auto mb-2 rounded-full"
+              />
+              <p className="text-center">{character.name}</p>
+            </div>
+          </Link>
+        ))}
       </div>
-      {items.length > 0 ? (
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Items</h2>
-          <ItemGrid items={items} />
-        </div>
-      ) : (
-        <div>Loading items...</div>
-      )}
     </div>
   );
 }

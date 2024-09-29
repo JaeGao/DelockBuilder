@@ -2,70 +2,42 @@ import React from 'react';
 import Image from 'next/image';
 import { Item } from '../lib/gameInterfaces';
 
-
 interface ItemGridProps {
-    items: Item[];
+    title: string;
+    items: (Item | null)[];
+    onItemRemove: (index: number) => void;
 }
 
-const getCategoryColor = (category: string): string => {
-    switch (category.toLowerCase()) {
-        case 'vitality':
-            return 'bg-[#86c921]';
-        case 'spirit':
-            return 'bg-[#de9cff]';
-        default:
-            return 'bg-[#FCAC4D]';
-    }
-};
-
-const ItemCard: React.FC<Item> = ({ name, image, cost, category }) => {
-    const categoryColor = getCategoryColor(category);
-
-    return (
-        <div className="w-24 m-1">
-            <table className="w-full">
-                <tbody>
-                    <tr>
-                        <th className="bg-gray-800 text-xs">
-                            <span className="text-[#98ffde] text-shadow">
-                                <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
-                                <b>{cost}</b>
-                            </span>
-                        </th>
-                    </tr>
-                    <tr className={`${categoryColor} h-16`}>
-                        <td className="text-center">
-                            <Image src={image} alt={name} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
-                        </td>
-                    </tr>
-                    <tr className="bg-[#FFF0D7] h-12">
-                        <th className="text-[#151912] text-xs">
-                            <a href={`/items/${name.replace(' ', '_')}`} className="hover:underline">{name}</a>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    );
-};
-
-const ItemGrid: React.FC<ItemGridProps> = ({ items }) => {
-    const categories = Array.from(new Set(items.map(item => item.category)));
-
+const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemRemove }) => {
     return (
         <div>
-            {categories.map(category => (
-                <div key={category} className="mb-4">
-                    <h3 className="text-lg font-bold mb-2">{category}</h3>
-                    <div className=" bg-gray-800 p-4 roundedflex flex-wrap">
-                        {items
-                            .filter(item => item.category === category)
-                            .map(item => (
-                                <ItemCard key={item.name} {...item} />
-                            ))}
+            <h3 className="text-lg font-semibold mb-2">{title}</h3>
+            <div className="grid grid-cols-2 gap-2">
+                {items.map((item, index) => (
+                    <div key={index} className="bg-gray-800 p-2 rounded">
+                        {item ? (
+                            <div className="relative">
+                                <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    width={50}
+                                    height={50}
+                                    className="mx-auto"
+                                />
+                                <button
+                                    onClick={() => onItemRemove(index)}
+                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                                >
+                                    x
+                                </button>
+                                <p className="text-xs text-center mt-1">{item.name}</p>
+                            </div>
+                        ) : (
+                            <div className="w-[50px] h-[50px] bg-gray-700 mx-auto" />
+                        )}
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };
