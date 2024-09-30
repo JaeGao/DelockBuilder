@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Character, Item, CharacterStats } from '../lib/gameInterfaces';
+import { Character, Item, CharacterStats, ItemEffect } from '../lib/gameInterfaces';
 import ItemGrid from './ItemGrid';
 import ItemSidebar from './ItemSidebar';
 
@@ -17,36 +17,41 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
     const [vitalityItems, setVitalityItems] = useState<(Item | null)[]>(Array(4).fill(null));
     const [spiritItems, setSpiritItems] = useState<(Item | null)[]>(Array(4).fill(null));
     const [anyItems, setAnyItems] = useState<(Item | null)[]>(Array(4).fill(null));
-    const [characterStats, setCharacterStats] = useState<CharacterStats>(character.baseStats);
+    const [characterStats, setCharacterStats] = useState<CharacterStats>({
+        dps: character.dps,
+        bullet_damage: character.bullet_damage,
+        ammo: character.ammo,
+        bullets_per_second: character.bullets_per_second,
+        light_mellee_damage: character.light_mellee_damage,
+        heavy_mellee_damage: character.heavy_mellee_damage,
+        max_health: character.max_health,
+        health_regen: character.health_regen,
+        bullet_resistance_pct: character.bullet_resistance_pct,
+        spirit_resistance_pct: character.spirit_resistance_pct,
+        movement_speed_mps: character.movement_speed_mps,
+        sprint_speed_mps: character.sprint_speed_mps,
+        stamina: character.stamina
+    });
+    const [equippedAbilities, setEquippedAbilities] = useState<string[]>(character.abilities);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const applyItemEffect = (stats: CharacterStats, item: Item): CharacterStats => {
-        if (typeof item.effect === 'function') {
-            return item.effect(stats);
-        } else {
-            return {
-                ...stats,
-                Weapon: {
-                    DPS: stats.Weapon.DPS + (item.effect.Weapon?.DPS || 0),
-                    BulletDamage: stats.Weapon.BulletDamage + (item.effect.Weapon?.BulletDamage || 0),
-                    Ammo: stats.Weapon.Ammo + (item.effect.Weapon?.Ammo || 0),
-                    BulletsPerSecond: stats.Weapon.BulletsPerSecond + (item.effect.Weapon?.BulletsPerSecond || 0),
-                    LightMelee: stats.Weapon.LightMelee + (item.effect.Weapon?.LightMelee || 0),
-                    HeavyMelee: stats.Weapon.HeavyMelee + (item.effect.Weapon?.HeavyMelee || 0),
-                },
-                Vitality: {
-                    MaxHealth: stats.Vitality.MaxHealth + (item.effect.Vitality?.MaxHealth || 0),
-                    HealthRegen: stats.Vitality.HealthRegen + (item.effect.Vitality?.HealthRegen || 0),
-                    BulletResist: stats.Vitality.BulletResist + (item.effect.Vitality?.BulletResist || 0),
-                    SpiritResist: stats.Vitality.SpiritResist + (item.effect.Vitality?.SpiritResist || 0),
-                    MoveSpeed: stats.Vitality.MoveSpeed + (item.effect.Vitality?.MoveSpeed || 0),
-                    SprintSpeed: stats.Vitality.SprintSpeed + (item.effect.Vitality?.SprintSpeed || 0),
-                    Stamina: stats.Vitality.Stamina + (item.effect.Vitality?.Stamina || 0),
-                },
-                Spirit: { ...stats.Spirit, ...item.effect.Spirit },
-                Abilities: [...stats.Abilities, ...(item.effect.Abilities || [])]
-            };
+    const applyItemEffect = (stats: CharacterStats, abilities: string[], effect: ItemEffect): [CharacterStats, string[]] => {
+        let newStats = { ...stats };
+        let newAbilities = [...abilities];
+
+        if (effect.stats) {
+            Object.entries(effect.stats).forEach(([key, value]) => {
+                if (key in newStats) {
+                    (newStats as any)[key] += value;
+                }
+            });
         }
+
+        if (effect.abilities) {
+            newAbilities = [...newAbilities, ...effect.abilities];
+        }
+
+        return [newStats, newAbilities];
     };
 
     const handleItemSelect = (item: Item) => {
@@ -59,7 +64,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
 
         if (isItemAlreadyEquipped) {
             setErrorMessage('This item is already equipped!');
-            setTimeout(() => setErrorMessage(null), 3000); // Clear message after 3 seconds
+            setTimeout(() => setErrorMessage(null), 3000);
             return;
         }
 
@@ -87,7 +92,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
         const emptyIndex = targetGrid.findIndex(slot => slot === null);
         if (emptyIndex === -1) {
             setErrorMessage('No empty slots in the appropriate grid!');
-            setTimeout(() => setErrorMessage(null), 3000); // Clear message after 3 seconds
+            setTimeout(() => setErrorMessage(null), 3000);
             return;
         }
 
@@ -97,7 +102,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
             return newGrid;
         });
 
-        setCharacterStats(prevStats => applyItemEffect(prevStats, item));
+        const [newStats, newAbilities] = applyItemEffect(characterStats, equippedAbilities, item.effect);
+        setCharacterStats(newStats);
+        setEquippedAbilities(newAbilities);
     };
 
     const handleItemRemove = (category: 'Weapon' | 'Vitality' | 'Spirit' | 'Any', index: number) => {
@@ -131,38 +138,57 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
                 return newGrid;
             });
 
-            setCharacterStats(prevStats => {
-                // Reset to base stats and reapply all other items
-                let newStats = { ...character.baseStats };
-                [...weaponItems, ...vitalityItems, ...spiritItems, ...anyItems].forEach(item => {
-                    if (item && item !== itemToRemove) {
-                        newStats = applyItemEffect(newStats, item);
-                    }
-                });
-                return newStats;
+            // Reset stats and abilities, then reapply all other items
+            let newStats: CharacterStats = {
+                dps: character.dps,
+                bullet_damage: character.bullet_damage,
+                ammo: character.ammo,
+                bullets_per_second: character.bullets_per_second,
+                light_mellee_damage: character.light_mellee_damage,
+                heavy_mellee_damage: character.heavy_mellee_damage,
+                max_health: character.max_health,
+                health_regen: character.health_regen,
+                bullet_resistance_pct: character.bullet_resistance_pct,
+                spirit_resistance_pct: character.spirit_resistance_pct,
+                movement_speed_mps: character.movement_speed_mps,
+                sprint_speed_mps: character.sprint_speed_mps,
+                stamina: character.stamina
+            };
+            let newAbilities = [...character.abilities];
+
+            [...weaponItems, ...vitalityItems, ...spiritItems, ...anyItems].forEach(item => {
+                if (item && item !== itemToRemove) {
+                    [newStats, newAbilities] = applyItemEffect(newStats, newAbilities, item.effect);
+                }
             });
+
+            setCharacterStats(newStats);
+            setEquippedAbilities(newAbilities);
         }
     };
 
     return (
         <div className="flex">
             <div className="w-3/4 p-4">
-                <div className="mb-4">
+                <div className="mb-4 flex items-center">
                     <Image
                         src={character.image}
                         alt={character.name}
                         width={200}
                         height={200}
-                        className="mx-auto rounded-full"
+                        className="rounded-full mr-4"
                     />
-                    <h2 className="text-2xl font-bold text-center mt-2">{character.name}</h2>
+                    <div>
+                        <h2 className="text-2xl font-bold">{character.name}</h2>
+                        <p className="text-lg">{character.short_description}</p>
+                    </div>
                 </div>
                 {errorMessage && (
                     <div className="bg-red-500 text-white p-2 mb-4 rounded">
                         {errorMessage}
                     </div>
                 )}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                     <ItemGrid
                         title="Weapon"
                         items={weaponItems}
@@ -184,30 +210,19 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
                         onItemRemove={(index) => handleItemRemove('Any', index)}
                     />
                 </div>
-                <div className="mt-4">
-                    <h3 className="text-xl font-bold">Character Stats</h3>
-                    <div>
-                        <h4 className="font-semibold">Weapon:</h4>
-                        {Object.entries(characterStats.Weapon).map(([key, value]) => (
-                            <p key={key}>{key}: {value}</p>
+                <div className="mb-4">
+                    <h3 className="text-xl font-bold mb-2">Abilities</h3>
+                    <ul>
+                        {equippedAbilities.map((ability, index) => (
+                            <li key={index}>{ability}</li>
                         ))}
-                    </div>
-                    <div>
-                        <h4 className="font-semibold">Vitality:</h4>
-                        {Object.entries(characterStats.Vitality).map(([key, value]) => (
-                            <p key={key}>{key}: {value}</p>
-                        ))}
-                    </div>
-                    <div>
-                        <h4 className="font-semibold">Spirit:</h4>
-                        {Object.entries(characterStats.Spirit).map(([key, value]) => (
-                            <p key={key}>{key}: {value}</p>
-                        ))}
-                    </div>
-                    <div>
-                        <h4 className="font-semibold">Abilities:</h4>
-                        {characterStats.Abilities.map((ability, index) => (
-                            <p key={index}>{ability.name}: {ability.description}</p>
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold mb-2">Character Stats</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                        {Object.entries(characterStats).map(([key, value]) => (
+                            <p key={key}>{key.replace(/_/g, ' ')}: {value}</p>
                         ))}
                     </div>
                 </div>
