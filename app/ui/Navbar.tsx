@@ -14,7 +14,8 @@ const Navbar: React.FC = () => {
   return (
     <>
       <button
-        className="fixed top-4 left-4 z-50 lg:hidden text-custom-beige"
+        className={`fixed top-4 z-50 lg:hidden text-custom-beige transition-all duration-300 ${isOpen ? 'left-[17rem]' : 'left-4'
+          }`}
         onClick={toggleSidebar}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
