@@ -1,105 +1,83 @@
-// Weapon stats interface
-export interface Weapon {
-    DPS: number;
-    BulletDamage: number;
-    Ammo: number;
-    BulletsPerSecond: number;
-    LightMelee: number;
-    HeavyMelee: number;
+export interface StartingStats {
+    max_move_speed: number;
+    sprint_speed: number;
+    crouch_speed: number;
+    move_acceleration: number;
+    light_melee_damage: number;
+    heavy_melee_damage: number;
+    max_health: number;
+    weapon_power: number;
+    reload_speed: number;
+    weapon_power_scale: number;
+    stamina: number;
+    base_health_regen: number;
+    stamina_regen_per_second: number;
 }
 
-// Vitality stats interface
-export interface Vitality {
-    MaxHealth: number;
-    HealthRegen: number;
-    BulletResist: number;
-    SpiritResist: number;
-    MoveSpeed: number;
-    SprintSpeed: number;
-    Stamina: number;
+export interface LevelUpgrades {
+    modifier_value_base_melee_damage_from_level: number;
+    modifier_value_tech_damage_percent: number;
+    modifier_value_base_bullet_damage_from_level: number;
+    modifier_value_base_health_from_level: number;
+    modifier_value_bonus_attack_range: number | null;
+    modifier_value_bullet_armor_damage_resist: number;
 }
 
-// Spirit stats interface
-export interface Spirit {
-    SpiritPower: number
-}
-
-// Ability interface
-export interface Ability {
+export interface Character {
     name: string;
+    short_description: string;
     description: string;
-    effect: (stats: CharacterStats) => CharacterStats;
+    dps: number;
+    bullet_damage: number;
+    ammo: number;
+    bullets_per_second: number;
+    light_mellee_damage: number;
+    heavy_mellee_damage: number;
+    max_health: number;
+    health_regen: number;
+    bullet_resistance_pct: number;
+    spirit_resistance_pct: number;
+    movement_speed_mps: number;
+    sprint_speed_mps: number;
+    stamina: number;
+    pi_bullet_damage: number;
+    pi_melee_damage: number;
+    pi_health_abs: number;
+    id: number;
+    new_player_friendly: boolean;
+    starting_stats: StartingStats;
+    abilities: string[];
+    level_upgrades: LevelUpgrades;
+    image: string;
 }
 
-// Character stats interface
 export interface CharacterStats {
-    Weapon: Weapon;
-    Vitality: Vitality;
-    Spirit: Spirit;
-    Abilities: Ability[];
+    dps: number;
+    bullet_damage: number;
+    ammo: number;
+    bullets_per_second: number;
+    light_mellee_damage: number;
+    heavy_mellee_damage: number;
+    max_health: number;
+    health_regen: number;
+    bullet_resistance_pct: number;
+    spirit_resistance_pct: number;
+    movement_speed_mps: number;
+    sprint_speed_mps: number;
+    stamina: number;
 }
 
-// Item effect type
-export type ItemEffect = Partial<{
-    Weapon: Partial<Weapon>;
-    Vitality: Partial<Vitality>;
-    Spirit: Partial<Spirit>;
-    Abilities: Ability[];
-}>;
+export type StatModifier = Partial<CharacterStats>;
 
-// Item interface
+export interface ItemEffect {
+    stats?: StatModifier;
+    abilities?: string[];
+}
+
 export interface Item {
     name: string;
     image: string;
-    category: 'Weapon' | 'Vitality' | 'Spirit';
-    effect: ((stats: CharacterStats) => CharacterStats) | ItemEffect;
+    category: 'Weapon' | 'Vitality' | 'Spirit' | 'Any';
+    effect: ItemEffect;
     cost: number;
-}
-
-// Character interface
-export interface Character {
-    name: string;
-    image: string;
-    baseStats: CharacterStats;
-}
-
-// Initial character stats
-export const initialCharacterStats: CharacterStats = {
-    Weapon: {
-        DPS: 0,
-        BulletDamage: 0,
-        Ammo: 0,
-        BulletsPerSecond: 0,
-        LightMelee: 0,
-        HeavyMelee: 0
-    },
-    Vitality: {
-        MaxHealth: 100,
-        HealthRegen: 0,
-        BulletResist: 0,
-        SpiritResist: 0,
-        MoveSpeed: 5,
-        SprintSpeed: 7,
-        Stamina: 100
-    },
-    Spirit: {
-        SpiritPower: 5
-    },
-    Abilities: []
-};
-
-// Utility type for stat categories
-export type StatCategory = 'Weapon' | 'Vitality' | 'Spirit';
-
-// Utility type for all possible stat names
-export type StatName = keyof (Weapon & Vitality & Spirit);
-
-// Utility function to check if a property is a valid stat
-export function isValidStat(obj: any, prop: string): prop is StatName {
-    return prop in obj && typeof obj[prop] === 'number';
-}
-
-// Utility function to check if an object is an ItemEffect
-export function isItemEffect(effect: any): effect is ItemEffect {
-    return typeof effect === 'object' && ('Weapon' in effect || 'Vitality' in effect || 'Spirit' in effect || 'Abilities' in effect);
 }

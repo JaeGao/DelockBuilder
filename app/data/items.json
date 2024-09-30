@@ -14,11 +14,11 @@
     "effect": {
       "Vitality": {
         "MaxHealth": 22,
-        "HealthRegen": 0.19268718356034034,
+        "HealthRegen": 0.19,
         "BulletResist": 4,
         "SpiritResist": 1,
-        "MoveSpeed": 0.39309183432107453,
-        "SprintSpeed": 0.222713944117713,
+        "MoveSpeed": 0.39,
+        "SprintSpeed": 0.22,
         "Stamina": 8
       }
     }
@@ -30,11 +30,11 @@
     "effect": {
       "Vitality": {
         "MaxHealth": 17,
-        "HealthRegen": 0.2574020085999792,
+        "HealthRegen": 0.25,
         "BulletResist": 3,
         "SpiritResist": 2,
-        "MoveSpeed": 0.23714662906401754,
-        "SprintSpeed": 0.26552494511431385,
+        "MoveSpeed": 0.23,
+        "SprintSpeed": 0.26,
         "Stamina": 14
       }
     }

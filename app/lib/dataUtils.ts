@@ -2,13 +2,27 @@ import fs from 'fs/promises';
 import path from 'path';
 import { Character, Item } from './gameInterfaces';
 
-const charactersPath = path.join(process.cwd(), 'app', 'data', 'characters.json');
+const charactersDir = path.join(process.cwd(), 'app', 'data', 'Characters');
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'items.json');
 
 export async function getCharacters(): Promise<Character[]> {
     try {
-        const data = await fs.readFile(charactersPath, 'utf8');
-        const characters = JSON.parse(data);
+        const characterFolders = await fs.readdir(charactersDir);
+        const characters: Character[] = [];
+
+        for (const folder of characterFolders) {
+            const characterPath = path.join(charactersDir, folder, 'data.json');
+            const data = await fs.readFile(characterPath, 'utf8');
+            const character: Character = JSON.parse(data);
+
+            // Add asset paths
+            character.image = `/CharacterAssets/${folder}/assets/hero_thumbnail.png`;
+            // character.heroModel = `/next/CharacterAssets/${folder}/assets/hero_model.png`;
+            // character.abilityIcons = [1, 2, 3, 4].map(i => `/next/CharacterAssets/${folder}/assets/ability_${i}.png`);
+
+            characters.push(character);
+        }
+
         console.log('DataUtils: Read characters:', characters);
         return characters;
     } catch (error) {
