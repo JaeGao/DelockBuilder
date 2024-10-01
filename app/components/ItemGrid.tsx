@@ -20,7 +20,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemRemove }) => {
     return (
         <div>
             <h3 className="text-lg font-semibold mb-2">{title}</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid bg-gray-800 p-4 rounded grid-cols-2 lg:grid-cols-4 gap-2">
                 {items.map((item, index) => (
                     <div key={index} className="bg-gray-800 p-2 rounded w-28 h-40 overflow-hidden">
                         {item ? (
