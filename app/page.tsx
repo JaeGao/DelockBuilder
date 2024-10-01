@@ -7,7 +7,6 @@ import { Character } from '@/app/lib/gameInterfaces';
 export default async function Home() {
   const characters: Character[] = await getCharacters();
   characters.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Character Selection</h1>
