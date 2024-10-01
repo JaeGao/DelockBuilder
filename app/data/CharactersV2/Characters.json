@@ -9051,6 +9051,7 @@
         "icon_hero_card": "panorama:\"file://{images}/heroes/lash_card.psd\"",
         "top_bar_image": "panorama:\"file://{images}/hud/hero_portraits/lash_hud.psd\"",
         "images": {
+            "portrait": "/images/heroes/lash_psd.png",
             "card": "/images/heroes/lash_card_psd.png",
             "top_bar": "/images/heroes/lash_hud_psd.png",
             "minimap": "/images/heroes/lash_mm_psd.png",
