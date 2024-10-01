@@ -402,11 +402,11 @@
   "icon_hero_card": "panorama:\"file://{images}/heroes/bull_card.psd\"",
   "top_bar_image": "panorama:\"file://{images}/hud/hero_portraits/bull_hud.psd\"",
   "images": {
-    "portrait": "https://assets.deadlock-api.com/images/heroes/bull_psd.png",
-    "card": "https://assets.deadlock-api.com/images/heroes/bull_card_psd.png",
-    "top_bar": "https://assets.deadlock-api.com/images/heroes/bull_hud_psd.png",
-    "minimap": "https://assets.deadlock-api.com/images/heroes/bull_mm_psd.png",
-    "small": "https://assets.deadlock-api.com/images/heroes/bull_sm_psd.png",
-    "weapon": "https://assets.deadlock-api.com/images/heroes/guns/bull_gun_psd.png"
+    "portrait": "/images/heroes/bull_psd.png",
+    "card": "/images/heroes/bull_card_psd.png",
+    "top_bar": "/images/heroes/bull_hud_psd.png",
+    "minimap": "/images/heroes/bull_mm_psd.png",
+    "small": "/images/heroes/bull_sm_psd.png",
+    "weapon": "/images/heroes/guns/bull_gun_psd.png"
   }
 }

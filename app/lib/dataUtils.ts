@@ -2,26 +2,20 @@ import fs from 'fs/promises';
 import path from 'path';
 import { Character, Item } from './gameInterfaces';
 
-const charactersDir = path.join(process.cwd(), 'app', 'data', 'Characters');
-const itemsPath = path.join(process.cwd(), 'app', 'data', 'items.json');
+const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'Characters.json');
+const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'items.json');
 
 export async function getCharacters(): Promise<Character[]> {
     try {
-        const characterFolders = await fs.readdir(charactersDir);
-        const characters: Character[] = [];
+        const data = await fs.readFile(charactersPath, 'utf8');
+        const characters: Character[] = JSON.parse(data);
 
-        for (const folder of characterFolders) {
-            const characterPath = path.join(charactersDir, folder, 'data.json');
-            const data = await fs.readFile(characterPath, 'utf8');
-            const character: Character = JSON.parse(data);
-
-            // Add asset paths
-            character.image = `/CharacterAssets/${folder}/assets/hero_thumbnail.png`;
-            // character.heroModel = `/next/CharacterAssets/${folder}/assets/hero_model.png`;
-            // character.abilityIcons = [1, 2, 3, 4].map(i => `/next/CharacterAssets/${folder}/assets/ability_${i}.png`);
-
-            characters.push(character);
-        }
+        // Ensure each character has an image property
+        characters.forEach(character => {
+            if (!character.images || !character.images.portrait) {
+                console.warn(`Character ${character.name} does not have a portrait image`);
+            }
+        });
 
         console.log('DataUtils: Read characters:', characters);
         return characters;
@@ -34,7 +28,15 @@ export async function getCharacters(): Promise<Character[]> {
 export async function getItems(): Promise<Item[]> {
     try {
         const data = await fs.readFile(itemsPath, 'utf8');
-        const items = JSON.parse(data);
+        const items: Item[] = JSON.parse(data);
+
+        // Ensure each item has an image property
+        items.forEach(item => {
+            if (!item.image) {
+                console.warn(`Item ${item.name} does not have an image property`);
+            }
+        });
+
         console.log('DataUtils: Read items:', items);
         return items;
     } catch (error) {
