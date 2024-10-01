@@ -12,7 +12,7 @@ export default async function Home() {
       <h1 className="text-3xl font-bold mb-6">Character Selection</h1>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {characters.map((character) => (
-          <Link href={`/builder/${character.name}`} key={character.id}>
+          <Link href={`/builder/${character.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.id}>
             <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
               <Image
                 src={character.images.portrait}

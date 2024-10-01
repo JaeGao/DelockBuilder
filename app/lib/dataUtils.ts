@@ -48,7 +48,10 @@ export async function getItems(): Promise<Item[]> {
 export async function getCharacter(name: string): Promise<Character | undefined> {
     try {
         const characters = await getCharacters();
-        return characters.find(char => char.name === name);
+        return characters.find(char =>
+            char.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') ===
+            name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
+        );
     } catch (error) {
         console.error('Error fetching character:', error);
         return undefined;
