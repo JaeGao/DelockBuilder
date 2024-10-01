@@ -24,7 +24,7 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({ characters }) => {
                         alt={character.name}
                         width={50}
                         height={50}
-                        className="rounded-full"
+                        className="object-scale-down object-contain rounded-full"
                     />
                     <p className="mt-1 text-center text-xs">{character.name}</p>
                 </div>
