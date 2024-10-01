@@ -9,7 +9,7 @@ interface StatsSidebarProps {
 
 const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass }) => {
     return (
-        <div className="w-1/4 bg-gray-800 p-4 overflow-y-auto h-screen">
+        <div className="w-1/4 bg-gray-800 p-4 overflow-y-auto h-screen min-h-[200vw]">
             <h2 className="text-2xl font-bold text-white mb-4">{characterName}</h2>
             <p className="text-lg text-gray-300 mb-6">{characterClass}</p>
             <h3 className="text-xl font-bold text-white mb-4">Character Stats</h3>
