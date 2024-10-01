@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import { Item } from '../lib/gameInterfaces';
 import Image from 'next/image';
