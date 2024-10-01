@@ -11,29 +11,46 @@ interface ItemGridProps {
 const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemRemove }) => {
     return (
         <div>
-            <h3 className="text-lg font-semibold mb-2">{title}</h3>
+            <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
             <div className="grid grid-cols-2 gap-2">
                 {items.map((item, index) => (
                     <div key={index} className="bg-gray-800 p-2 rounded">
                         {item ? (
-                            <div className="relative">
-                                <Image
-                                    src={item.image}
-                                    alt={item.name}
-                                    width={50}
-                                    height={50}
-                                    className="mx-auto"
-                                />
+                            <div className="relative w-28 h-40">
+                                <div className="bg-gray-800 text-xs p-1">
+                                    <span className="text-[#98ffde] text-shadow">
+                                        <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                                        <b>{item.cost ?? 'N/A'}</b>
+                                    </span>
+                                </div>
+                                <div className="flex-grow flex items-center justify-center h-24">
+                                    {item.image && (
+                                        <Image
+                                            src={item.image}
+                                            alt={item.name}
+                                            width={50}
+                                            height={50}
+                                            className="inline-block filter brightness-0 saturate-100"
+                                        />
+                                    )}
+                                </div>
+                                <div className="bg-[#FFF0D7] p-1">
+                                    <p className="text-[#151912] text-xs truncate">{item.name}</p>
+                                </div>
+                                <div className="bg-gray-200 text-xs text-gray-600 p-1">
+                                    Tier {item.tier}
+                                </div>
                                 <button
                                     onClick={() => onItemRemove(index)}
-                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
                                 >
                                     x
                                 </button>
-                                <p className="text-xs text-center mt-1">{item.name}</p>
                             </div>
                         ) : (
-                            <div className="w-[50px] h-[50px] bg-gray-700 mx-auto" />
+                            <div className="w-28 h-40 bg-gray-700 flex items-center justify-center">
+                                <span className="text-gray-500">Empty</span>
+                            </div>
                         )}
                     </div>
                 ))}
