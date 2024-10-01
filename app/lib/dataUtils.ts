@@ -17,7 +17,7 @@ export async function getCharacters(): Promise<Character[]> {
             }
         });
 
-        console.log('DataUtils: Read characters:', characters);
+        // console.log('DataUtils: Read characters:', characters);
         return characters;
     } catch (error) {
         console.error('DataUtils: Error reading characters:', error);
@@ -37,7 +37,7 @@ export async function getItems(): Promise<Item[]> {
             }
         });
 
-        console.log('DataUtils: Read items:', items);
+        // console.log('DataUtils: Read items:', items);
         return items;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);

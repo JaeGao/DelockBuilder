@@ -195,13 +195,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
                         {errorMessage}
                     </div>
                 )}
-                <input
-                    type="text"
-                    placeholder="Search upgrade items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full p-2 mb-4 bg-gray-700 text-white rounded"
-                />
+
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <ItemGrid
                         title="Weapon"
@@ -224,8 +218,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
                         onItemRemove={(index) => handleItemRemove('Utility', index)}
                     />
                 </div>
+                <input
+                    type="text"
+                    placeholder="Search upgrade items..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-2 mb-4 bg-gray-700 text-white rounded"
+                />
                 <div className="mb-4">
-                    <h3 className="text-xl font-bold mb-2">Available Upgrade Items</h3>
                     <ItemsDisplay items={filteredItems} onItemSelect={handleItemSelect} />
                 </div>
                 <div className="mb-4">

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Item } from '../lib/gameInterfaces';
 import Image from 'next/image';
@@ -81,8 +82,8 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                     <button
                         key={category}
                         className={`px-4 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
-                                ? `${getCategoryColor(category)} text-white`
-                                : 'bg-gray-200 text-gray-700'
+                            ? `${getCategoryColor(category)} text-white`
+                            : 'bg-gray-200 text-gray-700'
                             }`}
                         onClick={() => setActiveCategory(category)}
                     >
