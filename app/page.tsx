@@ -19,7 +19,7 @@ export default async function Home() {
                 alt={character.name}
                 width={100}
                 height={100}
-                className="mx-auto mb-2 rounded-full"
+                className="object-scale-down object-contain h-24 w-24 mx-auto mb-2 rounded-full"
               />
               <p className="text-center">{character.name}</p>
             </div>

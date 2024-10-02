@@ -6,7 +6,7 @@ type VideoUrl = string;
 type PropertyValue = number | string | null;
 
 // Base item interface
-interface BaseItem {
+export interface BaseItem {
     name: string;
     class_name: string;
     image?: ImageUrl;
@@ -23,29 +23,30 @@ interface BaseItem {
 }
 
 // Tech item interface
-interface TechItem extends BaseItem {
+export interface TechItem extends BaseItem {
     type: 'tech';
 }
 
 // Armor item interface
-interface ArmorItem extends BaseItem {
+export interface ArmorItem extends BaseItem {
     type: 'armor';
 }
 
 // Weapon item interface
-interface WeaponItem extends BaseItem {
+export interface WeaponItem extends BaseItem {
     type: 'weapon';
+    // Note: We're not adding bullet_damage or clip_size here as they're in properties
 }
 
 // Ability item interface
-interface AbilityItem extends BaseItem {
+export interface AbilityItem extends BaseItem {
     type: 'ability';
     points_cost?: number;
     unlocks_cost?: number;
 }
 
 // Upgrade item interface
-interface UpgradeItem extends BaseItem {
+export interface UpgradeItem extends BaseItem {
     type: 'upgrade';
     properties: {
         ability_cast_delay: number;
@@ -67,7 +68,6 @@ interface UpgradeItem extends BaseItem {
 
 // Union type for all items
 export type Item = TechItem | ArmorItem | WeaponItem | AbilityItem | UpgradeItem;
-
 // Character interfaces
 export interface CharacterStartingStats {
     max_move_speed: number;
