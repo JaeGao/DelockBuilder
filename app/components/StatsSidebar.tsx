@@ -11,7 +11,7 @@ interface StatsSidebarProps {
 
 const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, characterName, characterClass }) => {
     const formatStat = (value: any): string => {
-        if (value === undefined || value === null) return 'N/A';
+        if (value === undefined || value === null) return 'THIS IS BROKEN formatStat';
         if (typeof value === 'number') {
             return Number.isInteger(value) ? value.toString() : value.toFixed(2);
         }
@@ -98,13 +98,13 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, 
                         {group.stats.map((stat) => {
                             const baseStat = getStatValue(baseStats, stat.key);
                             const currentStat = getStatValue(characterStats, stat.key);
-                            if (baseStat === undefined && currentStat === undefined) return null;
+                            if (baseStat === undefined && currentStat === undefined) return "THIS IS BROKEN";
                             return (
                                 <div key={stat.key} className="flex justify-between items-center">
                                     <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
                                     <div className="text-right">
                                         <span className="text-white text-xs font-medium">
-                                            {formatStat(baseStat)}
+                                            {formatStat(currentStat)}
                                         </span>
                                         <span className="text-yellow-400 text-xs ml-1">
                                             {calculatePercentageDifference(baseStat, currentStat)}
