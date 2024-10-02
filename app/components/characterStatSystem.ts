@@ -15,9 +15,8 @@ const getItemById = (id: number, allItems: Item[]): Item | undefined => {
 
 const applyWeaponStats = (stats: EnhancedCharacterStats, weapon: Item): EnhancedCharacterStats => {
     if (isWeaponItem(weapon) && weapon.weapon_info) {
-        stats.bullet_damage = weapon.weapon_info.bullet_damage || 0;
-        stats.clip_size = weapon.weapon_info.clip_size || 0;
-        stats.dps = stats.bullet_damage / (weapon.weapon_info.cycle_time || 1);
+        stats.bullet_damage = (weapon.weapon_info.bullet_damage as number) || 0;
+        stats.clip_size = (weapon.weapon_info.clip_size as number) || 0;
     }
     return stats;
 };
