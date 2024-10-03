@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Character, Item, isWeaponItem } from '../lib/gameInterfaces';
+import { Item } from '../lib/gameInterfaces';
 import { EnhancedCharacterStats, calculateCharacterStats } from './characterStatSystem';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import ItemsDisplay from './ItemsDisplay';
-
+import { HeroWithKey, HeroType } from '../lib/herointerface';
 interface CharacterBuilderProps {
-    character: Character;
+    character: HeroWithKey;
     items: Item[];
 }
 
@@ -28,16 +28,18 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
     const [spiritItems, setSpiritItems] = useState<(Item | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(Item | null)[]>(Array(4).fill(null));
     const [characterStats, setCharacterStats] = useState<EnhancedCharacterStats>(
-        calculateCharacterStats(character, [], items)
+        calculateCharacterStats(character.data, [], items)
     );
     const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
     const recalculateStats = () => {
         const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
             (item): item is Item => item !== null
         );
-        const newStats = calculateCharacterStats(character, allEquippedItems, items);
+        const newStats = calculateCharacterStats(character.data, allEquippedItems, items);
         setCharacterStats(newStats);
 
         const newAbilities = allEquippedItems
@@ -154,16 +156,18 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
         <div className="flex">
             <div className="w-[calc(100%-20rem)] p-4">
                 <div className="mb-4 flex items-center">
-                    <Image
-                        src={character.images.portrait}
-                        alt={character.name}
-                        width={200}
-                        height={200}
-                        className="rounded-full mr-4"
-                    />
+                    {character.data.m_strSelectionImage && (
+                        <Image
+                            src={character.data.m_strSelectionImage}
+                            alt={heroName}
+                            width={200}
+                            height={200}
+                            className="rounded-full mr-4"
+                        />
+                    )}
                     <div>
-                        <h2 className="text-2xl font-bold">{character.name}</h2>
-                        <p className="text-lg">{character.class_name}</p>
+                        <h2 className="text-2xl font-bold">{heroName}</h2>
+                        <p className="text-lg">{character.data._class}</p>
                     </div>
                 </div>
                 {errorMessage && (
@@ -215,9 +219,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
             </div>
             <StatsSidebar
                 characterStats={characterStats}
-                baseStats={character}
-                characterName={character.name}
-                characterClass={character.class_name}
+                baseStats={character.data.m_mapStartingStats}
+                characterName={heroName}
+                characterClass={character.data._class}
             />
         </div>
     );

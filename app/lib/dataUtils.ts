@@ -1,27 +1,76 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { Character, Item } from './gameInterfaces';
+import { Item } from './gameInterfaces';
+import { Heroes } from './herointerface';
 
-const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'Characters.json');
+const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'items.json');
 
-export async function getCharacters(): Promise<Character[]> {
+type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
+type HeroType = Heroes[HeroKey];
+
+export interface HeroWithKey {
+    data: HeroType;
+    key: string;
+}
+
+export function convertImagePath(imagePath: string): string {
+    const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
+    const match = cleanPath.match(/file:\/\/\{images\}\/(.+)/);
+    if (match) {
+        let pngPath = match[1];
+        pngPath = pngPath.replace('.psd', '_psd.png');
+        return `/images/${pngPath}`;
+    }
+    return imagePath;
+}
+
+export async function getCharacters(): Promise<HeroWithKey[]> {
     try {
         const data = await fs.readFile(charactersPath, 'utf8');
-        const characters: Character[] = JSON.parse(data);
+        const characters: Heroes = JSON.parse(data);
 
-        // Ensure each character has an image property
-        characters.forEach(character => {
-            if (!character.images || !character.images.portrait) {
-                console.warn(`Character ${character.name} does not have a portrait image`);
-            }
-        });
+        const playableCharacters = Object.entries(characters)
+            .filter((entry): entry is [HeroKey, HeroType] => {
+                const [key, value] = entry;
+                return key !== 'generic_data_type' && typeof value === 'object' && value !== null && 'm_bPlayerSelectable' in value && value.m_bPlayerSelectable === true;
+            })
+            .map(([key, character]) => ({
+                data: {
+                    ...character,
+                    m_strSelectionImage: 'm_strSelectionImage' in character && typeof character.m_strSelectionImage === 'string'
+                        ? convertImagePath(character.m_strSelectionImage)
+                        : undefined
+                },
+                key
+            }));
 
-        // console.log('DataUtils: Read characters:', characters);
-        return characters;
+        return playableCharacters;
     } catch (error) {
         console.error('DataUtils: Error reading characters:', error);
         throw error;
+    }
+}
+export async function getCharacter(name: string): Promise<HeroWithKey | undefined> {
+    try {
+        const data = await fs.readFile(charactersPath, 'utf8');
+        const characters: Heroes = JSON.parse(data);
+        const heroKey = `hero_${name.toLowerCase()}` as HeroKey;
+        const character = characters[heroKey];
+
+        if (typeof character === 'object' && character !== null && 'm_bPlayerSelectable' in character && character.m_bPlayerSelectable) {
+            return {
+                data: {
+                    ...character,
+                    m_strSelectionImage: 'm_strSelectionImage' in character ? convertImagePath(character.m_strSelectionImage) : undefined
+                },
+                key: heroKey
+            };
+        }
+        return undefined;
+    } catch (error) {
+        console.error('Error fetching character:', error);
+        return undefined;
     }
 }
 
@@ -30,31 +79,16 @@ export async function getItems(): Promise<Item[]> {
         const data = await fs.readFile(itemsPath, 'utf8');
         const items: Item[] = JSON.parse(data);
 
-        // Ensure each item has an image property
         items.forEach(item => {
             if (!item.image) {
                 console.warn(`Item ${item.name} does not have an image property`);
             }
         });
 
-        // console.log('DataUtils: Read items:', items);
         return items;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
         throw error;
-    }
-}
-
-export async function getCharacter(name: string): Promise<Character | undefined> {
-    try {
-        const characters = await getCharacters();
-        return characters.find(char =>
-            char.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') ===
-            name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
-        );
-    } catch (error) {
-        console.error('Error fetching character:', error);
-        return undefined;
     }
 }
 

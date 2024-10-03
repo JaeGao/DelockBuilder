@@ -1,10 +1,10 @@
-import { Character, Item, isUpgradeItem, isWeaponItem } from '../lib/gameInterfaces';
+import { Item, isUpgradeItem, isWeaponItem } from '../lib/gameInterfaces';
+import { HeroType, MmapStartingStats } from '../lib/herointerface';
 
-export interface EnhancedCharacterStats extends Character {
-    // Additional calculated stats
-    bullet_damage: number;
-    dps: number;
-    clip_size: number;
+export interface EnhancedCharacterStats extends MmapStartingStats {
+    bullet_damage?: number;
+    dps?: number;
+    clip_size?: number;
     bonus_clip_size_percent: number;
     base_attack_damage_percent: number;
 }
@@ -23,43 +23,43 @@ const applyWeaponStats = (stats: EnhancedCharacterStats, weapon: Item): Enhanced
 
 const applyUpgradeEffect = (stats: EnhancedCharacterStats, item: Item): EnhancedCharacterStats => {
     if (isUpgradeItem(item)) {
-        if (typeof item.properties.base_attack_damage_percent === 'number') {
-            stats.base_attack_damage_percent += item.properties.base_attack_damage_percent;
-        }
-        if (typeof item.properties.bonus_clip_size_percent === 'number') {
-            stats.bonus_clip_size_percent += item.properties.bonus_clip_size_percent;
-        }
+        Object.entries(item.properties).forEach(([key, value]) => {
+            if (typeof value === 'number') {
+                (stats as any)[key] = ((stats as any)[key] || 0) + value;
+            }
+        });
     }
     return stats;
 };
 
 const applyPercentageModifiers = (stats: EnhancedCharacterStats): EnhancedCharacterStats => {
-    // Apply damage increase
-    stats.bullet_damage *= (1 + stats.base_attack_damage_percent / 100);
-    stats.dps *= (1 + stats.base_attack_damage_percent / 100);
-
-    // Apply clip size increase
-    stats.clip_size = Math.round(stats.clip_size * (1 + stats.bonus_clip_size_percent / 100));
-
+    if (stats.bullet_damage !== undefined) {
+        stats.bullet_damage *= (1 + stats.base_attack_damage_percent / 100);
+    }
+    if (stats.dps !== undefined) {
+        stats.dps *= (1 + stats.base_attack_damage_percent / 100);
+    }
+    if (stats.clip_size !== undefined) {
+        stats.clip_size = Math.round(stats.clip_size * (1 + stats.bonus_clip_size_percent / 100));
+    }
     return stats;
 };
 
 export const calculateCharacterStats = (
-    character: Character,
+    character: HeroType,
     equippedUpgradeItems: Item[],
     allItems: Item[]
 ): EnhancedCharacterStats => {
     let enhancedStats: EnhancedCharacterStats = {
-        ...character,
-        bullet_damage: 0,
-        dps: 0,
-        clip_size: 0,
+        ...character.m_mapStartingStats,
         bonus_clip_size_percent: 0,
         base_attack_damage_percent: 0,
     };
 
     // Apply weapon stats
-    const weaponItem = getItemById(character.items.weapon_primary, allItems);
+    const weaponItem = character.m_mapBoundAbilities?.weapon_primary
+        ? getItemById(character.m_mapBoundAbilities.weapon_primary, allItems)
+        : undefined;
     if (weaponItem) {
         enhancedStats = applyWeaponStats(enhancedStats, weaponItem);
     }

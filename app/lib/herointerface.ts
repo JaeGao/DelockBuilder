@@ -1,4 +1,4 @@
-interface Heroes {
+export interface Heroes {
     generic_data_type: string;
     hero_base: Herobase;
     hero_inferno: Heroinferno;
@@ -39,7 +39,7 @@ interface Heroes {
     hero_bomber: Herobomber;
 }
 
-interface Herobomber {
+export interface Herobomber {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -90,7 +90,7 @@ interface Herobomber {
     m_strDeathSound: string;
 }
 
-interface Herotargetdummy {
+export interface Herotargetdummy {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -147,7 +147,7 @@ interface Herotargetdummy {
     m_strTopBarVertical: string;
 }
 
-interface Herocadence {
+export interface Herocadence {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -206,7 +206,7 @@ interface Herocadence {
     m_strUIShopAnimGraph: string;
 }
 
-interface Heroslork {
+export interface Heroslork {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -268,7 +268,7 @@ interface Heroslork {
     m_strUIShoppingMap: string;
 }
 
-interface Herosynth {
+export interface Herosynth {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -334,7 +334,7 @@ interface Herosynth {
     m_strUIShoppingMap: string;
 }
 
-interface Herowrecker {
+export interface Herowrecker {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -400,7 +400,7 @@ interface Herowrecker {
     m_strUIShoppingMap: string;
 }
 
-interface Herotokamak {
+export interface Herotokamak {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -458,7 +458,7 @@ interface Herotokamak {
     m_strTopBarImage: string;
 }
 
-interface Herogenericperson {
+export interface Herogenericperson {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -514,7 +514,7 @@ interface Herogenericperson {
     m_strIconHeroCard: string;
 }
 
-interface Heroyakuza {
+export interface Heroyakuza {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -573,7 +573,7 @@ interface Heroyakuza {
     m_strUIShoppingMap: string;
 }
 
-interface Herogunslinger {
+export interface Herogunslinger {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -630,7 +630,7 @@ interface Herogunslinger {
     m_strIconHeroCard: string;
 }
 
-interface Heroviscous {
+export interface Heroviscous {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -698,7 +698,7 @@ interface Heroviscous {
     m_strUIShoppingMap: string;
 }
 
-interface Herolash {
+export interface Herolash {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -763,7 +763,7 @@ interface Herolash {
     m_strUIShoppingMap: string;
 }
 
-interface Heroyamato {
+export interface Heroyamato {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -829,7 +829,7 @@ interface Heroyamato {
     m_strUIShoppingMap: string;
 }
 
-interface Herowarden {
+export interface Herowarden {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -896,12 +896,12 @@ interface Herowarden {
     m_strUIShoppingMap: string;
 }
 
-interface MmapScalingStats6 {
+export interface MmapScalingStats6 {
     ERoundsPerSecond: EMaxMoveSpeed;
     EFireRate: EMaxMoveSpeed;
 }
 
-interface Herokali {
+export interface Herokali {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -963,7 +963,7 @@ interface Herokali {
     m_strUIShoppingMap: string;
 }
 
-interface Herotengu {
+export interface Herotengu {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1032,7 +1032,7 @@ interface Herotengu {
     m_strUIShoppingMap: string;
 }
 
-interface Heroshiv {
+export interface Heroshiv {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1098,7 +1098,7 @@ interface Heroshiv {
     m_strUIShoppingMap: string;
 }
 
-interface Herokrill {
+export interface Herokrill {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1166,7 +1166,7 @@ interface Herokrill {
     m_strUIShoppingMap: string;
 }
 
-interface Heroorion {
+export interface Heroorion {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1235,13 +1235,13 @@ interface Heroorion {
     m_strUIShoppingMap: string;
 }
 
-interface MmapScalingStats5 {
+export interface MmapScalingStats5 {
     EMaxMoveSpeed: EMaxMoveSpeed;
     ERoundsPerSecond: EMaxMoveSpeed;
     EFireRate: EMaxMoveSpeed;
 }
 
-interface Heronano {
+export interface Heronano {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1307,7 +1307,7 @@ interface Heronano {
     m_hGeneratedVOEventScript: string;
 }
 
-interface MmapBoundAbilities3 {
+export interface MmapBoundAbilities3 {
     ESlot_Weapon_Primary: string;
     ESlot_Weapon_Melee: string;
     ESlot_Ability_Mantle: string;
@@ -1326,7 +1326,7 @@ interface MmapBoundAbilities3 {
     ESlot_Signature_4: string;
 }
 
-interface Herobebop {
+export interface Herobebop {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1397,7 +1397,7 @@ interface Herobebop {
     m_strUIShopAnimGraph: string;
 }
 
-interface MmapStandardLevelUpUpgrades2 {
+export interface MmapStandardLevelUpUpgrades2 {
     MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL: number;
     MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL: number;
     MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL: number;
@@ -1406,7 +1406,7 @@ interface MmapStandardLevelUpUpgrades2 {
     MODIFIER_VALUE_BONUS_ATTACK_RANGE: number;
 }
 
-interface Heroastro {
+export interface Heroastro {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1472,19 +1472,19 @@ interface Heroastro {
     m_strUIShoppingMap: string;
 }
 
-interface MShopStatDisplay5 {
+export interface MShopStatDisplay5 {
     m_eWeaponStatsDisplay: MeWeaponStatsDisplay5;
     m_eVitalityStatsDisplay: MeWeaponStatsDisplay;
     m_eSpiritStatsDisplay: MeSpiritStatsDisplay;
 }
 
-interface MeWeaponStatsDisplay5 {
+export interface MeWeaponStatsDisplay5 {
     m_vecDisplayStats: string[];
     m_vecOtherDisplayStats: string[];
     m_eWeaponAttributes: string;
 }
 
-interface Herohaze {
+export interface Herohaze {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1554,11 +1554,11 @@ interface Herohaze {
     m_strUIShopAnimGraph: string;
 }
 
-interface MmapScalingStats4 {
+export interface MmapScalingStats4 {
     EClipSize: EMaxMoveSpeed;
 }
 
-interface Herokelvin {
+export interface Herokelvin {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1626,7 +1626,7 @@ interface Herokelvin {
     m_strUIShoppingMap: string;
 }
 
-interface Herodynamo {
+export interface Herodynamo {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1696,7 +1696,7 @@ interface Herodynamo {
     m_strUIShoppingMap: string;
 }
 
-interface Herochrono {
+export interface Herochrono {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1762,7 +1762,7 @@ interface Herochrono {
     m_strUIShopAnimGraph: string;
 }
 
-interface Heroforge {
+export interface Heroforge {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1831,7 +1831,7 @@ interface Heroforge {
     m_strUIShoppingMap: string;
 }
 
-interface MmapStartingStats3 {
+export interface MmapStartingStats3 {
     EMaxMoveSpeed: number;
     ESprintSpeed: number;
     ECrouchSpeed: number;
@@ -1854,7 +1854,7 @@ interface MmapStartingStats3 {
     ETechArmorDamageReduction: number;
 }
 
-interface Herowraith {
+export interface Herowraith {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -1924,13 +1924,13 @@ interface Herowraith {
     m_strUIShoppingMap: string;
 }
 
-interface MShopStatDisplay4 {
+export interface MShopStatDisplay4 {
     m_eWeaponStatsDisplay: MeWeaponStatsDisplay4;
     m_eVitalityStatsDisplay: MeWeaponStatsDisplay;
     m_eSpiritStatsDisplay: MeSpiritStatsDisplay;
 }
 
-interface MeWeaponStatsDisplay4 {
+export interface MeWeaponStatsDisplay4 {
     m_vecDisplayStats: string[];
     m_vecOtherDisplayStats: string[];
     m_eWeaponAttributes: string;
@@ -1938,11 +1938,11 @@ interface MeWeaponStatsDisplay4 {
     m_strWeaponImage: string;
 }
 
-interface MmapScalingStats3 {
+export interface MmapScalingStats3 {
     ESprintSpeed: EMaxMoveSpeed;
 }
 
-interface Heroatlas {
+export interface Heroatlas {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -2013,13 +2013,13 @@ interface Heroatlas {
     m_strUIShopAnimGraph: string;
 }
 
-interface MShopStatDisplay3 {
+export interface MShopStatDisplay3 {
     m_eWeaponStatsDisplay: MeWeaponStatsDisplay3;
     m_eVitalityStatsDisplay: MeWeaponStatsDisplay;
     m_eSpiritStatsDisplay: MeSpiritStatsDisplay;
 }
 
-interface MeWeaponStatsDisplay3 {
+export interface MeWeaponStatsDisplay3 {
     m_vecDisplayStats: string[];
     m_vecOtherDisplayStats: string[];
     m_eWeaponAttributes: string;
@@ -2027,13 +2027,13 @@ interface MeWeaponStatsDisplay3 {
     m_strWeaponDescLocString: string;
 }
 
-interface MheroStatsUI2 {
+export interface MheroStatsUI2 {
     m_vecDisplayStats: MvecDisplayStat[];
     m_eWeaponStatDisplay: string;
     m_eWeaponType: string;
 }
 
-interface Heroghost {
+export interface Heroghost {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -2100,7 +2100,7 @@ interface Heroghost {
     m_strUIShoppingMap: string;
 }
 
-interface Herohornet {
+export interface Herohornet {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -2169,7 +2169,7 @@ interface Herohornet {
     m_strUIShoppingMap: string;
 }
 
-interface MmapStartingStats2 {
+export interface MmapStartingStats2 {
     EMaxMoveSpeed: number;
     ESprintSpeed: number;
     ECrouchSpeed: number;
@@ -2192,7 +2192,7 @@ interface MmapStartingStats2 {
     EBulletArmorDamageReduction: number;
 }
 
-interface Herogigawatt {
+export interface Herogigawatt {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -2261,16 +2261,16 @@ interface Herogigawatt {
     m_strUIShoppingMap: string;
 }
 
-interface MmapScalingStats2 {
+export interface MmapScalingStats2 {
     EMaxMoveSpeed: EMaxMoveSpeed;
 }
 
-interface EMaxMoveSpeed {
+export interface EMaxMoveSpeed {
     eScalingStat: string;
     flScale: number;
 }
 
-interface Heroinferno {
+export interface Heroinferno {
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;
@@ -2340,20 +2340,20 @@ interface Heroinferno {
     m_strUIShoppingMap: string;
 }
 
-interface MShopStatDisplay2 {
+export interface MShopStatDisplay2 {
     m_eWeaponStatsDisplay: MeWeaponStatsDisplay2;
     m_eVitalityStatsDisplay: MeWeaponStatsDisplay;
     m_eSpiritStatsDisplay: MeSpiritStatsDisplay;
 }
 
-interface MeWeaponStatsDisplay2 {
+export interface MeWeaponStatsDisplay2 {
     m_vecDisplayStats: string[];
     m_vecOtherDisplayStats: string[];
     m_eWeaponAttributes: string;
     m_strWeaponImage: string;
 }
 
-interface MmapBoundAbilities2 {
+export interface MmapBoundAbilities2 {
     ESlot_Weapon_Primary: string;
     ESlot_Weapon_Melee: string;
     ESlot_Ability_Mantle: string;
@@ -2371,7 +2371,7 @@ interface MmapBoundAbilities2 {
     ESlot_Signature_4: string;
 }
 
-interface Herobase {
+export interface Herobase {
     _not_pickable: number;
     _class: string;
     m_bPlayerSelectable: boolean;
@@ -2420,23 +2420,28 @@ interface Herobase {
     m_eAbilityResourceType: string;
     m_ShopStatDisplay: MShopStatDisplay;
 }
+export type HeroType = Herobase & Record<string, any>;
 
-interface MShopStatDisplay {
+export interface HeroWithKey {
+    data: HeroType;
+    key: string;
+}
+export interface MShopStatDisplay {
     m_eWeaponStatsDisplay: MeWeaponStatsDisplay;
     m_eVitalityStatsDisplay: MeWeaponStatsDisplay;
     m_eSpiritStatsDisplay: MeSpiritStatsDisplay;
 }
 
-interface MeSpiritStatsDisplay {
+export interface MeSpiritStatsDisplay {
     m_vecDisplayStats: string[];
 }
 
-interface MeWeaponStatsDisplay {
+export interface MeWeaponStatsDisplay {
     m_vecDisplayStats: string[];
     m_vecOtherDisplayStats: string[];
 }
 
-interface MmapStandardLevelUpUpgrades {
+export interface MmapStandardLevelUpUpgrades {
     MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL: number;
     MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL: number;
     MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL: number;
@@ -2444,7 +2449,7 @@ interface MmapStandardLevelUpUpgrades {
     MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST: number;
 }
 
-interface MheroStatsDisplay {
+export interface MheroStatsDisplay {
     m_vecHealthHeaderStats: string[];
     m_vecHealthStats: string[];
     m_vecWeaponHeaderStats: string[];
@@ -2453,31 +2458,31 @@ interface MheroStatsDisplay {
     m_vecMagicStats: string[];
 }
 
-interface MmapScalingStats {
+export interface MmapScalingStats {
 }
 
-interface MheroStatsUI {
+export interface MheroStatsUI {
     m_vecDisplayStats: MvecDisplayStat[];
     m_eWeaponStatDisplay: string;
 }
 
-interface MvecDisplayStat {
+export interface MvecDisplayStat {
     m_eStatType: string;
     m_eStatCategory: string;
 }
 
-interface MvecAmbientParticleSetting {
+export interface MvecAmbientParticleSetting {
     m_eAttachmentType: string;
     m_nCP: number;
     m_strAttachmentName?: string;
 }
 
-interface MvecAnimGraphDefaultValueOverride {
+export interface MvecAnimGraphDefaultValueOverride {
     m_strParamName: string;
     m_strParamValue: string;
 }
 
-interface MmapLevelInfo {
+export interface MmapLevelInfo {
     '1': _1;
     '2': _2;
     '3': _3;
@@ -2513,68 +2518,68 @@ interface MmapLevelInfo {
     '33': _3;
 }
 
-interface _6 {
+export interface _6 {
     m_unRequiredGold: number;
     m_mapBonusCurrencies: MmapBonusCurrencies3;
     m_bUseStandardUpgrade: boolean;
 }
 
-interface _4 {
+export interface _4 {
     m_unRequiredGold: number;
     m_bUseStandardUpgrade: boolean;
 }
 
-interface _3 {
+export interface _3 {
     m_unRequiredGold: number;
     m_mapBonusCurrencies: MmapBonusCurrencies3;
 }
 
-interface MmapBonusCurrencies3 {
+export interface MmapBonusCurrencies3 {
     EAbilityPoints: number;
 }
 
-interface _2 {
+export interface _2 {
     m_unRequiredGold: number;
     m_mapBonusCurrencies: MmapBonusCurrencies2;
 }
 
-interface MmapBonusCurrencies2 {
+export interface MmapBonusCurrencies2 {
     EAbilityUnlocks: number;
     EAbilityPoints: number;
 }
 
-interface _1 {
+export interface _1 {
     m_unRequiredGold: number;
     m_mapBonusCurrencies: MmapBonusCurrencies;
 }
 
-interface MmapBonusCurrencies {
+export interface MmapBonusCurrencies {
     EAbilityUnlocks: number;
 }
 
-interface MmapPurchaseBonuses {
+export interface MmapPurchaseBonuses {
     EItemSlotType_WeaponMod: EItemSlotTypeWeaponMod2[];
     EItemSlotType_Armor: EItemSlotTypeWeaponMod2[];
     EItemSlotType_Tech: EItemSlotTypeWeaponMod2[];
 }
 
-interface EItemSlotTypeWeaponMod2 {
+export interface EItemSlotTypeWeaponMod2 {
     m_nTier: number;
     m_strValue: string;
     m_ValueType: string;
 }
 
-interface MmapItemSlotInfo {
+export interface MmapItemSlotInfo {
     EItemSlotType_WeaponMod: EItemSlotTypeWeaponMod;
     EItemSlotType_Armor: EItemSlotTypeWeaponMod;
     EItemSlotType_Tech: EItemSlotTypeWeaponMod;
 }
 
-interface EItemSlotTypeWeaponMod {
+export interface EItemSlotTypeWeaponMod {
     m_arMaxPurchasesForTier: number[];
 }
 
-interface MmapBoundAbilities {
+export interface MmapBoundAbilities {
     ESlot_Weapon_Primary: string;
     ESlot_Weapon_Melee: string;
     ESlot_Ability_Mantle: string;
@@ -2588,7 +2593,7 @@ interface MmapBoundAbilities {
     ESlot_Ability_Innate_3: string;
 }
 
-interface MmapStartingStats {
+export interface MmapStartingStats {
     EMaxMoveSpeed: number;
     ESprintSpeed: number;
     ECrouchSpeed: number;
