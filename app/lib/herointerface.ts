@@ -2372,7 +2372,6 @@ export interface MmapBoundAbilities2 {
 }
 
 export interface Herobase {
-    _not_pickable: number;
     _class: string;
     m_bPlayerSelectable: boolean;
     m_bDisabled: boolean;

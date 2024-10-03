@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getCharacters, HeroWithKey } from '@/app/lib/dataUtils';
-
+import { getCharacters } from '@/app/lib/dataUtils';
+import { HeroWithKey } from './lib/herointerface';
 function getHeroName(heroKey: string): string {
   // Remove 'hero_' prefix and capitalize the first letter
   return heroKey.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());

@@ -1,18 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { Item } from './gameInterfaces';
-import { Heroes } from './herointerface';
+import { Heroes, HeroWithKey, HeroType } from './herointerface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'items.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
-type HeroType = Heroes[HeroKey];
 
-export interface HeroWithKey {
-    data: HeroType;
-    key: string;
-}
 
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
