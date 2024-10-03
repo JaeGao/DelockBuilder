@@ -156,9 +156,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
         <div className="flex">
             <div className="w-[calc(100%-20rem)] p-4">
                 <div className="mb-4 flex items-center">
-                    {character.data.m_strSelectionImage && (
+                    {character.data.m_strIconHeroCard && (
                         <Image
-                            src={character.data.m_strSelectionImage}
+                            src={character.data.m_strIconHeroCard}
                             alt={heroName}
                             width={200}
                             height={200}
