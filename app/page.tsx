@@ -8,8 +8,8 @@ function getHeroName(heroKey: string): string {
   return heroKey.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 }
 
-function hasSelectionImage(hero: any): hero is { m_strSelectionImage: string } {
-  return 'm_strSelectionImage' in hero && typeof hero.m_strSelectionImage === 'string';
+function hasSelectionImage(hero: any): hero is { m_strIconHeroCard: string } {
+  return 'm_strIconHeroCard' in hero && typeof hero.m_strIconHeroCard === 'string';
 }
 
 export default async function Home() {
@@ -27,7 +27,7 @@ export default async function Home() {
               <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
                 {hasSelectionImage(character) && (
                   <Image
-                    src={character.m_strSelectionImage}
+                    src={character.m_strIconHeroCard}
                     alt={heroName}
                     width={100}
                     height={100}

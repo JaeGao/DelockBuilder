@@ -24,7 +24,7 @@ export function convertImagePath(imagePath: string): string {
     }
     return imagePath;
 }
-
+// if you want to see all characters regardless of in-game disabled status, use "m_strIconImageSmall" instead "m_strSelectionImage"
 export async function getCharacters(): Promise<HeroWithKey[]> {
     try {
         const data = await fs.readFile(charactersPath, 'utf8');
@@ -38,8 +38,8 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
             .map(([key, character]) => ({
                 data: {
                     ...character,
-                    m_strSelectionImage: 'm_strSelectionImage' in character && typeof character.m_strSelectionImage === 'string'
-                        ? convertImagePath(character.m_strSelectionImage)
+                    m_strIconHeroCard: 'm_strIconHeroCard' in character && typeof character.m_strIconHeroCard === 'string'
+                        ? convertImagePath(character.m_strIconHeroCard)
                         : undefined
                 },
                 key
@@ -62,7 +62,7 @@ export async function getCharacter(name: string): Promise<HeroWithKey | undefine
             return {
                 data: {
                     ...character,
-                    m_strSelectionImage: 'm_strSelectionImage' in character ? convertImagePath(character.m_strSelectionImage) : undefined
+                    m_strIconHeroCard: 'm_strIconHeroCard' in character ? convertImagePath(character.m_strIconHeroCard) : undefined
                 },
                 key: heroKey
             };
