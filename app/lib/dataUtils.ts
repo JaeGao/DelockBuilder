@@ -33,7 +33,7 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
         const playableCharacters = Object.entries(characters)
             .filter((entry): entry is [HeroKey, HeroType] => {
                 const [key, value] = entry;
-                return key !== 'generic_data_type' && typeof value === 'object' && value !== null && 'm_bPlayerSelectable' in value && value.m_bPlayerSelectable === true;
+                return key !== 'generic_data_type' && key !== 'hero_base' && typeof value === 'object' && value !== null && value.m_bDisabled === false && value.m_bInDevelopment === false;
             })
             .map(([key, character]) => ({
                 data: {
@@ -58,7 +58,7 @@ export async function getCharacter(name: string): Promise<HeroWithKey | undefine
         const heroKey = `hero_${name.toLowerCase()}` as HeroKey;
         const character = characters[heroKey];
 
-        if (typeof character === 'object' && character !== null && 'm_bPlayerSelectable' in character && character.m_bPlayerSelectable) {
+        if (typeof character === 'object' && character !== null && character.m_bDisabled === false && character.m_bInDevelopment === false) {
             return {
                 data: {
                     ...character,
