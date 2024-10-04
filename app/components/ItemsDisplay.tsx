@@ -1,11 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import { Item } from '../lib/gameInterfaces';
+import { Upgrade_with_name } from '../lib/itemInterface';
 import Image from 'next/image';
 
 interface ItemsDisplayProps {
-    items: Item[];
-    onItemSelect: (item: Item) => void;
+    items: Upgrade_with_name[];
+    onItemSelect: (item: Upgrade_with_name) => void;
 }
 
 const getCategoryColor = (category: string): string => {
@@ -31,8 +31,39 @@ const getCategory = (imageUrl: string): string => {
     return 'Other';
 };
 
-const ItemCard: React.FC<Item & { onSelect: () => void }> = ({ name, image, cost, tier, onSelect }) => {
-    const category = getCategory(image || '');
+const findCost = (tier: string): string => {
+    switch (tier) {
+        case "EModTier_1":
+            return "500"
+        case "EModTier_2":
+            return "1250"
+        case "EModTier_3":
+            return "3000"
+        case "EModTier_4":
+            return "6200"
+        default:
+            return "N/A"
+}
+}
+
+const findTier = (tier: string): number => {
+    switch (tier) {
+        case "EModTier_1":
+            return 1
+        case "EModTier_2":
+            return 2
+        case "EModTier_3":
+            return 3
+        case "EModTier_4":
+            return 4
+        default:
+            return 1
+}
+}
+
+const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ key, upgrade, onSelect }) => {
+    
+    const category = getCategory(upgrade.m_strAbilityImage|| '');
     const categoryColor = getCategoryColor(category);
 
     return (
@@ -41,19 +72,19 @@ const ItemCard: React.FC<Item & { onSelect: () => void }> = ({ name, image, cost
                 <div className="bg-gray-800 text-xs p-1">
                     <span className="text-[#98ffde] text-shadow">
                         <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
-                        <b>{cost ?? 'N/A'}</b>
+                        <b>{findCost(upgrade.m_iItemTier) ?? 'N/A'}</b>
                     </span>
                 </div>
                 <div className={`${categoryColor} flex-grow flex items-center justify-center`}>
-                    {image && (
-                        <Image src={image} alt={name} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
+                    {upgrade.m_strAbilityImage && (
+                        <Image src={upgrade.m_strAbilityImage} alt={key} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
                     )}
                 </div>
                 <div className="bg-[#FFF0D7] p-1">
-                    <p className="text-[#151912] text-xs truncate hover:underline">{name}</p>
+                    <p className="text-[#151912] text-xs truncate hover:underline">{key}</p>
                 </div>
                 <div className="bg-gray-200 text-xs text-gray-600 p-1">
-                    Tier {tier}
+                    Tier {findTier(upgrade.m_iItemTier) ?? 'N/A'}
                 </div>
             </div>
         </div>
@@ -62,18 +93,18 @@ const ItemCard: React.FC<Item & { onSelect: () => void }> = ({ name, image, cost
 
 const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    const upgradeItems = items.filter(item => item.type === 'upgrade');
+    //const upgradeItems = items.filter(item => item.type === 'upgrade');
     const categories = ['Weapon', 'Vitality', 'Spirit', 'Utility'];
 
-    const categorizedItems = upgradeItems.reduce((acc, item) => {
-        const category = getCategory(item.image || '');
+    const categorizedItems = items.reduce((acc, item) => {
+        const category = getCategory(item.upgrade.m_strAbilityImage || '');
         if (!acc[category]) {
             acc[category] = { 1: [], 2: [], 3: [], 4: [] };
         }
-        const tier = item.tier || 1;
+        const tier = findTier(item.upgrade.m_iItemTier) || 1;
         acc[category][tier].push(item);
         return acc;
-    }, {} as Record<string, Record<number, Item[]>>);
+    }, {} as Record<string, Record<number, Upgrade_with_name[]>>);
 
     return (
         <div>
@@ -97,7 +128,7 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                         <h3 className="text-xl font-semibold mb-2 text-white">Tier {tier}</h3>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
-                                <ItemCard key={item.id} {...item} onSelect={() => onItemSelect(item)} />
+                                <ItemCard /*key={item.id}*/ {...item} onSelect={() => onItemSelect(item)} />
                             ))}
                         </div>
                     </div>

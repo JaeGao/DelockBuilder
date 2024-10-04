@@ -13604,7 +13604,7 @@ export interface upgrades {
   }
 export interface Upgrade_with_name{
     upgrade: Upgradebase;
-    name: string;
+    key: string;
   }
   
   export interface MWeaponInfo {

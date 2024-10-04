@@ -8,9 +8,10 @@ import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import ItemsDisplay from './ItemsDisplay';
 import { HeroWithKey, HeroType } from '../lib/herointerface';
+import { Upgrade_with_name } from '../lib/itemInterface';
 interface CharacterBuilderProps {
     character: HeroWithKey;
-    items: Item[];
+    items: Upgrade_with_name[];
 }
 
 const getCategory = (imageUrl: string): string => {

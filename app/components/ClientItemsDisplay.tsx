@@ -2,15 +2,15 @@
 
 import React from 'react';
 import ItemsDisplay from './ItemsDisplay';
-import { Item } from '../lib/gameInterfaces';
+import { Upgrade_with_name } from '../lib/itemInterface';
 
 interface ClientItemsDisplayProps {
-    items: Item[];
+    items: Upgrade_with_name[];
 }
 
 const ClientItemsDisplay: React.FC<ClientItemsDisplayProps> = ({ items }) => {
-    const handleItemSelect = (item: Item) => {
-        console.log('Item selected:', item.name);
+    const handleItemSelect = (item: Upgrade_with_name) => {
+        console.log('Item selected:', item.key);
         // Add more logic here as needed
     };
 
