@@ -90,7 +90,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ key,
         </div>
     );
 };
-
+//THIS IS PROBABLY BROKEN
 const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
     //const upgradeItems = items.filter(item => item.type === 'upgrade');
@@ -128,7 +128,7 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                         <h3 className="text-xl font-semibold mb-2 text-white">Tier {tier}</h3>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
-                                <ItemCard /*key={item.id}*/ {...item} onSelect={() => onItemSelect(item)} />
+                                <ItemCard key={item.key} {...item} onSelect={() => onItemSelect(item)} />
                             ))}
                         </div>
                     </div>
