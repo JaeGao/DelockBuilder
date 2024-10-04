@@ -1,10 +1,15 @@
 import fs from 'fs/promises';
 import path from 'path';
+<<<<<<< Updated upstream
 import { Item } from './gameInterfaces';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
+=======
+import { upgrades } from './itemInterface';
+import { Heroes } from './herointerface';
+>>>>>>> Stashed changes
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
-const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'items.json');
+const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'itemsVdata.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 
