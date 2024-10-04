@@ -1,15 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
-
-
-import { Item } from './gameInterfaces';
+import { upgrades , Upgrade_with_name , Upgradebase} from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'itemsVdata.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
-
+type itemkeys = keyof upgrades;
 
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
@@ -71,25 +69,32 @@ export async function getCharacter(name: string): Promise<HeroWithKey | undefine
     }
 }
 
-export async function getItems(): Promise<Item[]> {
+export async function getItems(): Promise<Upgrade_with_name[]> {
     try {
         const data = await fs.readFile(itemsPath, 'utf8');
-        const items: Item[] = JSON.parse(data);
+        const items: upgrades = JSON.parse(data);
 
-        items.forEach(item => {
-            if (!item.image) {
-                console.warn(`Item ${item.name} does not have an image property`);
-            }
-        });
-
-        return items;
+        const itemslist = Object.entries(items)
+        .filter((entry): entry is [itemkeys, Upgradebase] => {
+            const [key, value] = entry;
+            return key === 'object' && value !== null && value.m_bDisabled === false;
+        }).map(([key, item]) => ({
+            upgrade:{
+                ...item,
+                m_strAbilityImage: 'm_strAbilityImage' in item && typeof item.m_strAbilityImage === 'string'
+                    ? convertImagePath(item.m_strAbilityImage)
+                    : undefined
+            },
+            key
+        }));
+        return itemslist;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
         throw error;
     }
 }
 
-export async function getItem(name: string): Promise<Item | undefined> {
+/*export async function getItem(name: string): Promise<Item | undefined> {
     try {
         const items = await getItems();
         return items.find(item => item.name === name);
@@ -97,4 +102,4 @@ export async function getItem(name: string): Promise<Item | undefined> {
         console.error('Error fetching item:', error);
         return undefined;
     }
-}
+}*/

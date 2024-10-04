@@ -1,24 +1,5 @@
 export interface upgrades {
     upgrade_base: Upgradebase;
-    tier1_base: Tier1base;
-    tier2_base: Tier1base;
-    tier3_base: Tier1base;
-    tier4_base: Tier1base;
-    armor_upgrade_base: Armorupgradebase;
-    armor_upgrade_t1: Armorupgradet1;
-    armor_upgrade_t2: Armorupgradet1;
-    armor_upgrade_t3: Armorupgradet1;
-    armor_upgrade_t4: Armorupgradet1;
-    weapon_upgrade_base: Armorupgradebase;
-    weapon_upgrade_t1: Armorupgradet1;
-    weapon_upgrade_t2: Armorupgradet1;
-    weapon_upgrade_t3: Armorupgradet1;
-    weapon_upgrade_t4: Armorupgradet1;
-    tech_upgrade_base: Armorupgradebase;
-    tech_upgrade_t1: Armorupgradet1;
-    tech_upgrade_t2: Armorupgradet1;
-    tech_upgrade_t3: Armorupgradet1;
-    tech_upgrade_t4: Armorupgradet1;
     upgrade_clip_size: Upgradeclipsize;
     upgrade_non_player_bonus: Upgradenonplayerbonus;
     upgrade_ammo_scavenger: Upgradeammoscavenger;
