@@ -77,7 +77,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const itemslist = Object.entries(items)
             .filter((entry): entry is [itemkeys, Upgradebase] => {
                 const [itemkey, value] = entry;
-                return value !== null
+                return value !== null;
             }).map(([itemkey, item]) => ({
                 upgrade: {
                     ...item,
