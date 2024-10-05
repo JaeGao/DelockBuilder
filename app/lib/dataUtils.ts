@@ -21,6 +21,10 @@ export interface HeroStats {
     stats: number;
 }
 
+export interface allStats {
+    [key: string] : number;
+}
+
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
     const match = cleanPath.match(/file:\/\/\{images\}\/(.+)/);
@@ -128,7 +132,7 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
                     adata: adat
                 }
             }
-            );
+        );
         return alist;
     } catch (error) {
         console.error('Error reading abilities:', error);
@@ -146,7 +150,7 @@ const eVSD = 'm_eVitalityStatsDisplay';
 const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
 const vODS = 'm_vecOtherDisplayStats';
-export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
+export async function getHeroStartingStats(name: string): Promise<allStats> {
     try {
         const data = await fs.readFile(charactersPath, 'utf8');
         const GameHeroes: Heroes = JSON.parse(data);
@@ -158,28 +162,39 @@ export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
             ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]),
             ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
         ]);
-        interface allStats {
-            [allStatNames]: number;
-        }
         const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
-        var StatsZero = [] as HeroStats[];
-        allStatNames.map((key, index) => {
-            StatsZero[index] = { name: key, stats: 0 }
+        var StatsZero = {} as allStats;
+        allStatNames.map((item) => {
+            StatsZero[item] = 0;
         });
 
-        let key: keyof typeof startStats;
-        for (key in startStats) {
-            StatsZero = StatsZero.map(({ name, stats }) => {
-                if (name === key) {
-                    return {
-                        name,
-                        stats: startStats[key] !== undefined ? startStats[key] : 0,
-                    }
-                } else {
-                    return { name, stats, }
+        for (let i = 0; i < allStatNames.length; i++) {
+            let key: keyof typeof startStats;
+            for (key in startStats) {
+                if (allStatNames[i] === key) {
+                    StatsZero[allStatNames[i]] = startStats[key];
                 }
-            });
+            }
         }
+
+
+
+
+        
+
+        // let key: keyof typeof startStats;
+        // for (key in startStats) {
+        //     StatsZero = StatsZero.map(({ name, stats }) => {
+        //         if (name === key) {
+        //             return {
+        //                 name,
+        //                 stats: startStats[key] !== undefined ? startStats[key] : 0,
+        //             }
+        //         } else {
+        //             return { name, stats, }
+        //         }
+        //     });
+        // }
     } catch (error) {
         console.error('Error reading starting stats:', error);
         throw error;
@@ -203,6 +218,10 @@ export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
     // }
     return StatsZero;
 }
+
+getHeroStartingStats('haze').then(hazeStats =>
+    console.log(hazeStats)
+)
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
     try {
