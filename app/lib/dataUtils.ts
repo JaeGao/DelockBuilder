@@ -100,6 +100,15 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
 }
 
 /*
+const CV3 = require(charactersPath);
+//Stats Variables
+const SSD = 'm_ShopStatDisplay'
+const eWSD = 'm_eWeaponStatsDisplay';
+const eVSD = 'm_eVitalityStatsDisplay';
+const eSSD = 'm_eSpiritStatsDisplay';
+const vDS = 'm_vecDisplayStats';
+const vODS = 'm_vecOtherDisplayStats';
+
 export async function getHeroStats(name: string) : Promise<HeroStats[]> {
     const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
     const w_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vDS]);
