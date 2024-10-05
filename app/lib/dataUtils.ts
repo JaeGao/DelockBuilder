@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
-import { RootObject, abilityKeys, AData, AWithKey} from './abilityInterface';
+import { RootObject, abilityKeys, AData, AWithKey } from './abilityInterface';
 import { a } from 'framer-motion/client';
 import { Root } from 'postcss';
 import { addAbortListener } from 'stream';
@@ -115,20 +115,17 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
     try {
         const data = await fs.readFile(abilitiesPath, 'utf8');
         const abilities: RootObject = JSON.parse(data);
-        const alist : AWithKey[] = Object.entries(abilities)
-            .map(([heron, adat])=> {
+        const alist: AWithKey[] = Object.entries(abilities)
+            .map(([heron, adat]) => {
                 let key: keyof typeof adat;
                 for (key in adat) {
-                    return {
-                        ...adat,
-                        m_strAbilityImage: 'm_strAbilityImage' in adat[key] && typeof adat[key].m_strAbilityImage === 'string'
-                        ? convertImagePath(adat[key].m_strAbilityImage)
-                        : undefined
+                    if (adat[key].m_strAbilityImage !== undefined) {
+                        adat[key].m_strAbilityImage = convertImagePath(adat[key].m_strAbilityImage);
                     }
                 }
                 return {
                     heroname: heron,
-                    adata: {...adat,}            
+                    adata: adat
                 }
             }
             );
@@ -149,20 +146,20 @@ const eVSD = 'm_eVitalityStatsDisplay';
 const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
 const vODS = 'm_vecOtherDisplayStats';
-export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> {
+export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
     try {
         const data = await fs.readFile(charactersPath, 'utf8');
         const GameHeroes: Heroes = JSON.parse(data);
-        const hero_id = `hero_${name.toLowerCase()}` as HeroKey; 
-        const allStatNames : Array<string> = Object.values([
-            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]), 
-            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]), 
-            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]), 
-            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]), 
+        const hero_id = `hero_${name.toLowerCase()}` as HeroKey;
+        const allStatNames: Array<string> = Object.values([
+            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]),
+            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]),
+            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]),
+            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]),
             ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
         ]);
         interface allStats {
-            [allStatNames] : number; 
+            [allStatNames]: number;
         }
         const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
         var StatsZero = [] as HeroStats[];
@@ -172,14 +169,14 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
 
         let key: keyof typeof startStats;
         for (key in startStats) {
-            StatsZero = StatsZero.map(({name, stats}) =>  {
+            StatsZero = StatsZero.map(({ name, stats }) => {
                 if (name === key) {
                     return {
-                        name, 
-                        stats : startStats[key] !== undefined ? startStats[key] : 0,
+                        name,
+                        stats: startStats[key] !== undefined ? startStats[key] : 0,
                     }
                 } else {
-                    return {name, stats,}
+                    return { name, stats, }
                 }
             });
         }
@@ -206,10 +203,6 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
     // }
     return StatsZero;
 }
-
-getAbilitiesbyHero().then(heroAData => 
-    console.log(heroAData[0].heroname)
-)
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
     try {
