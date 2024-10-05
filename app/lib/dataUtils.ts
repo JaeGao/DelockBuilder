@@ -4,7 +4,7 @@ import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
-const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'itemsVdata.json');
+const itemsPath = path.join(process.cwd(), 'dataprocessing', 'GameDATNEW', 'FilteredItem.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
@@ -77,7 +77,12 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const itemslist = Object.entries(items)
             .filter((entry): entry is [itemkeys, Upgradebase] => {
                 const [itemkey, value] = entry;
-                return value !== null && (value.m_bDisabled === false || value.m_bDisabled === undefined || value.m_bDisabled === "false" || value.m_bDisabled === 0) && value._editor.folder_name !== "Base";
+                return value !== null && (value.m_bDisabled === false || 
+                    value.m_bDisabled === undefined || 
+                    value.m_bDisabled === "false") && 
+                    Array.isArray(value._multibase) && 
+                    value._multibase[0].includes("_base") !== true;
+                //value._editor.folder_name !== "Base";
             }).map(([itemkey, item]) => ({
                 upgrade: {
                     ...item,
@@ -86,8 +91,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                         : undefined
                 },
                 itemkey
-            }));
-        console.log(itemslist.length);
+            }));    
         return itemslist;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
