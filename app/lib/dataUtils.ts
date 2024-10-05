@@ -66,7 +66,7 @@ async function getAbilitiesJson(): Promise<RootObject> {
     }
     return cachedAbilitiesJson;
 }
-
+// if you want to see all characters regardless of in-game disabled status, use "m_strIconImageSmall" instead "m_strSelectionImage"
 export async function getCharacters(): Promise<HeroWithKey[]> {
     if (cachedCharacters) {
         return cachedCharacters;
@@ -137,7 +137,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         throw error;
     }
 }
-
+//NOT WORKING
 export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
     if (cachedAbilities) {
         return cachedAbilities;
