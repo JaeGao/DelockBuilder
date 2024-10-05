@@ -10,36 +10,80 @@ interface StatsSidebarProps {
 }
 
 const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, characterName, characterClass }) => {
+    const formatStat = (value: number | undefined): string => {
+        return value !== undefined ? value.toFixed(2) : 'N/A';
+    };
+
+    const calculatePercentageDifference = (base: number, current: number): string => {
+        const diff = ((current - base) / base) * 100;
+        return diff === 0 ? '' : ` (${diff > 0 ? '+' : ''}${diff.toFixed(2)}%)`;
+    };
+
+    const renderStat = (label: string, baseValue: number, currentValue: number | undefined) => {
+        if (currentValue === undefined) return null;
+        const formattedBase = formatStat(baseValue);
+        const formattedCurrent = formatStat(currentValue);
+        const percentDiff = calculatePercentageDifference(baseValue, currentValue);
+
+        return (
+            <div className="flex justify-between items-center">
+                <span className="text-gray-300">{label}:</span>
+                <span className="text-white">
+                    <span className="font-bold">{formattedCurrent}</span>
+                    {percentDiff && <span className="text-green-400 text-xs ml-1">{percentDiff}</span>}
+                </span>
+            </div>
+        );
+    };
+
+    const statCategories = [
+        {
+            title: "Combat Stats",
+            stats: [
+                { label: "Max Health", key: "m_fMaxHealth" },
+                { label: "Bullet Damage", key: "bullet_damage" },
+                { label: "DPS", key: "dps" },
+                { label: "Clip Size", key: "clip_size" },
+                { label: "Weapon Power", key: "m_fWeaponPower" },
+            ]
+        },
+        {
+            title: "Movement Stats",
+            stats: [
+                { label: "Max Move Speed", key: "m_fMaxMoveSpeed" },
+                { label: "Sprint Speed", key: "m_fSprintSpeed" },
+                { label: "Crouch Speed", key: "m_fCrouchSpeed" },
+            ]
+        },
+        {
+            title: "Ability Stats",
+            stats: [
+                { label: "Ability Resource Max", key: "m_fAbilityResourceMax" },
+                { label: "Ability Resource Regen", key: "m_fAbilityResourceRegenPerSecond" },
+                { label: "Tech Duration", key: "m_fTechDuration" },
+                { label: "Tech Range", key: "m_fTechRange" },
+            ]
+        },
+    ];
+
     return (
-        <div className="fixed top-0 right-0 w-80 h-screen bg-gray-800 p-4 overflow-y-auto">
-            <div className="sticky top-0 bg-gray-800 z-10 pb-4">
-                <h2 className="text-2xl font-bold text-white mb-2">{characterName}</h2>
-                <p className="text-lg text-gray-300 mb-4">{characterClass}</p>
-                <h3 className="text-xl font-bold text-white mb-4">Character Stats</h3>
+        <div className="fixed top-0 right-0 w-80 h-screen bg-gray-800 p-4 overflow-y-auto text-sm">
+            <div className="sticky top-0 bg-gray-800 z-10 pb-4 mb-4 border-b border-gray-700">
+                <h2 className="text-xl font-bold text-white mb-1">{characterName}</h2>
+                <p className="text-sm text-gray-400 mb-2">{characterClass}</p>
             </div>
-            <div className="grid grid-cols-1 gap-2">
-                {Object.entries(baseStats).map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center">
-                        <span className="text-gray-300 capitalize">{key.replace(/^E/, '').replace(/([A-Z])/g, ' $1').trim()}:</span>
-                        <span className="text-white font-bold">
-                            {(characterStats as any)[key] !== undefined ? (characterStats as any)[key].toFixed(2) : value.toFixed(2)}
-                        </span>
+            {statCategories.map((category, index) => (
+                <div key={index} className="mb-4">
+                    <h3 className="text-lg font-semibold text-white mb-2">{category.title}</h3>
+                    <div className="space-y-1">
+                        {category.stats.map(stat => renderStat(
+                            stat.label,
+                            (baseStats as any)[stat.key] || 0,
+                            (characterStats as any)[stat.key]
+                        ))}
                     </div>
-                ))}
-                {/* Add any additional calculated stats here */}
-                <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Bullet Damage:</span>
-                    <span className="text-white font-bold">{characterStats.bullet_damage?.toFixed(2) ?? 'N/A'}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                    <span className="text-gray-300">DPS:</span>
-                    <span className="text-white font-bold">{characterStats.dps?.toFixed(2) ?? 'N/A'}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Clip Size:</span>
-                    <span className="text-white font-bold">{characterStats.clip_size ?? 'N/A'}</span>
-                </div>
-            </div>
+            ))}
         </div>
     );
 };
