@@ -163,6 +163,7 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
             ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
         ]);
         const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
+        
         var StatsZero = {} as allStats;
         allStatNames.map((item) => {
             StatsZero[item] = 0;
@@ -176,59 +177,13 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                 }
             }
         }
-
-
-
-
-        
-
-        // let key: keyof typeof startStats;
-        // for (key in startStats) {
-        //     StatsZero = StatsZero.map(({ name, stats }) => {
-        //         if (name === key) {
-        //             return {
-        //                 name,
-        //                 stats: startStats[key] !== undefined ? startStats[key] : 0,
-        //             }
-        //         } else {
-        //             return { name, stats, }
-        //         }
-        //     });
-        // }
     } catch (error) {
         console.error('Error reading starting stats:', error);
         throw error;
     }
-    // for (key in startStats) {
-    //     for (let i = 0; i < StatsZero.length; i++) {
-    //         if (StatsZero[i].name === key) {
-    //             StatsZero[i] = {
-    //                 name: key,
-    //                 stats: startStats[key] !== undefined ? startStats[key] : 0,
-
-    //             };
-    //             break
-    //         }  else {
-    //             StatsZero[i] = {
-    //                 name: StatsZero[i].name,
-    //                 stats: StatsZero[i].stats,
-    //             };
-    //         }
-    //     }
-    // }
     return StatsZero;
 }
 
 getHeroStartingStats('haze').then(hazeStats =>
     console.log(hazeStats)
 )
-
-/*export async function getItem(name: string): Promise<Item | undefined> {
-    try {
-        const items = await getItems();
-        return items.find(item => item.name === name);
-    } catch (error) {
-        console.error('Error fetching item:', error);
-        return undefined;
-    }
-}*/
