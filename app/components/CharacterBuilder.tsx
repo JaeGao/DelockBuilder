@@ -107,16 +107,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
             return;
         }
 
-        const higherTierEquipped = targetGrid.some(equippedItem =>
-            equippedItem && equippedItem.tier && item.tier && equippedItem.tier > item.tier
-        );
-
-        if (higherTierEquipped) {
-            setErrorMessage('Cannot equip a lower tier item when a higher tier is already equipped!');
-            setTimeout(() => setErrorMessage(null), 3000);
-            return;
-        }
-
         setTargetGrid(prev => {
             const newGrid = [...prev];
             newGrid[emptyIndex] = item;
