@@ -1,5 +1,5 @@
-import { Item, isUpgradeItem, isWeaponItem } from '../lib/gameInterfaces';
 import { HeroType, MmapStartingStats } from '../lib/herointerface';
+import { Upgrade_with_name, Upgradebase } from '../lib/itemInterface';
 
 export interface EnhancedCharacterStats extends MmapStartingStats {
     bullet_damage?: number;
@@ -9,21 +9,21 @@ export interface EnhancedCharacterStats extends MmapStartingStats {
     base_attack_damage_percent: number;
 }
 
-const getItemById = (id: number, allItems: Item[]): Item | undefined => {
-    return allItems.find(item => item.id === id);
+const getUpgradeByKey = (key: string, allUpgrades: Upgrade_with_name[]): Upgrade_with_name | undefined => {
+    return allUpgrades.find(upgrade => upgrade.itemkey === key);
 };
 
-const applyWeaponStats = (stats: EnhancedCharacterStats, weapon: Item): EnhancedCharacterStats => {
-    if (isWeaponItem(weapon) && weapon.weapon_info) {
-        stats.bullet_damage = (weapon.weapon_info.bullet_damage as number) || 0;
-        stats.clip_size = (weapon.weapon_info.clip_size as number) || 0;
+const applyWeaponStats = (stats: EnhancedCharacterStats, weapon: Upgradebase): EnhancedCharacterStats => {
+    if (weapon.m_WeaponInfo) {
+        stats.bullet_damage = weapon.m_WeaponInfo.m_fBulletDamage || 0;
+        stats.clip_size = weapon.m_WeaponInfo.m_nClipSize || 0;
     }
     return stats;
 };
 
-const applyUpgradeEffect = (stats: EnhancedCharacterStats, item: Item): EnhancedCharacterStats => {
-    if (isUpgradeItem(item)) {
-        Object.entries(item.properties).forEach(([key, value]) => {
+const applyUpgradeEffect = (stats: EnhancedCharacterStats, upgrade: Upgradebase): EnhancedCharacterStats => {
+    if (upgrade.m_mapAbilityProperties) {
+        Object.entries(upgrade.m_mapAbilityProperties).forEach(([key, value]) => {
             if (typeof value === 'number') {
                 (stats as any)[key] = ((stats as any)[key] || 0) + value;
             }
@@ -47,8 +47,8 @@ const applyPercentageModifiers = (stats: EnhancedCharacterStats): EnhancedCharac
 
 export const calculateCharacterStats = (
     character: HeroType,
-    equippedUpgradeItems: Item[],
-    allItems: Item[]
+    equippedUpgradeItems: Upgrade_with_name[],
+    allUpgrades: Upgrade_with_name[]
 ): EnhancedCharacterStats => {
     let enhancedStats: EnhancedCharacterStats = {
         ...character.m_mapStartingStats,
@@ -57,16 +57,16 @@ export const calculateCharacterStats = (
     };
 
     // Apply weapon stats
-    const weaponItem = character.m_mapBoundAbilities?.weapon_primary
-        ? getItemById(character.m_mapBoundAbilities.weapon_primary, allItems)
+    const weaponUpgrade = character.m_mapBoundAbilities?.weapon_primary
+        ? getUpgradeByKey(character.m_mapBoundAbilities.weapon_primary, allUpgrades)
         : undefined;
-    if (weaponItem) {
-        enhancedStats = applyWeaponStats(enhancedStats, weaponItem);
+    if (weaponUpgrade) {
+        enhancedStats = applyWeaponStats(enhancedStats, weaponUpgrade.upgrade);
     }
 
     // Apply effects from equipped upgrade items
     equippedUpgradeItems.forEach(item => {
-        enhancedStats = applyUpgradeEffect(enhancedStats, item);
+        enhancedStats = applyUpgradeEffect(enhancedStats, item.upgrade);
     });
 
     // Apply percentage modifiers
