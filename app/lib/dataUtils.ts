@@ -2,19 +2,14 @@ import fs from 'fs/promises';
 import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
-import { RootObject, abilityKeys, AData, AWithKey } from './abilityInterface';
-import { a } from 'framer-motion/client';
-import { Root } from 'postcss';
-import { addAbortListener } from 'stream';
+import { RootObject, AWithKey } from './abilityInterface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
 
-
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
-
 
 export interface HeroStats {
     name: string,
@@ -22,8 +17,18 @@ export interface HeroStats {
 }
 
 export interface allStats {
-    [key: string] : number;
+    [key: string]: number;
 }
+
+// Caching variables for processed data
+let cachedCharacters: HeroWithKey[] | null = null;
+let cachedItems: Upgrade_with_name[] | null = null;
+let cachedAbilities: AWithKey[] | null = null;
+
+// Caching variables for raw JSON data
+let cachedCharactersJson: Heroes | null = null;
+let cachedItemsJson: upgrades | null = null;
+let cachedAbilitiesJson: RootObject | null = null;
 
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
@@ -35,11 +40,40 @@ export function convertImagePath(imagePath: string): string {
     }
     return imagePath;
 }
-// if you want to see all characters regardless of in-game disabled status, use "m_strIconImageSmall" instead "m_strSelectionImage"
+
+async function readJsonFile<T>(filePath: string): Promise<T> {
+    const data = await fs.readFile(filePath, 'utf8');
+    return JSON.parse(data) as T;
+}
+
+async function getCharactersJson(): Promise<Heroes> {
+    if (!cachedCharactersJson) {
+        cachedCharactersJson = await readJsonFile<Heroes>(charactersPath);
+    }
+    return cachedCharactersJson;
+}
+
+async function getItemsJson(): Promise<upgrades> {
+    if (!cachedItemsJson) {
+        cachedItemsJson = await readJsonFile<upgrades>(itemsPath);
+    }
+    return cachedItemsJson;
+}
+
+async function getAbilitiesJson(): Promise<RootObject> {
+    if (!cachedAbilitiesJson) {
+        cachedAbilitiesJson = await readJsonFile<RootObject>(abilitiesPath);
+    }
+    return cachedAbilitiesJson;
+}
+
 export async function getCharacters(): Promise<HeroWithKey[]> {
+    if (cachedCharacters) {
+        return cachedCharacters;
+    }
+
     try {
-        const data = await fs.readFile(charactersPath, 'utf8');
-        const characters: Heroes = JSON.parse(data);
+        const characters = await getCharactersJson();
 
         const playableCharacters = Object.entries(characters)
             .filter((entry): entry is [HeroKey, HeroType] => {
@@ -56,39 +90,27 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
                 key
             }));
 
+        cachedCharacters = playableCharacters;
         return playableCharacters;
     } catch (error) {
-        console.error('DataUtils: Error reading characters:', error);
+        console.error('DataUtils: Error processing characters:', error);
         throw error;
     }
 }
-export async function getCharacter(name: string): Promise<HeroWithKey | undefined> {
-    try {
-        const data = await fs.readFile(charactersPath, 'utf8');
-        const characters: Heroes = JSON.parse(data);
-        const heroKey = `hero_${name.toLowerCase()}` as HeroKey;
-        const character = characters[heroKey];
 
-        if (typeof character === 'object' && character !== null && character.m_bDisabled === false && character.m_bInDevelopment === false) {
-            return {
-                data: {
-                    ...character,
-                    m_strIconHeroCard: 'm_strIconHeroCard' in character ? convertImagePath(character.m_strIconHeroCard) : undefined
-                },
-                key: heroKey
-            };
-        }
-        return undefined;
-    } catch (error) {
-        console.error('Error fetching character:', error);
-        return undefined;
-    }
+export async function getCharacter(name: string): Promise<HeroWithKey | undefined> {
+    const characters = await getCharacters();
+    const heroKey = `hero_${name.toLowerCase()}` as HeroKey;
+    return characters.find(character => character.key === heroKey);
 }
 
 export async function getItems(): Promise<Upgrade_with_name[]> {
+    if (cachedItems) {
+        return cachedItems;
+    }
+
     try {
-        const data = await fs.readFile(itemsPath, 'utf8');
-        const items: upgrades = JSON.parse(data);
+        const items = await getItemsJson();
 
         const itemslist = Object.entries(items)
             .filter((entry): entry is [itemkeys, Upgradebase] => {
@@ -98,7 +120,6 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                     value.m_bDisabled === "false") &&
                     Array.isArray(value._multibase) &&
                     value._multibase[0].includes("_base") !== true;
-                //value._editor.folder_name !== "Base";
             }).map(([itemkey, item]) => ({
                 upgrade: {
                     ...item,
@@ -108,17 +129,22 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                 },
                 itemkey
             }));
+
+        cachedItems = itemslist;
         return itemslist;
     } catch (error) {
-        console.error('DataUtils: Error reading items:', error);
+        console.error('DataUtils: Error processing items:', error);
         throw error;
     }
 }
-//NOT WORKING
+
 export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
+    if (cachedAbilities) {
+        return cachedAbilities;
+    }
+
     try {
-        const data = await fs.readFile(abilitiesPath, 'utf8');
-        const abilities: RootObject = JSON.parse(data);
+        const abilities = await getAbilitiesJson();
         const alist: AWithKey[] = Object.entries(abilities)
             .map(([heron, adat]) => {
                 let key: keyof typeof adat;
@@ -132,16 +158,14 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
                     adata: adat
                 }
             }
-        );
+            );
+        cachedAbilities = alist;
         return alist;
     } catch (error) {
-        console.error('Error reading abilities:', error);
+        console.error('Error processing abilities:', error);
         throw error;
     }
 }
-
-
-
 
 // Stats Variables
 const SSD = 'm_ShopStatDisplay'
@@ -150,10 +174,10 @@ const eVSD = 'm_eVitalityStatsDisplay';
 const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
 const vODS = 'm_vecOtherDisplayStats';
+
 export async function getHeroStartingStats(name: string): Promise<allStats> {
     try {
-        const data = await fs.readFile(charactersPath, 'utf8');
-        const GameHeroes: Heroes = JSON.parse(data);
+        const GameHeroes = await getCharactersJson();
         const hero_id = `hero_${name.toLowerCase()}` as HeroKey;
         const allStatNames: Array<string> = Object.values([
             ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]),
@@ -163,7 +187,7 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
             ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
         ]);
         const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
-        
+
         var StatsZero = {} as allStats;
         allStatNames.map((item) => {
             StatsZero[item] = 0;
@@ -177,13 +201,18 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                 }
             }
         }
+        return StatsZero;
     } catch (error) {
-        console.error('Error reading starting stats:', error);
+        console.error('Error processing starting stats:', error);
         throw error;
     }
-    return StatsZero;
 }
 
-getHeroStartingStats('haze').then(hazeStats =>
-    console.log(hazeStats)
-)
+export function clearCache(): void {
+    cachedCharacters = null;
+    cachedItems = null;
+    cachedAbilities = null;
+    cachedCharactersJson = null;
+    cachedItemsJson = null;
+    cachedAbilitiesJson = null;
+}
