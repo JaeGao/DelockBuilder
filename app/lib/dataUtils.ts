@@ -2,12 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
+import { RootObject, W_Import_Base } from './abilityInterface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
-const itemsPath = path.join(process.cwd(), 'app','data', 'Items', 'FilteredItem.json');
+const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
+const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
+type abilityKeys = keyof RootObject;
 
 export interface HeroStats {
     name: string, 
@@ -82,10 +85,10 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const itemslist = Object.entries(items)
             .filter((entry): entry is [itemkeys, Upgradebase] => {
                 const [itemkey, value] = entry;
-                return value !== null && (value.m_bDisabled === false || 
-                    value.m_bDisabled === undefined || 
-                    value.m_bDisabled === "false") && 
-                    Array.isArray(value._multibase) && 
+                return value !== null && (value.m_bDisabled === false ||
+                    value.m_bDisabled === undefined ||
+                    value.m_bDisabled === "false") &&
+                    Array.isArray(value._multibase) &&
                     value._multibase[0].includes("_base") !== true;
                 //value._editor.folder_name !== "Base";
             }).map(([itemkey, item]) => ({
@@ -96,7 +99,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                         : undefined
                 },
                 itemkey
-            }));    
+            }));
         return itemslist;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
@@ -105,6 +108,8 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
 }
 
 
+
+/*
 const CV3 = require(charactersPath);
 //Stats Variables
 const SSD = 'm_ShopStatDisplay'
