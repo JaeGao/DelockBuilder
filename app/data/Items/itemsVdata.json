@@ -21950,7 +21950,7 @@
     },
     "m_bitsPostCastEnabledStateMask": "MODIFIER_STATE_BUSY_WITH_ACTION",
     "_editor": {
-      "folder_name": "Base"
+      "folder_name": "Weapon"
     },
     "m_WeaponInfo": {
       "m_BulletSpeedCurve": {
