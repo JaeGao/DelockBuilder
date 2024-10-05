@@ -3,7 +3,6 @@ import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, W_Import_Base, Habilities } from './abilityInterface';
-import { a } from 'framer-motion/client';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
