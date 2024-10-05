@@ -4,7 +4,7 @@ import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
-const itemsPath = path.join(process.cwd(), 'dataprocessing', 'GameDATNEW', 'FilteredItem.json');
+const itemsPath = path.join(process.cwd(), 'app','data', 'Items', 'FilteredItem.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
