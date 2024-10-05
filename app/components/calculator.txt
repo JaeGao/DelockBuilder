@@ -1,0 +1,43 @@
+FI - FilteredItem.json
+HAS - HeroAbilityStats.json
+
+
+
+'EBulletDamage' - m_flBulletDamage from HAS
+'EBaseWeaponDamageIncrease' - MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT from FI
+'ERoundsPerSecond' - from HAS
+- 1 / m_flCycleTime - Abrams, Bebop, Dynamo, Grey Talon, Haze, Infernus, Ivy, Kelvin, Lady Geist, Mirage, Mo & Krill, Pocket, Shiv, Hornet, Viscous, Warden, Wraith, Yamato
+- 1/ (m_flCycleTime + m_flIntraBurstCycleTime * m_iBurstShotCount) - Lash, Paradox, Seven, 
+- 1 / m_flMaxSpinCycleTime - McGinnis
+
+'EFireRate' - MODIFIER_VALUE_FIRE_RATE - FI
+'EClipSize' - m_iClipSize, MODIFIER_VALUE_AMMO_CLIP_SIZE -HAS & FI
+'EClipSizeIncrease' - MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT - FI
+'EReloadTime' - m_reloadDuration - HAS
+'EReloadSpeed' - MODIFIER_VALUE_RELOAD_SPEED (Only Active Reload) - FI
+'EBulletSpeed' - m_BulletSpeedcurve[m_vDomainMaxs][2] - HAS
+'EBulletSpeedIncrease' - 0, MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT - FI
+'EBulletLifesteal' - 0, EBulletLifesteal, MODIFIER_VALUE_BULLET_LIFESTEAL - FI
+'ELightMeleeDamage' - in SS
+'EHeavyMeleeDamage' - in SS
+'EMaxHealth' - in SS
+'EBaseHealthRegen' - in SS
+'EBulletArmorDamageReduction' 0 or in SS - MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST_PERCENT, MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST, MODIFIER_VALUE_BULLET_ARMOR
+'ETechArmorDamageReduction' - 0 or in SS - MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST, MODIFIER_VALUE_TECH_ARMOR - FI
+'EBulletShieldHealth' - EBulletShieldHealth, MODIFIER_VALUE_BULLET_SHIELD_HEALTH_MAX
+'ETechShieldHealth' - ETechShieldHealth, MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX
+'EHealingOutput' (Heal Amp) - EHealingOutput, MODIFIER_VALUE_HEAL_AMP_REGEN_PERCENT
+'EDebuffResist' - MODIFIER_VALUE_STATUS_RESISTANCE
+'ECritDamageReceivedScale' (Crit Reduction) - Nowhere
+'EMaxMoveSpeed' - in SS - MODIFIER_VALUE_MOVEMENT_SPEED_MAX,
+'ESprintSpeed'- in SS - MODIFIER_VALUE_SPRINT_SPEED_BONUS
+'EStaminaCooldown' - 1 / EStaminaRegenPerSecond (in SS)
+OR 1 / (EStaminaRegenPerSecond * 1 + MODIFIER_VALUE_STAMINUA_REGEN_PER_SECOND_PERCENTAGE)
+'EStaminaRegenIncrease' - MODIFIER_VALUE_STAMINUA_REGEN_PER_SECOND_PERCENTAGE
+'EStamina' - in SS - MODIFIER_VALUE_STAMINA, 
+'ETechCooldown' - ETechCooldown, MODIFIER_VALUE_COOLDOWN_REDUCTION_PERCENTAGE 
+'ETechDuration' - in SS - MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE
+'ETechRange' - in SS - MODIFIER_VALUE_TECH_RANGE_PERCENT
+'ETechLifesteal' - ETechLifesteal - MODIFIER_VALUE_TECH_LIFESTEAL
+'EMaxChargesIncrease' - MODIFIER_VALUE_BONUS_ABILITY_CHARGES
+'ETechCooldownBetweenChargeUses' - MODIFIER_VALUE_COOLDOWN_BETWEEN_CHARGE_REDUCTION_PERCENTAGE
