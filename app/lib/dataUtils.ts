@@ -2,12 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
+import { RootObject, W_Import_Base } from './abilityInterface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'itemsVdata.json');
+const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
+type abilityKeys = keyof RootObject;
 
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
@@ -94,6 +97,9 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         throw error;
     }
 }
+
+export async function getAbilities(): Promis
+
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
     try {
