@@ -99,6 +99,25 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
     }
 }
 
+/*
+export async function getHeroStats(name: string) : Promise<HeroStats[]> {
+    const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
+    const w_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vDS]);
+    const w_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vODS]);
+    const v_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eVSD][vDS]);
+    const v_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eVSD][vODS]);
+    const s_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eSSD][vDS]);
+    const allStatNames : Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
+    const StartStats = CV3[hero_ids]['m_mapStartingStats'];
+    var StatsZero = [{}] as HeroStats[];
+    allStatNames.map((key, index) => {
+        StatsZero[index] = {name: key, stats : 0}
+    });
+
+}
+*/
+
+
 /*export async function getItem(name: string): Promise<Item | undefined> {
     try {
         const items = await getItems();
