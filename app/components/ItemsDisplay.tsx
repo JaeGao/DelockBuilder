@@ -43,7 +43,7 @@ const findCost = (tier: string): string => {
             return "6200"
         default:
             return "N/A"
-}
+    }
 }
 
 const findTier = (tier: string): number => {
@@ -58,12 +58,12 @@ const findTier = (tier: string): number => {
             return 4
         default:
             return 1
-}
+    }
 }
 
-const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ key, upgrade, onSelect }) => {
-    
-    const category = getCategory(upgrade.m_strAbilityImage|| '');
+const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ itemkey, upgrade, onSelect }) => {
+
+    const category = getCategory(upgrade.m_strAbilityImage || '');
     const categoryColor = getCategoryColor(category);
 
     return (
@@ -77,11 +77,11 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ key,
                 </div>
                 <div className={`${categoryColor} flex-grow flex items-center justify-center`}>
                     {upgrade.m_strAbilityImage && (
-                        <Image src={upgrade.m_strAbilityImage} alt={key} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
+                        <Image src={upgrade.m_strAbilityImage} alt={itemkey} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
                     )}
                 </div>
                 <div className="bg-[#FFF0D7] p-1">
-                    <p className="text-[#151912] text-xs truncate hover:underline">{key}</p>
+                    <p className="text-[#151912] text-xs truncate hover:underline">{itemkey}</p>
                 </div>
                 <div className="bg-gray-200 text-xs text-gray-600 p-1">
                     Tier {findTier(upgrade.m_iItemTier) ?? 'N/A'}
@@ -128,7 +128,7 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                         <h3 className="text-xl font-semibold mb-2 text-white">Tier {tier}</h3>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
-                                <ItemCard key={item.key} {...item} onSelect={() => onItemSelect(item)} />
+                                <ItemCard key={item.itemkey} {...item} onSelect={() => onItemSelect(item)} />
                             ))}
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { upgrades , Upgrade_with_name , Upgradebase} from './itemInterface';
+import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
@@ -75,19 +75,19 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const items: upgrades = JSON.parse(data);
 
         const itemslist = Object.entries(items)
-        .filter((entry): entry is [itemkeys, Upgradebase] => {
-            const [key, value] = entry;
-            return value !== null && value.m_bDisabled === false;
-        }).map(([key, item]) => ({
-            upgrade:{
-                ...item,
-                m_strAbilityImage: 'm_strAbilityImage' in item && typeof item.m_strAbilityImage === 'string'
-                    ? convertImagePath(item.m_strAbilityImage)
-                    : undefined
-            },
-            key
-        }));
-        console.log(itemslist[0].key);
+            .filter((entry): entry is [itemkeys, Upgradebase] => {
+                const [itemkey, value] = entry;
+                return value !== null
+            }).map(([itemkey, item]) => ({
+                upgrade: {
+                    ...item,
+                    m_strAbilityImage: 'm_strAbilityImage' in item && typeof item.m_strAbilityImage === 'string'
+                        ? convertImagePath(item.m_strAbilityImage)
+                        : undefined
+                },
+                itemkey
+            }));
+        console.log(itemslist[0].itemkey);
         return itemslist;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
