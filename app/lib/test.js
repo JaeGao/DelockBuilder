@@ -58,7 +58,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertImagePathTest = convertImagePathTest;
 exports.getInGameHeroes = getInGameHeroes;
-exports.getZeroHeroStats = getZeroHeroStats;
+exports.getHeroStartingStats = getHeroStartingStats;
 var fs = require("fs");
 var jsonpath = "../data/CharactersV2/CharactersV3.json";
 var data = fs.readFileSync(jsonpath, null).toString();
@@ -102,9 +102,9 @@ function getInGameHeroes() {
         });
     });
 }
-function getZeroHeroStats(name) {
+function getHeroStartingStats(name) {
     return __awaiter(this, void 0, void 0, function () {
-        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, StartStats, StatsZero, key, i;
+        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, startStats, StatsZero, key, i;
         return __generator(this, function (_a) {
             hero_id = "hero_".concat(name.toLowerCase());
             hero_ids = ("hero_".concat(name.toLowerCase())).toString();
@@ -114,18 +114,31 @@ function getZeroHeroStats(name) {
             v_vODS = Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]);
             s_vDS = Object.values(GameHeroes[hero_id][SSD][eSSD][vDS]);
             allStatNames = Object.values(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], w_vDS, true), w_vODS, true), v_vDS, true), v_vODS, true), s_vDS, true));
-            StartStats = GameHeroes[hero_id]['m_mapStartingStats'];
-            StatsZero = [{}];
+            startStats = GameHeroes[hero_id]['m_mapStartingStats'];
+            StatsZero = [];
             allStatNames.map(function (key, index) {
                 StatsZero[index] = { name: key, stats: 0 };
             });
-            console.log(StartStats['EMaxHealth']);
-            for (key in StartStats) {
+            for (key in startStats) {
+                StatsZero = StatsZero.map(function (_a) {
+                    var name = _a.name, stats = _a.stats;
+                    if (name === key) {
+                        return {
+                            name: name,
+                            stats: startStats[key] !== undefined ? startStats[key] : 0,
+                        };
+                    }
+                    else {
+                        return { name: name, stats: stats, };
+                    }
+                });
+            }
+            for (key in startStats) {
                 for (i = 0; i < StatsZero.length; i++) {
                     if (StatsZero[i].name === key) {
                         StatsZero[i] = {
                             name: key,
-                            stats: StartStats[key] !== undefined ? StartStats[key] : 0,
+                            stats: startStats[key] !== undefined ? startStats[key] : 0,
                         };
                         break;
                     }
