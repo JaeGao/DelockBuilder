@@ -17,7 +17,7 @@ type itemkeys = keyof upgrades;
 
 
 export interface HeroStats {
-    name: string, 
+    name: string,
     stats: number;
 }
 
