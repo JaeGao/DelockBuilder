@@ -28,8 +28,6 @@ export interface RootObject {
 export type abilityKeys = keyof RootObject;
 export type AData = RootObject[abilityKeys];
 
-
-
 export interface AWithKey {
     heroname : string;
     adata : AData;
