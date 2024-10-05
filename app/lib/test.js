@@ -60,7 +60,7 @@ exports.convertImagePathTest = convertImagePathTest;
 exports.getInGameHeroes = getInGameHeroes;
 exports.getZeroHeroStats = getZeroHeroStats;
 var fs = require("fs");
-var jsonpath = "C:/Users/rhta2/OneDrive/Documents/GitHub/DelockBuilder/app/data/CharactersV2/CharactersV3.json";
+var jsonpath = "../data/CharactersV2/CharactersV3.json";
 var data = fs.readFileSync(jsonpath, null).toString();
 var GameHeroes = JSON.parse(data);
 //const CV3 = require(jsonpath);
@@ -104,7 +104,7 @@ function getInGameHeroes() {
 }
 function getZeroHeroStats(name) {
     return __awaiter(this, void 0, void 0, function () {
-        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, StartStats, StatsZero, key;
+        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, StartStats, StatsZero, key, i;
         return __generator(this, function (_a) {
             hero_id = "hero_".concat(name.toLowerCase());
             hero_ids = ("hero_".concat(name.toLowerCase())).toString();
@@ -121,21 +121,21 @@ function getZeroHeroStats(name) {
             });
             console.log(StartStats['EMaxHealth']);
             for (key in StartStats) {
-                StatsZero.map(function (_a) {
-                    var name = _a.name, stats = _a.stats;
-                    if (name === key) {
-                        return {
+                for (i = 0; i < StatsZero.length; i++) {
+                    if (StatsZero[i].name === key) {
+                        StatsZero[i] = {
                             name: key,
                             stats: StartStats[key] !== undefined ? StartStats[key] : 0,
                         };
+                        break;
                     }
                     else {
-                        return {
-                            name: name,
-                            stats: stats,
+                        StatsZero[i] = {
+                            name: StatsZero[i].name,
+                            stats: StatsZero[i].stats,
                         };
                     }
-                });
+                }
             }
             return [2 /*return*/, StatsZero];
         });
