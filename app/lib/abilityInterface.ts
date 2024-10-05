@@ -1,4 +1,5 @@
 export interface RootObject {
+    Import_Base: W_Import_Base
     hero_inferno: Heroinferno;
     hero_gigawatt: Herogigawatt;
     hero_hornet: Herohornet;
@@ -21,6 +22,11 @@ export interface RootObject {
     hero_viscous: Heroviscous;
     hero_synth: Herosynth;
     hero_mirage: Heromirage;
+}
+
+export interface Habilities {
+    abilities: W_Import_Base[];
+    heroname: string;
 }
 
 export interface W_Import_Base {
