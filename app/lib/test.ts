@@ -5,7 +5,7 @@ const jsonpath = "C:/Users/rhta2/OneDrive/Documents/GitHub/DelockBuilder/app/dat
 
 const data = fs.readFileSync(jsonpath, null).toString();
 const GameHeroes : Heroes = JSON.parse(data);
-const CV3 = require(jsonpath);
+//const CV3 = require(jsonpath);
 //Stats Variables
 const SSD = 'm_ShopStatDisplay'
 const eWSD = 'm_eWeaponStatsDisplay';
@@ -26,7 +26,7 @@ export interface HeroStats {
     stats: number;
 }
 
-export function convertImagePath(imagePath: string): string {
+export function convertImagePathTest(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
     const match = cleanPath.match(/file:\/\/\{images\}\/(.+)/);
     if (match) {
@@ -48,7 +48,7 @@ export async function getInGameHeroes() : Promise<HeroFilteredList[]> {
         name: codenames,
         data: {
             ...heroData,
-            m_strIconHeroCard: convertImagePath(heroData.m_strIconHeroCard)
+            m_strIconHeroCard: convertImagePathTest(heroData.m_strIconHeroCard)
         },
         }));
     
@@ -56,43 +56,73 @@ export async function getInGameHeroes() : Promise<HeroFilteredList[]> {
 }
 
 
-export async function getHeroStats(name: string) : Promise<HeroStats[]> {
+export async function getZeroHeroStats(name: string) : Promise<HeroStats[]> {
+    const hero_id = `hero_${name.toLowerCase()}` as HeroID; 
     const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
-    const w_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vDS]);
-    const w_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vODS]);
-    const v_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eVSD][vDS]);
-    const v_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eVSD][vODS]);
-    const s_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eSSD][vDS]);
+    const w_vDS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]);
+    const w_vODS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]);
+    const v_vDS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]);
+    const v_vODS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]);
+    const s_vDS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eSSD][vDS]);
     const allStatNames : Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
-    const StartStats = CV3[hero_ids]['m_mapStartingStats'];
+    const StartStats = GameHeroes[hero_id]['m_mapStartingStats'];
     var StatsZero = [{}] as HeroStats[];
     allStatNames.map((key, index) => {
         StatsZero[index] = {name: key, stats : 0}
     });
+    console.log(StartStats['EMaxHealth'])
+    let key: keyof typeof StartStats;
+    var MappedStats = [] as HeroStats[];
+    for (key in StartStats) {
+        MappedStats = StatsZero.map(({name, stats}) => {
+            if (name === key) {
+                return {
+                    name : key,
+                    stats : StartStats[key] !== undefined ? StartStats[key] : 0,
+                }
+            } else {
+                return {
+                    name,
+                    stats,
+                }
+            }
+        })
+    }
 
+
+    return MappedStats;
 }
 
 
 
 
-const w_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eWSD][vDS]);
-const w_vODS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eWSD][vODS]);
-const v_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eVSD][vDS]);
-const v_vODS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eVSD][vODS]);
-const s_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eSSD][vDS]);
-const allStatsInferno : Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
+// const w_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eWSD][vDS]);
+// const w_vODS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eWSD][vODS]);
+// const v_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eVSD][vDS]);
+// const v_vODS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eVSD][vODS]);
+// const s_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eSSD][vDS]);
+// const allStatsInferno : Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
 
-var StatsZero = [{}] as HeroStats[] ;
-allStatsInferno.map((key, index) => {
-    StatsZero[index] = {name: key, stats : 0}
-});
+// var StatsZero = [{}] as HeroStats[] ;
+// allStatsInferno.map((key, index) => {
+//     StatsZero[index] = {name: key, stats : 0}
+// });
 
-console.log(StatsZero)
+// console.log(StatsZero)
+
+//const StartStats = CV3['hero_haze']['m_mapStartingStats'];
+
+//console.log(GameHeroes['hero_haze']['m_mapStartingStats']['EMaxMoveSpeed'])
 
 
 
 
-getInGameHeroes().then(heroesdata => {
-    console.log(heroesdata[0].data.m_strIcon)
-})
+getZeroHeroStats('haze').then(hazeStats => 
+    console.log(hazeStats)
+)
+
+
+// getInGameHeroes().then(heroesdata => {
+//     console.log(heroesdata[0].data.m_strIcon)
+// })
 

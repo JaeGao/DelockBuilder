@@ -9,6 +9,11 @@ const itemsPath = path.join(process.cwd(), 'app','data', 'Items', 'FilteredItem.
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
 
+export interface HeroStats {
+    name: string, 
+    stats: number;
+}
+
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
     const match = cleanPath.match(/file:\/\/\{images\}\/(.+)/);
@@ -99,7 +104,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
     }
 }
 
-/*
+
 const CV3 = require(charactersPath);
 //Stats Variables
 const SSD = 'm_ShopStatDisplay'
@@ -109,7 +114,7 @@ const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
 const vODS = 'm_vecOtherDisplayStats';
 
-export async function getHeroStats(name: string) : Promise<HeroStats[]> {
+export async function getZeroHeroStats(name: string) : Promise<HeroStats[]> {
     const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
     const w_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vDS]);
     const w_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vODS]);
@@ -122,9 +127,9 @@ export async function getHeroStats(name: string) : Promise<HeroStats[]> {
     allStatNames.map((key, index) => {
         StatsZero[index] = {name: key, stats : 0}
     });
-
+    return StatsZero;
 }
-*/
+
 
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
