@@ -104,7 +104,7 @@ function getInGameHeroes() {
 }
 function getZeroHeroStats(name) {
     return __awaiter(this, void 0, void 0, function () {
-        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, StartStats, StatsZero, key, MappedStats;
+        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, StartStats, StatsZero, key;
         return __generator(this, function (_a) {
             hero_id = "hero_".concat(name.toLowerCase());
             hero_ids = ("hero_".concat(name.toLowerCase())).toString();
@@ -120,9 +120,8 @@ function getZeroHeroStats(name) {
                 StatsZero[index] = { name: key, stats: 0 };
             });
             console.log(StartStats['EMaxHealth']);
-            MappedStats = [];
             for (key in StartStats) {
-                MappedStats = StatsZero.map(function (_a) {
+                StatsZero.map(function (_a) {
                     var name = _a.name, stats = _a.stats;
                     if (name === key) {
                         return {
@@ -138,7 +137,7 @@ function getZeroHeroStats(name) {
                     }
                 });
             }
-            return [2 /*return*/, MappedStats];
+            return [2 /*return*/, StatsZero];
         });
     });
 }

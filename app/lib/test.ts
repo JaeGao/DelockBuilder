@@ -72,9 +72,9 @@ export async function getZeroHeroStats(name: string) : Promise<HeroStats[]> {
     });
     console.log(StartStats['EMaxHealth'])
     let key: keyof typeof StartStats;
-    var MappedStats = [] as HeroStats[];
+
     for (key in StartStats) {
-        MappedStats = StatsZero.map(({name, stats}) => {
+        StatsZero.map(({name, stats}) => {
             if (name === key) {
                 return {
                     name : key,
@@ -88,9 +88,7 @@ export async function getZeroHeroStats(name: string) : Promise<HeroStats[]> {
             }
         })
     }
-
-
-    return MappedStats;
+    return StatsZero;
 }
 
 
