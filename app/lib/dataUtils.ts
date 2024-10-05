@@ -5,12 +5,8 @@ import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, W_Import_Base } from './abilityInterface';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
-<<<<<<< HEAD
-const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'itemsVdata.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
-=======
-const itemsPath = path.join(process.cwd(), 'app','data', 'Items', 'FilteredItem.json');
->>>>>>> f5f6dde207df87302d6f692eb22e75578038b716
+const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
@@ -84,10 +80,10 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const itemslist = Object.entries(items)
             .filter((entry): entry is [itemkeys, Upgradebase] => {
                 const [itemkey, value] = entry;
-                return value !== null && (value.m_bDisabled === false || 
-                    value.m_bDisabled === undefined || 
-                    value.m_bDisabled === "false") && 
-                    Array.isArray(value._multibase) && 
+                return value !== null && (value.m_bDisabled === false ||
+                    value.m_bDisabled === undefined ||
+                    value.m_bDisabled === "false") &&
+                    Array.isArray(value._multibase) &&
                     value._multibase[0].includes("_base") !== true;
                 //value._editor.folder_name !== "Base";
             }).map(([itemkey, item]) => ({
@@ -98,7 +94,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                         : undefined
                 },
                 itemkey
-            }));    
+            }));
         return itemslist;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
@@ -106,9 +102,8 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
     }
 }
 
-<<<<<<< HEAD
-export async function getAbilities(): Promis
-=======
+
+
 /*
 const CV3 = require(charactersPath);
 //Stats Variables
@@ -135,7 +130,6 @@ export async function getHeroStats(name: string) : Promise<HeroStats[]> {
 
 }
 */
->>>>>>> f5f6dde207df87302d6f692eb22e75578038b716
 
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
