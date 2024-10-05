@@ -1,4 +1,4 @@
-import { getCharacter, getItems, getAbilitiesbyHero } from '../../lib/dataUtils';
+import { getCharacter, getItems, getAbilitiesbyHero, getHeroStartingStats } from '../../lib/dataUtils';
 import CharacterBuilder from '../../components/CharacterBuilder';
 
 export default async function BuilderPage({ params }: { params: { characterName: string } }) {
@@ -13,3 +13,7 @@ export default async function BuilderPage({ params }: { params: { characterName:
 
     return <CharacterBuilder character={character} items={items} />;
 }
+
+getHeroStartingStats('haze').then(herostats => 
+    console.log(herostats)
+)

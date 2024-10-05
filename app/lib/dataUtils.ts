@@ -117,15 +117,20 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         const abilities: RootObject = JSON.parse(data);
         const alist : AWithKey[] = Object.entries(abilities)
             .map(([heron, adat])=> {
+                let key: keyof typeof adat;
+                for (key in adat) {
+                    return {
+                        ...adat,
+                        m_strAbilityImage: 'm_strAbilityImage' in adat[key] && typeof adat[key].m_strAbilityImage === 'string'
+                        ? convertImagePath(adat[key].m_strAbilityImage)
+                        : undefined
+                    }
+                }
                 return {
                     heroname: heron,
-                    adata: {
-                        ...adat,
-                        m_strAbilityImage: 'm_strAbilityImage' in adat && typeof adat.m_strAbilityImage === 'string'
-                            ? convertImagePath(adat.m_strAbilityImage)
-                            : undefined
-                    },
-            }}
+                    adata: {...adat,}            
+                }
+            }
             );
         return alist;
     } catch (error) {
@@ -133,6 +138,10 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         throw error;
     }
 }
+
+
+
+
 // Stats Variables
 const SSD = 'm_ShopStatDisplay'
 const eWSD = 'm_eWeaponStatsDisplay';
@@ -152,6 +161,9 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
             ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]), 
             ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
         ]);
+        interface allStats {
+            [allStatNames] : number; 
+        }
         const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
         var StatsZero = [] as HeroStats[];
         allStatNames.map((key, index) => {
@@ -196,7 +208,7 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
 }
 
 getAbilitiesbyHero().then(heroAData => 
-    console.log(heroAData[0].adata.ESlot_Weapon_Primary)
+    console.log(heroAData[0].heroname)
 )
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
