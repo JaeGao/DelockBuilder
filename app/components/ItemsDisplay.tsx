@@ -23,11 +23,11 @@ const getCategoryColor = (category: string): string => {
     }
 };
 
-const getCategory = (imageUrl: string): string => {
-    if (imageUrl.includes('mods_weapon')) return 'Weapon';
-    if (imageUrl.includes('mods_armor')) return 'Vitality';
-    if (imageUrl.includes('mods_tech')) return 'Spirit';
-    if (imageUrl.includes('mods_utility')) return 'Utility';
+const getCategory = (itemCat: string): string => {
+    if (itemCat.includes('_WeaponMod')) return 'Weapon';
+    if (itemCat.includes('_Armor')) return 'Vitality';
+    if (itemCat.includes('_Tech')) return 'Spirit';
+    if (itemCat.includes('mods_utility')) return 'Utility';
     return 'Other';
 };
 
@@ -63,7 +63,7 @@ const findTier = (tier: string): number => {
 
 const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ itemkey, upgrade, onSelect }) => {
 
-    const category = getCategory(upgrade.m_strAbilityImage || '');
+    const category = getCategory(upgrade.m_eItemSlotType || '');
     const categoryColor = getCategoryColor(category);
 
     return (
@@ -97,7 +97,7 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
     const categories = ['Weapon', 'Vitality', 'Spirit', 'Utility'];
 
     const categorizedItems = items.reduce((acc, item) => {
-        const category = getCategory(item.upgrade.m_strAbilityImage || '');
+        const category = getCategory(item.upgrade.m_eItemSlotType || '');
         if (!acc[category]) {
             acc[category] = { 1: [], 2: [], 3: [], 4: [] };
         }

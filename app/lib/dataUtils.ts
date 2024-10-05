@@ -77,7 +77,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const itemslist = Object.entries(items)
             .filter((entry): entry is [itemkeys, Upgradebase] => {
                 const [itemkey, value] = entry;
-                return value !== null
+                return value !== null && (value.m_bDisabled === false || value.m_bDisabled === undefined || value.m_bDisabled === "false" || value.m_bDisabled  === 0) && value._editor.folder_name !== "Base";
             }).map(([itemkey, item]) => ({
                 upgrade: {
                     ...item,
@@ -87,7 +87,7 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                 },
                 itemkey
             }));
-        console.log(itemslist[0].itemkey);
+        console.log(itemslist.length);
         return itemslist;
     } catch (error) {
         console.error('DataUtils: Error reading items:', error);
