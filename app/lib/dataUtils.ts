@@ -2,16 +2,19 @@ import fs from 'fs/promises';
 import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
-import { RootObject, W_Import_Base, Habilities } from './abilityInterface';
+import { RootObject, abilityKeys, AData, AWithKey} from './abilityInterface';
 import { a } from 'framer-motion/client';
+import { Root } from 'postcss';
+import { addAbortListener } from 'stream';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
 
+
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
-type abilityKeys = keyof RootObject;
+
 
 export interface HeroStats {
     name: string, 
@@ -108,58 +111,93 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
     }
 }
 //NOT WORKING
-export async function getAbilitiesbyHero(): Promise<Habilities[]> {
+export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
     try {
         const data = await fs.readFile(abilitiesPath, 'utf8');
         const abilities: RootObject = JSON.parse(data);
-
-        const alist = Object.entries(abilities).filter(
-            (entry): entry is [abilityKeys, W_Import_Base] => {
-                const [key, value] = entry;
-                return key !== 'generic_data_type';
-            }
-        ).map(([heroname, abilitie]) => ({
-            abilitie: {
-                ...abilitie,
-                m_strAbilityImage: 'm_strAbilityImage' in abilitie && typeof abilitie.m_strAbilityImage === 'string'
-                    ? convertImagePath(abilitie.m_strAbilityImage)
-                    : undefined
-            }, heroname
-        }));
+        const alist : AWithKey[] = Object.entries(abilities)
+            .map(([heron, adat])=> {
+                return {
+                    heroname: heron,
+                    adata: {
+                        ...adat,
+                        m_strAbilityImage: 'm_strAbilityImage' in adat && typeof adat.m_strAbilityImage === 'string'
+                            ? convertImagePath(adat.m_strAbilityImage)
+                            : undefined
+                    },
+            }}
+            );
         return alist;
     } catch (error) {
         console.error('Error reading abilities:', error);
         throw error;
     }
 }
-
-/*
-const CV3 = require(charactersPath);
-//Stats Variables
+// Stats Variables
 const SSD = 'm_ShopStatDisplay'
 const eWSD = 'm_eWeaponStatsDisplay';
 const eVSD = 'm_eVitalityStatsDisplay';
 const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
 const vODS = 'm_vecOtherDisplayStats';
+export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> {
+    try {
+        const data = await fs.readFile(charactersPath, 'utf8');
+        const GameHeroes: Heroes = JSON.parse(data);
+        const hero_id = `hero_${name.toLowerCase()}` as HeroKey; 
+        const allStatNames : Array<string> = Object.values([
+            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]), 
+            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]), 
+            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]), 
+            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]), 
+            ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
+        ]);
+        const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
+        var StatsZero = [] as HeroStats[];
+        allStatNames.map((key, index) => {
+            StatsZero[index] = { name: key, stats: 0 }
+        });
 
-export async function getZeroHeroStats(name: string) : Promise<HeroStats[]> {
-    const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
-    const w_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vDS]);
-    const w_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eWSD][vODS]);
-    const v_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eVSD][vDS]);
-    const v_vODS : Array<string> = Object.values(CV3[hero_ids][SSD][eVSD][vODS]);
-    const s_vDS : Array<string> = Object.values(CV3[hero_ids][SSD][eSSD][vDS]);
-    const allStatNames : Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
-    const StartStats = CV3[hero_ids]['m_mapStartingStats'];
-    var StatsZero = [{}] as HeroStats[];
-    allStatNames.map((key, index) => {
-        StatsZero[index] = {name: key, stats : 0}
-    });
+        let key: keyof typeof startStats;
+        for (key in startStats) {
+            StatsZero = StatsZero.map(({name, stats}) =>  {
+                if (name === key) {
+                    return {
+                        name, 
+                        stats : startStats[key] !== undefined ? startStats[key] : 0,
+                    }
+                } else {
+                    return {name, stats,}
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error reading starting stats:', error);
+        throw error;
+    }
+    // for (key in startStats) {
+    //     for (let i = 0; i < StatsZero.length; i++) {
+    //         if (StatsZero[i].name === key) {
+    //             StatsZero[i] = {
+    //                 name: key,
+    //                 stats: startStats[key] !== undefined ? startStats[key] : 0,
+
+    //             };
+    //             break
+    //         }  else {
+    //             StatsZero[i] = {
+    //                 name: StatsZero[i].name,
+    //                 stats: StatsZero[i].stats,
+    //             };
+    //         }
+    //     }
+    // }
     return StatsZero;
 }
 
-
+getAbilitiesbyHero().then(heroAData => 
+    console.log(heroAData[0].adata.ESlot_Weapon_Primary)
+)
 
 /*export async function getItem(name: string): Promise<Item | undefined> {
     try {

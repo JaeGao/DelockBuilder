@@ -15,7 +15,7 @@ const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
 const vODS = 'm_vecOtherDisplayStats';
 
-type HeroID = Exclude<keyof Heroes, 'generic_data_type'>;
+type HeroID = keyof Heroes;
 
 export interface HeroFilteredList {
     name: string;
@@ -86,23 +86,23 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
         });
     }
 
-    for (key in startStats) {
-        for (let i = 0; i < StatsZero.length; i++) {
-            if (StatsZero[i].name === key) {
-                StatsZero[i] = {
-                    name: key,
-                    stats: startStats[key] !== undefined ? startStats[key] : 0,
+    // for (key in startStats) {
+    //     for (let i = 0; i < StatsZero.length; i++) {
+    //         if (StatsZero[i].name === key) {
+    //             StatsZero[i] = {
+    //                 name: key,
+    //                 stats: startStats[key] !== undefined ? startStats[key] : 0,
 
-                };
-                break
-            }  else {
-                StatsZero[i] = {
-                    name: StatsZero[i].name,
-                    stats: StatsZero[i].stats,
-                };
-            }
-        }
-    }
+    //             };
+    //             break
+    //         }  else {
+    //             StatsZero[i] = {
+    //                 name: StatsZero[i].name,
+    //                 stats: StatsZero[i].stats,
+    //             };
+    //         }
+    //     }
+    // }
     return StatsZero;
 }
 
@@ -127,14 +127,7 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
 
 //console.log(GameHeroes['hero_haze']['m_mapStartingStats']['EMaxMoveSpeed'])
 
-<<<<<<< Updated upstream
-
-
-
-getZeroHeroStats('haze').then(hazeStats =>
-=======
 getHeroStartingStats('haze').then(hazeStats => 
->>>>>>> Stashed changes
     console.log(hazeStats)
 )
 
