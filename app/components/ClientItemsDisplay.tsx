@@ -10,7 +10,7 @@ interface ClientItemsDisplayProps {
 
 const ClientItemsDisplay: React.FC<ClientItemsDisplayProps> = ({ items }) => {
     const handleItemSelect = (item: Upgrade_with_name) => {
-        console.log('Item selected:', item.key);
+        console.log('Item selected:', item.itemkey);
         // Add more logic here as needed
     };
 
