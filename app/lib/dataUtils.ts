@@ -2,7 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
-import { RootObject, W_Import_Base } from './abilityInterface';
+import { RootObject, W_Import_Base, Habilities } from './abilityInterface';
+import { a } from 'framer-motion/client';
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
@@ -101,8 +102,31 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         throw error;
     }
 }
+//NOT WORKING
+export async function getAbilitiesbyHero(): Promise<Habilities[]> {
+    try {
+        const data = await fs.readFile(abilitiesPath, 'utf8');
+        const abilities: RootObject = JSON.parse(data);
 
-
+        const alist = Object.entries(abilities).filter(
+            (entry): entry is [abilityKeys, W_Import_Base] => {
+                const [key, value] = entry;
+                return key !== 'generic_data_type';
+            }
+        ).map(([heroname, abilitie]) => ({
+            abilitie: {
+                ...abilitie,
+                m_strAbilityImage: 'm_strAbilityImage' in abilitie && typeof abilitie.m_strAbilityImage === 'string'
+                    ? convertImagePath(abilitie.m_strAbilityImage)
+                    : undefined
+            }, heroname
+        }));
+        return alist;
+    } catch (error) {
+        console.error('Error reading abilities:', error);
+        throw error;
+    }
+}
 
 /*
 const CV3 = require(charactersPath);
