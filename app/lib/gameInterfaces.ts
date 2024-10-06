@@ -147,6 +147,7 @@ export interface Character {
     collision_height: number;
     step_height: number;
     items: CharacterItems;
+   
     item_slot_info: {
         [key: string]: ItemSlotInfo;
     };

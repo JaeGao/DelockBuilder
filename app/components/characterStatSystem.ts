@@ -1,76 +1,57 @@
-import { Character, Item, isUpgradeItem, isWeaponItem } from '../lib/gameInterfaces';
+import { HeroType } from '../lib/herointerface';
+import { Upgrade_with_name } from '../lib/itemInterface';
+import { allStats, getHeroStartingStats } from '../lib/dataUtils';
 
-export interface EnhancedCharacterStats extends Character {
-    // Additional calculated stats
-    bullet_damage: number;
-    dps: number;
-    clip_size: number;
-    bonus_clip_size_percent: number;
-    base_attack_damage_percent: number;
-}
+export async function calculateCharacterStats(
+    character: HeroType,
+    equippedItems: Upgrade_with_name[],
+    allItems: Upgrade_with_name[]
+): Promise<allStats> {
+    // Get base stats
+    let stats = await getHeroStartingStats(character.key.replace('hero_', ''));
 
-const getItemById = (id: number, allItems: Item[]): Item | undefined => {
-    return allItems.find(item => item.id === id);
-};
+    // Apply item modifiers
+    equippedItems.forEach(item => {
+        const itemStats = allItems.find(i => i.itemkey === item.itemkey)?.upgrade;
+        if (itemStats) {
+            // Weapon stats
+            stats.EBulletDamage += itemStats.MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT || 0;
+            stats.EFireRate += itemStats.MODIFIER_VALUE_FIRE_RATE || 0;
+            stats.EClipSize += (stats.EClipSize * (itemStats.MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT || 0)) / 100;
+            stats.EReloadSpeed += itemStats.MODIFIER_VALUE_RELOAD_SPEED || 0;
+            stats.EBulletSpeed += (stats.EBulletSpeed * (itemStats.MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT || 0)) / 100;
+            stats.EBulletLifesteal += itemStats.MODIFIER_VALUE_BULLET_LIFESTEAL || 0;
 
-const applyWeaponStats = (stats: EnhancedCharacterStats, weapon: Item): EnhancedCharacterStats => {
-    if (isWeaponItem(weapon) && weapon.weapon_info) {
-        stats.bullet_damage = (weapon.weapon_info.bullet_damage as number) || 0;
-        stats.clip_size = (weapon.weapon_info.clip_size as number) || 0;
-    }
-    return stats;
-};
+            // Vitality stats
+            stats.EMaxHealth += itemStats.MODIFIER_VALUE_HEALTH_MAX || 0;
+            stats.EBaseHealthRegen += itemStats.MODIFIER_VALUE_HEALTH_REGEN || 0;
+            stats.EBulletArmorDamageReduction += itemStats.MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST_PERCENT || 0;
+            stats.ETechArmorDamageReduction += itemStats.MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST || 0;
+            stats.EBulletShieldHealth += itemStats.MODIFIER_VALUE_BULLET_SHIELD_HEALTH_MAX || 0;
+            stats.ETechShieldHealth += itemStats.MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX || 0;
 
-const applyUpgradeEffect = (stats: EnhancedCharacterStats, item: Item): EnhancedCharacterStats => {
-    if (isUpgradeItem(item)) {
-        if (typeof item.properties.base_attack_damage_percent === 'number') {
-            stats.base_attack_damage_percent += item.properties.base_attack_damage_percent;
+            // Movement stats
+            stats.EMaxMoveSpeed += itemStats.MODIFIER_VALUE_MOVEMENT_SPEED_MAX || 0;
+            stats.ESprintSpeed += itemStats.MODIFIER_VALUE_SPRINT_SPEED_BONUS || 0;
+            stats.EStamina += itemStats.MODIFIER_VALUE_STAMINA || 0;
+
+            // Tech stats
+            stats.ETechDuration += (stats.ETechDuration * (itemStats.MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE || 0)) / 100;
+            stats.ETechRange += (stats.ETechRange * (itemStats.MODIFIER_VALUE_TECH_RANGE_PERCENT || 0)) / 100;
+            stats.ETechCooldown -= (stats.ETechCooldown * (itemStats.MODIFIER_VALUE_COOLDOWN_REDUCTION_PERCENTAGE || 0)) / 100;
+            stats.ETechLifesteal += itemStats.MODIFIER_VALUE_TECH_LIFESTEAL || 0;
+            stats.EMaxChargesIncrease += itemStats.MODIFIER_VALUE_BONUS_ABILITY_CHARGES || 0;
+            stats.ETechCooldownBetweenChargeUses -= (stats.ETechCooldownBetweenChargeUses * (itemStats.MODIFIER_VALUE_COOLDOWN_BETWEEN_CHARGE_REDUCTION_PERCENTAGE || 0)) / 100;
+
+            // Other stats
+            stats.EHealingOutput += itemStats.MODIFIER_VALUE_HEAL_AMP_REGEN_PERCENT || 0;
+            stats.EDebuffResist += itemStats.MODIFIER_VALUE_STATUS_RESISTANCE || 0;
         }
-        if (typeof item.properties.bonus_clip_size_percent === 'number') {
-            stats.bonus_clip_size_percent += item.properties.bonus_clip_size_percent;
-        }
-    }
-    return stats;
-};
-
-const applyPercentageModifiers = (stats: EnhancedCharacterStats): EnhancedCharacterStats => {
-    // Apply damage increase
-    stats.bullet_damage *= (1 + stats.base_attack_damage_percent / 100);
-    stats.dps *= (1 + stats.base_attack_damage_percent / 100);
-
-    // Apply clip size increase
-    stats.clip_size = Math.round(stats.clip_size * (1 + stats.bonus_clip_size_percent / 100));
-
-    return stats;
-};
-
-export const calculateCharacterStats = (
-    character: Character,
-    equippedUpgradeItems: Item[],
-    allItems: Item[]
-): EnhancedCharacterStats => {
-    let enhancedStats: EnhancedCharacterStats = {
-        ...character,
-        bullet_damage: 0,
-        dps: 0,
-        clip_size: 0,
-        bonus_clip_size_percent: 0,
-        base_attack_damage_percent: 0,
-    };
-
-    // Apply weapon stats
-    const weaponItem = getItemById(character.items.weapon_primary, allItems);
-    if (weaponItem) {
-        enhancedStats = applyWeaponStats(enhancedStats, weaponItem);
-    }
-
-    // Apply effects from equipped upgrade items
-    equippedUpgradeItems.forEach(item => {
-        enhancedStats = applyUpgradeEffect(enhancedStats, item);
     });
 
-    // Apply percentage modifiers
-    enhancedStats = applyPercentageModifiers(enhancedStats);
+    // Calculate derived stats
+    stats.EDPS = stats.EBulletDamage * (stats.EFireRate || 1);
+    stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);
 
-    return enhancedStats;
-};
+    return stats;
+}

@@ -1,37 +1,18 @@
 import React from 'react';
-import { Character } from '../lib/gameInterfaces';
-import { EnhancedCharacterStats } from './characterStatSystem';
+import { allStats } from '../lib/dataUtils';
 
 interface StatsSidebarProps {
-    characterStats: EnhancedCharacterStats;
-    baseStats: Character;
+    characterStats: allStats;
     characterName: string;
     characterClass: string;
 }
 
-const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, characterName, characterClass }) => {
-    const formatStat = (value: any): string => {
-        if (value === undefined || value === null) return 'N/A';
-        if (typeof value === 'number') {
-            return Number.isInteger(value) ? value.toString() : value.toFixed(2);
-        }
-        return String(value);
-    };
+const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass }) => {
+    console.log('StatsSidebar received characterStats:', characterStats);
 
-    const calculatePercentageDifference = (base: any, current: any): string => {
-        if (typeof base !== 'number' || typeof current !== 'number') return '';
-        const diff = ((current - base) / base) * 100;
-        return diff === 0 ? '' : ` (${diff > 0 ? '+' : ''}${diff.toFixed(2)}%)`;
-    };
-
-    const getStatValue = (stats: EnhancedCharacterStats | Character, key: string): any => {
-        if (key in stats) {
-            return (stats as any)[key];
-        }
-        if ('starting_stats' in stats && key in stats.starting_stats) {
-            return stats.starting_stats[key as keyof typeof stats.starting_stats];
-        }
-        return undefined;
+    const formatStat = (value: number | undefined): string => {
+        if (value === undefined) return 'N/A';
+        return Number.isInteger(value) ? value.toString() : value.toFixed(2);
     };
 
     const statGroups = [
@@ -39,51 +20,74 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, 
             title: "Weapon Stats",
             color: "text-red-400",
             stats: [
-                { name: "Bullet Damage", key: "bullet_damage" },
-                { name: "DPS", key: "dps" },
-                { name: "Clip Size", key: "clip_size" },
-                { name: "Weapon Power", key: "weapon_power" },
+                { name: "Bullet Damage", key: "EBulletDamage" },
+                { name: "Weapon Damage Increase", key: "EBaseWeaponDamageIncrease" },
+                { name: "Rounds Per Second", key: "ERoundsPerSecond" },
+                { name: "Fire Rate", key: "EFireRate" },
+                { name: "Clip Size", key: "EClipSize" },
+                { name: "Clip Size Increase", key: "EClipSizeIncrease" },
+                { name: "Reload Time", key: "EReloadTime" },
+                { name: "Reload Speed", key: "EReloadSpeed" },
+                { name: "Bullet Speed", key: "EBulletSpeed" },
+                { name: "Bullet Speed Increase", key: "EBulletSpeedIncrease" },
+                { name: "Bullet Lifesteal", key: "EBulletLifesteal" },
             ]
         },
         {
             title: "Combat Stats",
             color: "text-orange-400",
             stats: [
-                { name: "Light Melee Damage", key: "light_melee_damage" },
-                { name: "Heavy Melee Damage", key: "heavy_melee_damage" },
-                { name: "Reload Speed", key: "reload_speed" },
+                { name: "Light Melee Damage", key: "ELightMeleeDamage" },
+                { name: "Heavy Melee Damage", key: "EHeavyMeleeDamage" },
             ]
         },
         {
             title: "Vitality Stats",
             color: "text-green-400",
             stats: [
-                { name: "Max Health", key: "max_health" },
-                { name: "Health Regen", key: "base_health_regen" },
-                { name: "Stamina", key: "stamina" },
-                { name: "Stamina Regen", key: "stamina_regen_per_second" },
+                { name: "Max Health", key: "EMaxHealth" },
+                { name: "Health Regen", key: "EBaseHealthRegen" },
+                { name: "Bullet Armor", key: "EBulletArmorDamageReduction" },
+                { name: "Tech Armor", key: "ETechArmorDamageReduction" },
+                { name: "Bullet Shield", key: "EBulletShieldHealth" },
+                { name: "Tech Shield", key: "ETechShieldHealth" },
             ]
         },
         {
             title: "Movement Stats",
             color: "text-blue-400",
             stats: [
-                { name: "Max Move Speed", key: "max_move_speed" },
-                { name: "Sprint Speed", key: "sprint_speed" },
-                { name: "Crouch Speed", key: "crouch_speed" },
-                { name: "Move Acceleration", key: "move_acceleration" },
+                { name: "Max Move Speed", key: "EMaxMoveSpeed" },
+                { name: "Sprint Speed", key: "ESprintSpeed" },
+                { name: "Stamina", key: "EStamina" },
+                { name: "Stamina Cooldown", key: "EStaminaCooldown" },
+                { name: "Stamina Regen Increase", key: "EStaminaRegenIncrease" },
+            ]
+        },
+        {
+            title: "Tech Stats",
+            color: "text-purple-400",
+            stats: [
+                { name: "Tech Duration", key: "ETechDuration" },
+                { name: "Tech Range", key: "ETechRange" },
+                { name: "Tech Cooldown", key: "ETechCooldown" },
+                { name: "Tech Lifesteal", key: "ETechLifesteal" },
+                { name: "Max Charges Increase", key: "EMaxChargesIncrease" },
+                { name: "Charge Cooldown", key: "ETechCooldownBetweenChargeUses" },
             ]
         },
         {
             title: "Other Stats",
             color: "text-yellow-400",
             stats: [
-                { name: "Tech Duration", key: "tech_duration" },
-                { name: "Tech Range", key: "tech_range" },
-                { name: "Crit Damage Received Scale", key: "crit_damage_received_scale" },
+                { name: "Crit Damage Received", key: "ECritDamageReceivedScale" },
+                { name: "Healing Output", key: "EHealingOutput" },
+                { name: "Debuff Resist", key: "EDebuffResist" },
             ]
         },
     ];
+
+    console.log('Rendering StatsSidebar with characterStats:', characterStats);
 
     return (
         <div className="fixed top-0 right-0 w-80 h-screen bg-gray-900 p-3 overflow-y-auto text-sm">
@@ -96,23 +100,15 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, 
                     <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title}</h4>
                     <div className="space-y-1">
                         {group.stats.map((stat) => {
-                            const baseStat = getStatValue(baseStats, stat.key);
-                            const currentStat = getStatValue(characterStats, stat.key);
-                            if (baseStat === undefined && currentStat === undefined) return null;
+                            const statValue = characterStats[stat.key as keyof allStats];
+                            console.log(`Stat ${stat.name} (${stat.key}):`, statValue);
+                            if (statValue === undefined) return null;
                             return (
                                 <div key={stat.key} className="flex justify-between items-center">
                                     <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                    <div className="text-right">
-                                        <span className="text-white text-xs font-medium">
-                                            {formatStat(baseStat)}
-                                        </span>
-                                        <span className="text-yellow-400 text-xs ml-1">
-                                            {calculatePercentageDifference(baseStat, currentStat)}
-                                        </span>
-                                        <span className="text-green-400 text-xs ml-1">
-                                            → {formatStat(currentStat)}
-                                        </span>
-                                    </div>
+                                    <span className="text-white text-xs font-medium">
+                                        {formatStat(statValue)}
+                                    </span>
                                 </div>
                             );
                         })}
