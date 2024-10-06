@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
-import ItemsDisplay from './ItemsDisplay';
+import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -71,7 +71,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         let targetGrid: (Upgrade_with_name | null)[];
         let setTargetGrid: React.Dispatch<React.SetStateAction<(Upgrade_with_name | null)[]>>;
 
-        const category = getCategory(item.upgrade.m_strAbilityImage || '');
+        const category = getCategory(item.upgrade.m_eItemSlotType || '');
         switch (category) {
             case 'Weapon':
                 targetGrid = weaponItems;
@@ -138,39 +138,31 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         item.itemkey.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const getCategory = (imageUrl: string): string => {
-        if (imageUrl.includes('mods_weapon')) return 'Weapon';
-        if (imageUrl.includes('mods_armor')) return 'Vitality';
-        if (imageUrl.includes('mods_tech')) return 'Spirit';
-        if (imageUrl.includes('mods_utility')) return 'Utility';
-        return 'Other';
-    };
-
     return (
         <div className="flex">
-            <div className="w-[calc(100%-20rem)] p-4">
-                <div className="mb-2 flex items-center">
+            <div className="w-[calc(100%-16rem)] p-2">
+                <div className="ml-3">
+                    <h2 className="text-2xl font-bold">{heroName}</h2>
+                    {/* <p className="text-sm text-gray-300">{character.data._class}</p> */}
+                </div>
+                
+                <div className="mb-2 flex float-left">
                     {character.data.m_strIconHeroCard && (
                         <Image
                             src={character.data.m_strIconHeroCard}
                             alt={heroName}
-                            width={80}
-                            height={80}
-                            className="rounded-full mr-3"
+                            width={120}
+                            height={120}
+                            className="rounded-full mt-8 mr-4 object-none"
                         />
                     )}
-                    <div>
-                        <h2 className="text-lg font-bold">{heroName}</h2>
-                        <p className="text-sm text-gray-300">{character.data._class}</p>
-                    </div>
                 </div>
                 {errorMessage && (
                     <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                         {errorMessage}
                     </div>
                 )}
-
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="flex flex-row-reverse flex-wrap h-fit gap-x-8 gap-y-1 mb-4">
                     <ItemGrid
                         title="Weapon"
                         items={weaponItems}
@@ -187,18 +179,19 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         onItemRemove={(index) => handleItemRemove('Spirit', index)}
                     />
                     <ItemGrid
-                        title="Utility"
+                        title="Flex"
                         items={utilityItems}
                         onItemRemove={(index) => handleItemRemove('Utility', index)}
                     />
                 </div>
+                
 
                 <input
                     type="text"
                     placeholder="Search upgrade items..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full p-2 mb-4 bg-gray-700 text-white rounded"
+                    className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
                 />
                 <div className="mb-4">
                     <h3 className="text-xl font-bold mb-2">Available Items</h3>

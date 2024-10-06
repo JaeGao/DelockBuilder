@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className="font-forevs-black text-custom-beige">
         <div className="flex">
           <Navbar />
-          <main className="flex-1 lg:ml-64 p-8">
+          <main className="flex-1 lg:ml-64 p-2">
             {children}
           </main>
         </div>

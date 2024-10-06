@@ -90,7 +90,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     console.log('Rendering StatsSidebar with characterStats:', characterStats);
 
     return (
-        <div className="fixed top-0 right-0 w-80 h-screen bg-gray-900 p-3 overflow-y-auto text-sm">
+        <div className="fixed top-0 right-0 w-56 h-screen bg-gray-900 p-3 overflow-y-auto text-sm">
             <div className="sticky top-0 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
                 <h2 className="text-lg font-bold text-white">{characterName}</h2>
                 <p className="text-xs text-gray-400">{characterClass}</p>

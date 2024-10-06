@@ -23,7 +23,22 @@ const getCategoryColor = (category: string): string => {
     }
 };
 
-const getCategory = (itemCat: string): string => {
+const getCategoryBackground = (category: string): string[] => {
+    switch (category) {
+        case 'Weapon':
+            return ['bg-custom-wbg1', 'bg-custom-wbg2'];
+        case 'Vitality':
+            return ['bg-custom-vbg1', 'bg-custom-vbg2'];
+        case 'Spirit':
+            return ['bg-custom-sbg1', 'bg-custom-sbg2'];
+        case 'Utility':
+            return ['bg-gray-400'];
+        default:
+            return ['bg-gray-400'];
+    }
+}
+
+export function getCategory(itemCat: string) : string { 
     if (itemCat.includes('_WeaponMod')) return 'Weapon';
     if (itemCat.includes('_Armor')) return 'Vitality';
     if (itemCat.includes('_Tech')) return 'Spirit';
@@ -61,6 +76,8 @@ const findTier = (tier: string): number => {
     }
 }
 
+const tierCost = ["500", "1,250", "3,000","6,200"];
+
 const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ itemkey, upgrade, onSelect }) => {
 
     const category = getCategory(upgrade.m_eItemSlotType || '');
@@ -69,13 +86,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
     return (
         <div className="w-28 h-40 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
             <div className="w-full h-full flex flex-col">
-                <div className="bg-gray-800 text-xs p-1">
-                    <span className="text-[#98ffde] text-shadow">
-                        <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
-                        <b>{findCost(upgrade.m_iItemTier) ?? 'N/A'}</b>
-                    </span>
-                </div>
-                <div className={`${categoryColor} flex-grow flex items-center justify-center`}>
+                <div className={`${categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
                     {upgrade.m_strAbilityImage && (
                         <Image src={upgrade.m_strAbilityImage} alt={itemkey} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
                     )}
@@ -83,7 +94,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
                 <div className="bg-[#FFF0D7] p-1">
                     <p className="text-[#151912] text-xs truncate hover:underline">{itemkey}</p>
                 </div>
-                <div className="bg-gray-200 text-xs text-gray-600 p-1">
+                <div className="bg-gray-200 text-xs text-gray-600 p-1 rounded-b-md">
                     Tier {findTier(upgrade.m_iItemTier) ?? 'N/A'}
                 </div>
             </div>
@@ -91,7 +102,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
     );
 };
 //THIS IS PROBABLY BROKEN
-const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
+export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
     //const upgradeItems = items.filter(item => item.type === 'upgrade');
     const categories = ['Weapon', 'Vitality', 'Spirit', 'Utility'];
@@ -108,7 +119,7 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
 
     return (
         <div>
-            <div className="flex mb-4">
+            <div className="flex">
                 {categories.map(category => (
                     <button
                         key={category}
@@ -122,10 +133,14 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                     </button>
                 ))}
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg">
+            <div className="flex flex-col rounded-b-md rounded-r-md">
                 {[1, 2, 3, 4].map(tier => (
-                    <div key={tier} className="mb-4">
-                        <h3 className="text-xl font-semibold mb-2 text-white">Tier {tier}</h3>
+                    <div key={tier} 
+                        className={`p-2`}>
+                        <span className="text-[#98ffde] text-shadow">
+                            <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                            <b>{tierCost[tier-1]}</b>
+                        </span>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
                                 <ItemCard key={item.itemkey} {...item} onSelect={() => onItemSelect(item)} />
@@ -133,6 +148,7 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                         </div>
                     </div>
                 ))}
+           
             </div>
         </div>
     );
