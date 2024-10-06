@@ -1,6 +1,9 @@
 import { HeroType } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
-import { allStats, getHeroStartingStats } from '../lib/dataUtils';
+import { allStats, getHeroStartingStats, cachedAbilities } from '../lib/dataUtils';
+
+
+
 
 export async function calculateCharacterStats(
     character: HeroType,

@@ -1,7 +1,5 @@
-import { Root } from "postcss";
-
 export interface RootObject {
-//    Import_Base: W_Import_Base
+    //    Import_Base: W_Import_Base
     hero_inferno: Heroinferno;
     hero_gigawatt: Herogigawatt;
     hero_hornet: Herohornet;
@@ -29,8 +27,8 @@ export type abilityKeys = keyof RootObject;
 export type AData = RootObject[abilityKeys];
 
 export interface AWithKey {
-    heroname : string;
-    adata : AData;
+    heroname: string;
+    adata: AData;
 }
 
 // export interface Habilities {
@@ -382,6 +380,7 @@ export interface Subclass194 {
 export interface MWeaponInfo39 {
     m_BulletSpeedCurve: MBulletSpeedCurve;
     m_mapImpactEffects: MmapImpactEffects4;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties98 {
@@ -535,6 +534,7 @@ export interface MWeaponInfo38 {
     m_strCustomAttachmentSource: string;
     m_strBulletLoopingSound: string;
     m_flVerticalAimBias: number;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties97 {
@@ -1211,6 +1211,7 @@ export interface MWeaponInfo37 {
     m_bHitOnceAcrossAllBullets: boolean;
     m_eAttachmentSourceType: string;
     m_strCustomAttachmentSource: string;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties92 {
@@ -1377,6 +1378,7 @@ export interface MWeaponInfo36 {
     m_flPelletScatterFactor: number;
     m_vecScatterOffsets: number[][];
     m_flPelletScatterSpreadFactor: number;
+    [key: string]: any;
 }
 
 export interface Heroviscous {
@@ -1492,6 +1494,7 @@ export interface MWeaponInfo35 {
     m_flVerticalAimBias: number;
     m_bCanCrit: boolean;
     m_strBulletLoopingSound: string;
+    [key: string]: any;
 }
 
 export interface ESlotSignature420 {
@@ -2126,6 +2129,7 @@ export interface MWeaponInfo34 {
     m_flPelletScatterFactor: number;
     m_flBulletRadiusVsWorld: number;
     m_flExplosionDamageScaleAtMaxRadius: number;
+    [key: string]: any;
 }
 
 export interface Herolash {
@@ -2659,6 +2663,7 @@ export interface MWeaponInfo33 {
     m_StandingMoveSpreadPenalty: number[];
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Heroyamato {
@@ -3228,6 +3233,7 @@ export interface MWeaponInfo32 {
     m_bCanCrit: boolean;
     m_flVerticalAimBias: number;
     m_flExplosionRadius: number;
+    [key: string]: any;
 }
 
 export interface ESlotWeaponPrimary17 {
@@ -3343,6 +3349,7 @@ export interface MWeaponInfo31 {
     m_flPelletScatterSpreadFactor: number;
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface MHorizontalRecoil2 {
@@ -3930,6 +3937,7 @@ export interface MWeaponInfo30 {
     m_mapImpactEffects: MmapImpactEffects2;
     m_eAttachmentSourceType: string;
     m_strBulletLoopingSound: string;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties74 {
@@ -4217,6 +4225,7 @@ export interface MWeaponInfo29 {
     m_strLocalPlayerBulletImpactSound: string;
     m_szMuzzleFlashEffectName: string;
     m_strWeaponImpactEffect: string;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties72 {
@@ -4448,6 +4457,7 @@ export interface MWeaponInfo28 {
     m_AimingShootSpreadPenalty: number[];
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Heroshiv {
@@ -4906,6 +4916,7 @@ export interface MWeaponInfo27 {
     m_szMuzzleFlashEffectName: string;
     m_strWeaponImpactEffect: string;
     m_bHitOnceAcrossAllBullets: boolean;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties67 {
@@ -5026,6 +5037,7 @@ export interface MWeaponInfo26 {
     m_flBulletDamage: number;
     m_flIntraBurstCycleTime: number;
     m_iAmmoConsumedPerShot: number;
+    [key: string]: any;
 }
 
 export interface ESlotWeaponPrimary15 {
@@ -5123,6 +5135,7 @@ export interface MWeaponInfo25 {
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
     m_szSelfBulletTravelTracerParticle: string;
+    [key: string]: any;
 }
 
 export interface Herokrill {
@@ -5606,6 +5619,7 @@ export interface MWeaponInfo24 {
     m_flPelletScatterFactor: number;
     m_flPelletScatterSpreadFactor: number;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Heroorion {
@@ -6167,6 +6181,7 @@ export interface MWeaponInfo23 {
     m_vecScatterOffsets: number[][];
     m_flPelletScatterFactor: number;
     m_bHitOnceAcrossAllBullets: boolean;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties59 {
@@ -6294,6 +6309,7 @@ export interface MWeaponInfo22 {
     m_flPelletScatterSpreadFactor: number;
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Herobebop {
@@ -6989,6 +7005,7 @@ export interface MWeaponInfo21 {
     m_nLowAmmoIndicatorThreshold: number;
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties54 {
@@ -7420,6 +7437,7 @@ export interface MWeaponInfo20 {
     m_strBulletLoopingSound: string;
     m_strBulletImpactSound: string;
     m_strBulletWhizSound: string;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties50 {
@@ -7553,6 +7571,7 @@ export interface MWeaponInfo19 {
     m_flBulletFirstSegmentMinLength: number;
     m_flBulletSpeed: number;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Herokelvin {
@@ -8026,6 +8045,7 @@ export interface MWeaponInfo18 {
     m_eAttachmentSourceType: string;
     m_strBulletLoopingSound: string;
     m_flVerticalAimBias: number;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties46 {
@@ -8149,6 +8169,7 @@ export interface MWeaponInfo17 {
     m_StandingShootSpreadPenalty: number[];
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties45 {
@@ -8718,6 +8739,7 @@ export interface MWeaponInfo16 {
     m_StandingMoveSpreadPenalty: number[];
     m_AimingMoveSpreadPenalty: number[];
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Herochrono {
@@ -8812,6 +8834,7 @@ export interface MWeaponInfo15 {
     m_strWeaponImpactEffect: string;
     m_eAttachmentSourceType: string;
     m_flPenetrationPercent: number;
+    [key: string]: any;
 }
 
 export interface MmapImpactEffects4 {
@@ -9177,6 +9200,7 @@ export interface MWeaponInfo14 {
     m_mapImpactEffects: MmapImpactEffects2;
     m_eAttachmentSourceType: string;
     m_flVerticalAimBias: number;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties37 {
@@ -9313,6 +9337,7 @@ export interface MWeaponInfo13 {
     m_flBulletDamage: number;
     m_flIntraBurstCycleTime: number;
     m_szSelfBulletTravelTracerParticle: string;
+    [key: string]: any;
 }
 
 export interface Heroforge {
@@ -9840,6 +9865,7 @@ export interface MWeaponInfo12 {
     m_flBulletDamage: number;
     m_eAttachmentSourceType: string;
     m_strCustomAttachmentSource: string;
+    [key: string]: any;
 }
 
 export interface MmapImpactEffects3 {
@@ -9990,6 +10016,7 @@ export interface MWeaponInfo11 {
     m_strSpinDownSound: string;
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Herowraith {
@@ -10510,6 +10537,7 @@ export interface MWeaponInfo10 {
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
     m_szSelfBulletTravelTracerParticle: string;
+    [key: string]: any;
 }
 
 export interface Heroatlas {
@@ -11095,6 +11123,7 @@ export interface MWeaponInfo9 {
     m_strBulletImpactSound: string;
     m_bReloadSingleBulletsAllowCancel: boolean;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface MVerticallRecoil2 {
@@ -11347,6 +11376,7 @@ export interface MWeaponInfo8 {
     m_strBulletLoopingSound: string;
     m_strBulletWhizSound: string;
     m_strBulletImpactSound: string;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties23 {
@@ -11575,6 +11605,7 @@ export interface MprojectileInfo5 {
 export interface MWeaponInfo7 {
     m_BulletSpeedCurve: MBulletSpeedCurve;
     m_strBulletImpactSound: string;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties21 {
@@ -11693,6 +11724,7 @@ export interface MWeaponInfo6 {
     m_StandingShootSpreadPenalty: number[];
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Herohornet {
@@ -12145,6 +12177,7 @@ export interface MWeaponInfo5 {
     m_flVerticalAimBias: number;
     m_flBulletRadius: number;
     m_mapImpactEffects: MmapImpactEffects2;
+    [key: string]: any;
 }
 
 export interface MmapImpactEffects2 {
@@ -12279,6 +12312,7 @@ export interface MWeaponInfo4 {
     m_StandingShootSpreadPenalty: number[];
     m_strBulletImpactSound: string;
     m_szSelfBulletTravelTracerParticle: string;
+    [key: string]: any;
 }
 
 export interface Herogigawatt {
@@ -12821,6 +12855,7 @@ export interface MWeaponInfo3 {
     m_strBulletImpactSound: string;
     m_flIntraBurstCycleTime: number;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface Heroinferno {
@@ -14493,6 +14528,7 @@ export interface MvecFOVOperation {
 
 export interface MWeaponInfo2 {
     m_BulletSpeedCurve: MBulletSpeedCurve;
+    [key: string]: any;
 }
 
 export interface MmapAbilityProperties2 {
@@ -14635,6 +14671,7 @@ export interface MWeaponInfo {
     m_StandingShootSpreadPenalty: number[];
     m_strBulletImpactSound: string;
     m_flBulletDamage: number;
+    [key: string]: any;
 }
 
 export interface MmapImpactEffects {
