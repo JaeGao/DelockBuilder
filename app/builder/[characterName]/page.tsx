@@ -5,15 +5,11 @@ export default async function BuilderPage({ params }: { params: { characterName:
     const character = await getCharacter(params.characterName);
     const items = await getItems();
     const abilities = await getAbilitiesbyHero();
-    //console.log(abilities);
+    const initialStats = await getHeroStartingStats(params.characterName);
 
     if (!character) {
         return <div>Character not found</div>;
     }
 
-    return <CharacterBuilder character={character} items={items} />;
+    return <CharacterBuilder character={character} items={items} initialStats={initialStats} />;
 }
-
-/*getHeroStartingStats('haze').then(herostats => 
-    //console.log(herostats)
-)*/

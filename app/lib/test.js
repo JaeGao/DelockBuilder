@@ -104,7 +104,7 @@ function getInGameHeroes() {
 }
 function getHeroStartingStats(name) {
     return __awaiter(this, void 0, void 0, function () {
-        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, startStats, StatsZero, key, i;
+        var hero_id, hero_ids, w_vDS, w_vODS, v_vDS, v_vODS, s_vDS, allStatNames, startStats, StatsZero, key;
         return __generator(this, function (_a) {
             hero_id = "hero_".concat(name.toLowerCase());
             hero_ids = ("hero_".concat(name.toLowerCase())).toString();
@@ -133,23 +133,6 @@ function getHeroStartingStats(name) {
                     }
                 });
             }
-            for (key in startStats) {
-                for (i = 0; i < StatsZero.length; i++) {
-                    if (StatsZero[i].name === key) {
-                        StatsZero[i] = {
-                            name: key,
-                            stats: startStats[key] !== undefined ? startStats[key] : 0,
-                        };
-                        break;
-                    }
-                    else {
-                        StatsZero[i] = {
-                            name: StatsZero[i].name,
-                            stats: StatsZero[i].stats,
-                        };
-                    }
-                }
-            }
             return [2 /*return*/, StatsZero];
         });
     });
@@ -167,7 +150,7 @@ function getHeroStartingStats(name) {
 // console.log(StatsZero)
 //const StartStats = CV3['hero_haze']['m_mapStartingStats'];
 //console.log(GameHeroes['hero_haze']['m_mapStartingStats']['EMaxMoveSpeed'])
-getZeroHeroStats('haze').then(function (hazeStats) {
+getHeroStartingStats('haze').then(function (hazeStats) {
     return console.log(hazeStats);
 });
 // getInGameHeroes().then(heroesdata => {

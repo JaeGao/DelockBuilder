@@ -1,86 +1,117 @@
 import React from 'react';
-import { EnhancedCharacterStats } from './characterStatSystem';
-import { MmapStartingStats } from '../lib/herointerface';
+import { allStats } from '../lib/dataUtils';
 
 interface StatsSidebarProps {
-    characterStats: EnhancedCharacterStats;
-    baseStats: MmapStartingStats;
+    characterStats: allStats;
     characterName: string;
     characterClass: string;
 }
 
-const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, baseStats, characterName, characterClass }) => {
+const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass }) => {
+    console.log('StatsSidebar received characterStats:', characterStats);
+
     const formatStat = (value: number | undefined): string => {
-        return value !== undefined ? value.toFixed(2) : 'N/A';
+        if (value === undefined) return 'N/A';
+        return Number.isInteger(value) ? value.toString() : value.toFixed(2);
     };
 
-    const calculatePercentageDifference = (base: number, current: number): string => {
-        const diff = ((current - base) / base) * 100;
-        return diff === 0 ? '' : ` (${diff > 0 ? '+' : ''}${diff.toFixed(2)}%)`;
-    };
-
-    const renderStat = (label: string, baseValue: number, currentValue: number | undefined) => {
-        if (currentValue === undefined) return null;
-        const formattedBase = formatStat(baseValue);
-        const formattedCurrent = formatStat(currentValue);
-        const percentDiff = calculatePercentageDifference(baseValue, currentValue);
-
-        return (
-            <div className="flex justify-between items-center">
-                <span className="text-gray-300">{label}:</span>
-                <span className="text-white">
-                    <span className="font-bold">{formattedCurrent}</span>
-                    {percentDiff && <span className="text-green-400 text-xs ml-1">{percentDiff}</span>}
-                </span>
-            </div>
-        );
-    };
-
-    const statCategories = [
+    const statGroups = [
+        {
+            title: "Weapon Stats",
+            color: "text-red-400",
+            stats: [
+                { name: "Bullet Damage", key: "EBulletDamage" },
+                { name: "Weapon Damage Increase", key: "EBaseWeaponDamageIncrease" },
+                { name: "Rounds Per Second", key: "ERoundsPerSecond" },
+                { name: "Fire Rate", key: "EFireRate" },
+                { name: "Clip Size", key: "EClipSize" },
+                { name: "Clip Size Increase", key: "EClipSizeIncrease" },
+                { name: "Reload Time", key: "EReloadTime" },
+                { name: "Reload Speed", key: "EReloadSpeed" },
+                { name: "Bullet Speed", key: "EBulletSpeed" },
+                { name: "Bullet Speed Increase", key: "EBulletSpeedIncrease" },
+                { name: "Bullet Lifesteal", key: "EBulletLifesteal" },
+            ]
+        },
         {
             title: "Combat Stats",
+            color: "text-orange-400",
             stats: [
-                { label: "Max Health", key: "m_fMaxHealth" },
-                { label: "Bullet Damage", key: "bullet_damage" },
-                { label: "DPS", key: "dps" },
-                { label: "Clip Size", key: "clip_size" },
-                { label: "Weapon Power", key: "m_fWeaponPower" },
+                { name: "Light Melee Damage", key: "ELightMeleeDamage" },
+                { name: "Heavy Melee Damage", key: "EHeavyMeleeDamage" },
+            ]
+        },
+        {
+            title: "Vitality Stats",
+            color: "text-green-400",
+            stats: [
+                { name: "Max Health", key: "EMaxHealth" },
+                { name: "Health Regen", key: "EBaseHealthRegen" },
+                { name: "Bullet Armor", key: "EBulletArmorDamageReduction" },
+                { name: "Tech Armor", key: "ETechArmorDamageReduction" },
+                { name: "Bullet Shield", key: "EBulletShieldHealth" },
+                { name: "Tech Shield", key: "ETechShieldHealth" },
             ]
         },
         {
             title: "Movement Stats",
+            color: "text-blue-400",
             stats: [
-                { label: "Max Move Speed", key: "m_fMaxMoveSpeed" },
-                { label: "Sprint Speed", key: "m_fSprintSpeed" },
-                { label: "Crouch Speed", key: "m_fCrouchSpeed" },
+                { name: "Max Move Speed", key: "EMaxMoveSpeed" },
+                { name: "Sprint Speed", key: "ESprintSpeed" },
+                { name: "Stamina", key: "EStamina" },
+                { name: "Stamina Cooldown", key: "EStaminaCooldown" },
+                { name: "Stamina Regen Increase", key: "EStaminaRegenIncrease" },
             ]
         },
         {
-            title: "Ability Stats",
+            title: "Tech Stats",
+            color: "text-purple-400",
             stats: [
-                { label: "Ability Resource Max", key: "m_fAbilityResourceMax" },
-                { label: "Ability Resource Regen", key: "m_fAbilityResourceRegenPerSecond" },
-                { label: "Tech Duration", key: "m_fTechDuration" },
-                { label: "Tech Range", key: "m_fTechRange" },
+                { name: "Tech Duration", key: "ETechDuration" },
+                { name: "Tech Range", key: "ETechRange" },
+                { name: "Tech Cooldown", key: "ETechCooldown" },
+                { name: "Tech Lifesteal", key: "ETechLifesteal" },
+                { name: "Max Charges Increase", key: "EMaxChargesIncrease" },
+                { name: "Charge Cooldown", key: "ETechCooldownBetweenChargeUses" },
+            ]
+        },
+        {
+            title: "Other Stats",
+            color: "text-yellow-400",
+            stats: [
+                { name: "Crit Damage Received", key: "ECritDamageReceivedScale" },
+                { name: "Healing Output", key: "EHealingOutput" },
+                { name: "Debuff Resist", key: "EDebuffResist" },
             ]
         },
     ];
 
+    console.log('Rendering StatsSidebar with characterStats:', characterStats);
+
     return (
-        <div className="fixed top-0 right-0 w-80 h-screen bg-gray-800 p-4 overflow-y-auto text-sm">
-            <div className="sticky top-0 bg-gray-800 z-10 pb-4 mb-4 border-b border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-1">{characterName}</h2>
-                <p className="text-sm text-gray-400 mb-2">{characterClass}</p>
+        <div className="fixed top-0 right-0 w-80 h-screen bg-gray-900 p-3 overflow-y-auto text-sm">
+            <div className="sticky top-0 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
+                <h2 className="text-lg font-bold text-white">{characterName}</h2>
+                <p className="text-xs text-gray-400">{characterClass}</p>
             </div>
-            {statCategories.map((category, index) => (
-                <div key={index} className="mb-4">
-                    <h3 className="text-lg font-semibold text-white mb-2">{category.title}</h3>
+            {statGroups.map((group, groupIndex) => (
+                <div key={groupIndex} className="mb-4">
+                    <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title}</h4>
                     <div className="space-y-1">
-                        {category.stats.map(stat => renderStat(
-                            stat.label,
-                            (baseStats as any)[stat.key] || 0,
-                            (characterStats as any)[stat.key]
-                        ))}
+                        {group.stats.map((stat) => {
+                            const statValue = characterStats[stat.key as keyof allStats];
+                            console.log(`Stat ${stat.name} (${stat.key}):`, statValue);
+                            if (statValue === undefined) return null;
+                            return (
+                                <div key={stat.key} className="flex justify-between items-center">
+                                    <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                    <span className="text-white text-xs font-medium">
+                                        {formatStat(statValue)}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             ))}

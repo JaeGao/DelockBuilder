@@ -2,45 +2,56 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { EnhancedCharacterStats, calculateCharacterStats } from './characterStatSystem';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import ItemsDisplay from './ItemsDisplay';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
+import { allStats } from '../lib/dataUtils';
 
 interface CharacterBuilderProps {
     character: HeroWithKey;
     items: Upgrade_with_name[];
+    initialStats: allStats;
 }
 
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items }) => {
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [spiritItems, setSpiritItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
-    const [characterStats, setCharacterStats] = useState<EnhancedCharacterStats>(
-        calculateCharacterStats(character.data, [], items)
-    );
+    const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
-    const recalculateStats = () => {
-        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-            (item): item is Upgrade_with_name => item !== null
-        );
-        const newStats = calculateCharacterStats(character.data, allEquippedItems, items);
-        setCharacterStats(newStats);
+    useEffect(() => {
+        setCurrentStats(initialStats);
+    }, [initialStats]);
 
-        const newAbilities = allEquippedItems.map(item => item.itemkey);
-        setEquippedAbilities(newAbilities);
+    const calculateStats = (equippedItems: Upgrade_with_name[]) => {
+        let newStats = { ...initialStats };
+        equippedItems.forEach(item => {
+            Object.entries(item.upgrade).forEach(([key, value]) => {
+                if (typeof value === 'number' && key in newStats) {
+                    newStats[key as keyof allStats] += value;
+                }
+            });
+        });
+        return newStats;
     };
 
     useEffect(() => {
-        recalculateStats();
+        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
+            (item): item is Upgrade_with_name => item !== null
+        );
+        const newStats = calculateStats(allEquippedItems);
+        setCurrentStats(newStats);
+
+        const newAbilities = allEquippedItems.map(item => item.itemkey);
+        setEquippedAbilities(newAbilities);
     }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
 
     const handleItemSelect = (item: Upgrade_with_name) => {
@@ -203,8 +214,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items })
                 </div>
             </div>
             <StatsSidebar
-                characterStats={characterStats}
-                baseStats={character.data.m_mapStartingStats}
+                characterStats={currentStats || initialStats}
                 characterName={heroName}
                 characterClass={character.data._class}
             />

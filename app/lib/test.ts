@@ -57,15 +57,15 @@ export async function getInGameHeroes(): Promise<HeroFilteredList[]> {
 }
 
 
-export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> {
-    const hero_id = `hero_${name.toLowerCase()}` as HeroID; 
+export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
+    const hero_id = `hero_${name.toLowerCase()}` as HeroID;
     const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
-    const w_vDS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]);
-    const w_vODS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]);
-    const v_vDS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]);
-    const v_vODS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]);
-    const s_vDS : Array<string> = Object.values(GameHeroes[hero_id][SSD][eSSD][vDS]);
-    const allStatNames : Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
+    const w_vDS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]);
+    const w_vODS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]);
+    const v_vDS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]);
+    const v_vODS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]);
+    const s_vDS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eSSD][vDS]);
+    const allStatNames: Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
     const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
     var StatsZero = [] as HeroStats[];
     allStatNames.map((key, index) => {
@@ -74,14 +74,14 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
 
     let key: keyof typeof startStats;
     for (key in startStats) {
-        StatsZero = StatsZero.map(({name, stats}) =>  {
+        StatsZero = StatsZero.map(({ name, stats }) => {
             if (name === key) {
                 return {
-                    name, 
-                    stats : startStats[key] !== undefined ? startStats[key] : 0,
+                    name,
+                    stats: startStats[key] !== undefined ? startStats[key] : 0,
                 }
             } else {
-                return {name, stats,}
+                return { name, stats, }
             }
         });
     }
@@ -109,9 +109,9 @@ export async function getHeroStartingStats(name: string) : Promise<HeroStats[]> 
 
 //console.log(GameHeroes['hero_haze']['m_mapStartingStats']['EMaxMoveSpeed'])
 
-// getHeroStartingStats('haze').then(hazeStats => 
-//     console.log(hazeStats)
-// )
+getHeroStartingStats('haze').then(hazeStats =>
+    console.log(hazeStats)
+)
 
 // getInGameHeroes().then(heroesdata => {
 //     console.log(heroesdata[0].data.m_strIcon)

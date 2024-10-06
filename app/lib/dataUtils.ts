@@ -216,3 +216,6 @@ export function clearCache(): void {
     cachedItemsJson = null;
     cachedAbilitiesJson = null;
 }
+// getHeroStartingStats('haze').then(hazeStats =>
+//     console.log(hazeStats)
+// )
