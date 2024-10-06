@@ -1,43 +1,85 @@
-FI - FilteredItem.json
 HAS - HeroAbilityStats.json
 
+INITIAL VALUES:
 
+    'EBulletDamage', - m_flBulletDamage from HAS
+    'EBaseWeaponDamageIncrease', - 0
+    'ERoundsPerSecond', - from HAS {
+        - 1 / m_flCycleTime - Abrams, Bebop, Dynamo, Grey Talon, Haze, Infernus, Ivy, Kelvin, Lady Geist, Mirage, Mo & Krill, Pocket, Shiv, Hornet, Viscous, Warden, Wraith, Yamato
+        - m_iBurstShotCount / (m_flCycleTime + m_flIntraBurstCycleTime * m_iBurstShotCount) - Lash, Paradox, Seven, 
+        - 1 / m_flMaxSpinCycleTime - McGinnis
+    }
+    m_iBurstShotCount / (m_flCycleTime * (1/1 + MODIFIER_VALUE_FIRE_RATE) + m_flIntraBurstCycleTime * m_iBurstShotCount)
+    'EFireRate', - 0
+    'EClipSize', - m_iClipSize from HAS
+    'EClipSizeIncrease', - 0
+    'EReloadTime', - m_reloadDuration from HAS
+    'EReloadSpeed', - 0
+    'EBulletSpeed', - m_BulletSpeedCurve[m_vDomainMaxs][2] from HAS
+    'EBulletSpeedIncrease', - 0
+    'EBulletLifesteal', - 0
+    'ELightMeleeDamage', - from SS
+    'EHeavyMeleeDamage', - from SS
+    'EMaxHealth', - from SS
+    'EBaseHealthRegen', - from SS
+    'EBulletArmorDamageReduction', - 0 or from SS
+    'ETechArmorDamageReduction', - 0 or from SS
+    'EBulletShieldHealth', - 0
+    'ETechShieldHealth', - 0
+    'EHealingOutput', - 0
+    'EDebuffResist', - 0
+    'ECritDamageReceivedScale', -0
+    'EMaxMoveSpeed', - from SS
+    'ESprintSpeed', - from SS
+    'EStaminaCooldown', - 1 / EStaminaRegenPerSecond from SS
+    'EStaminaRegenIncrease', - 0
+    'EStamina', - from SS
+    'ETechCooldown', - 0
+    'ETechDuration', - from SS
+    'ETechRange', - from SS
+    'ETechLifesteal', - 0
+    'EMaxChargesIncrease', - 0
+    'ETechCooldownBetweenChargeUses' - 0
 
-'EBulletDamage' - m_flBulletDamage from HAS
-'EBaseWeaponDamageIncrease' - MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT from FI
-'ERoundsPerSecond' - from HAS
-- 1 / m_flCycleTime - Abrams, Bebop, Dynamo, Grey Talon, Haze, Infernus, Ivy, Kelvin, Lady Geist, Mirage, Mo & Krill, Pocket, Shiv, Hornet, Viscous, Warden, Wraith, Yamato
-- 1/ (m_flCycleTime + m_flIntraBurstCycleTime * m_iBurstShotCount) - Lash, Paradox, Seven, 
-- 1 / m_flMaxSpinCycleTime - McGinnis
+MODIFIER VALUES: 
+BS: Base Stats
 
-'EFireRate' - MODIFIER_VALUE_FIRE_RATE - FI
-'EClipSize' - m_iClipSize, MODIFIER_VALUE_AMMO_CLIP_SIZE -HAS & FI
-'EClipSizeIncrease' - MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT - FI
-'EReloadTime' - m_reloadDuration - HAS
-'EReloadSpeed' - MODIFIER_VALUE_RELOAD_SPEED (Only Active Reload) - FI
-'EBulletSpeed' - m_BulletSpeedcurve[m_vDomainMaxs][2] - HAS
-'EBulletSpeedIncrease' - 0, MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT - FI
-'EBulletLifesteal' - 0, EBulletLifesteal, MODIFIER_VALUE_BULLET_LIFESTEAL - FI
-'ELightMeleeDamage' - in SS
-'EHeavyMeleeDamage' - in SS
-'EMaxHealth' - in SS
-'EBaseHealthRegen' - in SS
-'EBulletArmorDamageReduction' 0 or in SS - MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST_PERCENT, MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST, MODIFIER_VALUE_BULLET_ARMOR
-'ETechArmorDamageReduction' - 0 or in SS - MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST, MODIFIER_VALUE_TECH_ARMOR - FI
-'EBulletShieldHealth' - EBulletShieldHealth, MODIFIER_VALUE_BULLET_SHIELD_HEALTH_MAX
-'ETechShieldHealth' - ETechShieldHealth, MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX
-'EHealingOutput' (Heal Amp) - EHealingOutput, MODIFIER_VALUE_HEAL_AMP_REGEN_PERCENT
-'EDebuffResist' - MODIFIER_VALUE_STATUS_RESISTANCE
-'ECritDamageReceivedScale' (Crit Reduction) - Nowhere
-'EMaxMoveSpeed' - in SS - MODIFIER_VALUE_MOVEMENT_SPEED_MAX,
-'ESprintSpeed'- in SS - MODIFIER_VALUE_SPRINT_SPEED_BONUS
-'EStaminaCooldown' - 1 / EStaminaRegenPerSecond (in SS)
-OR 1 / (EStaminaRegenPerSecond * 1 + MODIFIER_VALUE_STAMINUA_REGEN_PER_SECOND_PERCENTAGE)
-'EStaminaRegenIncrease' - MODIFIER_VALUE_STAMINUA_REGEN_PER_SECOND_PERCENTAGE
-'EStamina' - in SS - MODIFIER_VALUE_STAMINA, 
-'ETechCooldown' - ETechCooldown, MODIFIER_VALUE_COOLDOWN_REDUCTION_PERCENTAGE 
-'ETechDuration' - in SS - MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE
-'ETechRange' - in SS - MODIFIER_VALUE_TECH_RANGE_PERCENT
-'ETechLifesteal' - ETechLifesteal - MODIFIER_VALUE_TECH_LIFESTEAL
-'EMaxChargesIncrease' - MODIFIER_VALUE_BONUS_ABILITY_CHARGES
-'ETechCooldownBetweenChargeUses' - MODIFIER_VALUE_COOLDOWN_BETWEEN_CHARGE_REDUCTION_PERCENTAGE
+    'EBulletDamage' - BS * 1 + Sum(MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT)
+    'EBaseWeaponDamageIncrease' - Sum(MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT)
+    'ERoundsPerSecond' - 
+        - 1 / (m_flCycleTime / (1 + (MODIFIER_VALUE_FIRE_RATE / 100))) - Abrams, Bebop, Dynamo, Grey Talon, Haze, Infernus, Ivy, Kelvin, Lady Geist, Mirage, Mo & Krill, Pocket, Shiv, Hornet, Viscous, Warden, Wraith, Yamato
+        - m_iBurstShotCount / (m_flCycleTime / (1 + (MODIFIER_VALUE_FIRE_RATE / 100)) + m_flIntraBurstCycleTime * m_iBurstShotCount) - Lash, Paradox, Seven, 
+        - 1 / (m_flMaxSpinCycleTime / (1+ (MODIFIER_VALUE_FIRE_RATE) / 100)) - McGinnis
+
+    'EFireRate' - Sum(MODIFIER_VALUE_FIRE_RATE)
+    'EClipSize' - BS + MODIFIER_VALUE_AMMO_CLIP_SIZE 
+    'EClipSizeIncrease' - BS * (1 + MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT)
+    'EReloadTime' - BS * (1 + MODIFIER_VALUE_RELOAD_SPEED)
+    'EReloadSpeed' - MODIFIER_VALUE_RELOAD_SPEED (Only Active Reload)
+    'EBulletSpeed' - m_BulletSpeedcurve[m_vDomainMaxs][2] * (1 + MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT)
+    'EBulletSpeedIncrease' - MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT 
+    'EBulletLifesteal' - MODIFIER_VALUE_BULLET_LIFESTEAL 
+    'ELightMeleeDamage' - BS * (1 + MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT) + Weapon Power * (SOME SCALE)
+    'EHeavyMeleeDamage' - BS * (1 + MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT) + Weapon Power * (SOME SCALE)
+    'EMaxHealth' - ( BS + MODIFIER_VALUE_HEALTH_MAX ) * ( 1 + MODIFIER_VALUE_HEALTH_MAX_PERCENT )
+    'EBaseHealthRegen' - BS + MODIFIER_VALUE_HEALTH_REGEN_PER_SECOND 
+    DOES NOT FUCKING WORK
+    'EBulletArmorDamageReduction' -  MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST 
+    'ETechArmorDamageReduction' - MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST
+    DOES NOT FUCKING WORK
+    'EBulletShieldHealth' - BS + Sum(MODIFIER_VALUE_BULLET_SHIELD_HEALTH_MAX)
+    'ETechShieldHealth' - BS + Sum(MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX)
+    'EHealingOutput' (Heal Amp) - BS + MODIFIER_VALUE_HEAL_AMP_REGEN_PERCENT
+    'EDebuffResist' - BS + MODIFIER_VALUE_STATUS_RESISTANCE
+    'ECritDamageReceivedScale' (Crit Reduction) - Nowhere
+    'EMaxMoveSpeed' - BS + MODIFIER_VALUE_MOVEMENT_SPEED_MAX
+    'ESprintSpeed'- BS + MODIFIER_VALUE_SPRINT_SPEED_BONUS
+    'EStaminaCooldown' - 1 / (EStaminaRegenPerSecond from SS * (1 + MODIFIER_VALUE_STAMINUA_REGEN_PER_SECOND_PERCENTAGE))
+    'EStaminaRegenIncrease' - BS + MODIFIER_VALUE_STAMINUA_REGEN_PER_SECOND_PERCENTAGE
+    'EStamina' - BS + MODIFIER_VALUE_STAMINA, 
+    'ETechCooldown' - BS + MODIFIER_VALUE_COOLDOWN_REDUCTION_PERCENTAGE 
+    'ETechDuration' - BS + MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE
+    'ETechRange' - BS + MODIFIER_VALUE_TECH_RANGE_PERCENT
+    'ETechLifesteal' - BS + MODIFIER_VALUE_TECH_LIFESTEAL
+    'EMaxChargesIncrease' - BS + MODIFIER_VALUE_BONUS_ABILITY_CHARGES
+    'ETechCooldownBetweenChargeUses' - BS + MODIFIER_VALUE_COOLDOWN_BETWEEN_CHARGE_REDUCTION_PERCENTAGE
