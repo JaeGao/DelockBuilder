@@ -1,4 +1,4 @@
-HAS - HeroAbilityStats.json
+HAS: HeroAbilityStats.json
 
 INITIAL VALUES:
 
