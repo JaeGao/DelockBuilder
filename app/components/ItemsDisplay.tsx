@@ -6,6 +6,7 @@ import Image from 'next/image';
 interface ItemsDisplayProps {
     items: Upgrade_with_name[];
     onItemSelect: (item: Upgrade_with_name) => void;
+    equippedItems: Upgrade_with_name[];
 }
 
 const getCategoryColor = (category: string): string => {
@@ -46,21 +47,6 @@ export function getCategory(itemCat: string): string {
     return 'Other';
 };
 
-const findCost = (tier: string): string => {
-    switch (tier) {
-        case "EModTier_1":
-            return "500"
-        case "EModTier_2":
-            return "1250"
-        case "EModTier_3":
-            return "3000"
-        case "EModTier_4":
-            return "6200"
-        default:
-            return "N/A"
-    }
-}
-
 const findTier = (tier: string): number => {
     switch (tier) {
         case "EModTier_1":
@@ -78,17 +64,25 @@ const findTier = (tier: string): number => {
 
 const tierCost = ["500", "1,250", "3,000", "6,200"];
 
-const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ itemkey, upgrade, onSelect }) => {
-
+const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped: boolean }> = ({ itemkey, upgrade, onSelect, isEquipped }) => {
     const category = getCategory(upgrade.m_eItemSlotType || '');
     const categoryColor = getCategoryColor(category);
 
     return (
-        <div className="w-20 h-24 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
+        <div
+            className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''}`}
+            onClick={onSelect}
+        >
             <div className="w-full h-full flex flex-col">
                 <div className={`${categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
                     {upgrade.m_strAbilityImage && (
-                        <Image src={upgrade.m_strAbilityImage} alt={itemkey} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
+                        <Image
+                            src={upgrade.m_strAbilityImage}
+                            alt={itemkey}
+                            width={40}
+                            height={40}
+                            className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
+                        />
                     )}
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
@@ -98,10 +92,9 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
         </div>
     );
 };
-//THIS IS PROBABLY BROKEN
-export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
+
+export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect, equippedItems }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    //const upgradeItems = items.filter(item => item.type === 'upgrade');
     const categories = ['Weapon', 'Vitality', 'Spirit'];
 
     const categorizedItems = items.reduce((acc, item) => {
@@ -113,6 +106,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
         acc[category][tier].push(item);
         return acc;
     }, {} as Record<string, Record<number, Upgrade_with_name[]>>);
+
+    const isItemEquipped = (item: Upgrade_with_name) => {
+        return equippedItems.some(equippedItem => equippedItem.itemkey === item.itemkey);
+    };
 
     return (
         <div>
@@ -131,7 +128,6 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
                 ))}
             </div>
             <div className="flex flex-col rounded-b-md rounded-r-md">
-
                 {[1, 2, 3, 4].map(tier => (
                     <div key={tier}
                         className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} p-1`}>
@@ -141,12 +137,16 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
                         </span>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
-                                <ItemCard key={item.itemkey} {...item} onSelect={() => onItemSelect(item)} />
+                                <ItemCard
+                                    key={item.itemkey}
+                                    {...item}
+                                    onSelect={() => onItemSelect(item)}
+                                    isEquipped={isItemEquipped(item)}
+                                />
                             ))}
                         </div>
                     </div>
                 ))}
-
             </div>
         </div>
     );

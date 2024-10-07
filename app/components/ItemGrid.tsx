@@ -5,7 +5,7 @@ import { Upgrade_with_name } from '../lib/itemInterface';
 interface ItemGridProps {
     title: string;
     items: (Upgrade_with_name | null)[];
-    onItemRemove: (index: number) => void;
+    onItemToggle: (item: Upgrade_with_name) => void;
 }
 
 const getCategoryColor = (itemCat: string | undefined): string => {
@@ -17,16 +17,6 @@ const getCategoryColor = (itemCat: string | undefined): string => {
     return 'bg-gray-400';
 };
 
-const findCost = (tier: string | undefined): string => {
-    switch (tier) {
-        case "EModTier_1": return "500";
-        case "EModTier_2": return "1250";
-        case "EModTier_3": return "3000";
-        case "EModTier_4": return "6200";
-        default: return "N/A";
-    }
-}
-
 const findTier = (tier: string | undefined): string => {
     switch (tier) {
         case "EModTier_1": return 'I';
@@ -36,18 +26,22 @@ const findTier = (tier: string | undefined): string => {
         default: return 'I';
     }
 }
-const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemRemove }) => {
+
+const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemToggle }) => {
     return (
-        <div className="w-40 shrink-0">
+        <div className="w-36 shrink-0">
             <h3 className="text-lg font-semibold">{title}</h3>
-            <div className="grid grid-cols-2 gap-px bg-gray-800 p-0.1 rounded-md">
+            <div className="grid grid-cols-2 gap-px bg-gray-800 p-0.5 rounded-md">
                 {items.map((item, index) => (
-                    <div key={index} className="bg-gray-800 p-1 rounded overflow-hidden flex flex-col aspect-square w-full h-20 rounded-md">
+                    <div key={index} className="bg-gray-800 p-1 rounded overflow-hidden flex flex-col aspect-square w-full h-16 rounded-md">
                         {item ? (
-                            <div className="flex flex-col h-full">
+                            <div
+                                className="flex flex-col h-full cursor-pointer"
+                                onClick={() => onItemToggle(item)}
+                            >
                                 <div className={`${getCategoryColor(item.upgrade.m_eItemSlotType)} flex-grow flex items-center justify-center relative rounded-t-md`}>
                                     {item.upgrade.m_strAbilityImage && (
-                                        <div className="relative w-3/4 h-3/4 z-10">
+                                        <div className="relative w-1/2 h-1/2 z-10">
                                             <Image
                                                 src={item.upgrade.m_strAbilityImage}
                                                 alt={item.itemkey}
@@ -55,20 +49,10 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemRemove }) => {
                                                 objectFit="contain"
                                                 className="filter brightness-0 saturate-100"
                                             />
-                                            {/* <p className="absolute bottom-0 text-center text-[#151912] text-[10px] truncate">{item.itemkey}</p> */}
                                         </div>
                                     )}
-                                    <button
-                                        onClick={() => onItemRemove(index)}
-                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]"
-                                    >
-                                        x
-                                    </button>
                                 </div>
-                                {/* <div className="bg-[#FFF0D7] p-1 flex-shrink-0">
-                                    <p className="text-[#151912] text-[10px] truncate">{item.itemkey}</p>
-                                </div> */}
-                                <div className="bg-gray-200 text-center text-[12px] text-gray-600  flex-shrink-0 rounded-b-md">
+                                <div className="bg-gray-200 text-center text-[12px] text-gray-600 flex-shrink-0 rounded-b-md">
                                     {findTier(item.upgrade.m_iItemTier)}
                                 </div>
                             </div>
