@@ -102,7 +102,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
 export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
     //const upgradeItems = items.filter(item => item.type === 'upgrade');
-    const categories = ['Weapon', 'Vitality', 'Spirit', 'Utility'];
+    const categories = ['Weapon', 'Vitality', 'Spirit'];
 
     const categorizedItems = items.reduce((acc, item) => {
         const category = getCategory(item.upgrade.m_eItemSlotType || '');
