@@ -137,7 +137,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     return (
         <div className="flex mt-6">
-            <div className="flex flex-col 2xl:flex-row w-[calc(100%-14rem)] p-3">
+            <div className="flex flex-col 2xl:flex-row w-full pr-[calc(25%+12px)] min-pr-[212px] max-pr-[312px]">
                 <div className="flex flex-row 2xl:flex-col flex-wrap min-w-52">
                     <div className="mb-2 mr-4 flex flex-col justify-items-center float-left">
                         <div className="">
