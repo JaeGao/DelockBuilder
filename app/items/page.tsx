@@ -1,6 +1,6 @@
 import React from 'react';
 import { getItems } from '../lib/dataUtils';
-import ClientItemsDisplay from '../components/ClientItemsDisplay';
+import ClientItemsWrapper from '../components/ClientItemsWrapper';
 
 export default async function ItemsPage() {
     const items = await getItems();
@@ -8,7 +8,7 @@ export default async function ItemsPage() {
     return (
         <div className="container mx-auto 2xl:ml-52 p-4">
             <h1 className="text-3xl font-bold mb-6">Items</h1>
-            <ClientItemsDisplay items={items} />
+            <ClientItemsWrapper initialItems={items} />
         </div>
     );
 }
