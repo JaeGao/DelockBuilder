@@ -38,7 +38,7 @@ const getCategoryBackground = (category: string): string[] => {
     }
 }
 
-export function getCategory(itemCat: string) : string { 
+export function getCategory(itemCat: string): string {
     if (itemCat.includes('_WeaponMod')) return 'Weapon';
     if (itemCat.includes('_Armor')) return 'Vitality';
     if (itemCat.includes('_Tech')) return 'Spirit';
@@ -76,7 +76,7 @@ const findTier = (tier: string): number => {
     }
 }
 
-const tierCost = ["500", "1,250", "3,000","6,200"];
+const tierCost = ["500", "1,250", "3,000", "6,200"];
 
 const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ itemkey, upgrade, onSelect }) => {
 
@@ -84,7 +84,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
     const categoryColor = getCategoryColor(category);
 
     return (
-        <div className="w-24 h-28 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
+        <div className="w-20 h-24 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
             <div className="w-full h-full flex flex-col">
                 <div className={`${categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
                     {upgrade.m_strAbilityImage && (
@@ -92,7 +92,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
                     )}
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
-                    <p className="text-[#151912] text-xs text-balance hover:underline">{itemkey}</p>
+                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
                 </div>
             </div>
         </div>
@@ -120,7 +120,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
                 {categories.map(category => (
                     <button
                         key={category}
-                        className={`px-4 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
+                        className={`px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
                             ? `${getCategoryColor(category)} text-white`
                             : 'bg-gray-200 text-gray-700'
                             }`}
@@ -131,13 +131,13 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
                 ))}
             </div>
             <div className="flex flex-col rounded-b-md rounded-r-md">
-            
+
                 {[1, 2, 3, 4].map(tier => (
-                    <div key={tier} 
+                    <div key={tier}
                         className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} p-1`}>
                         <span className="text-[#98ffde] text-shadow">
                             <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
-                            <b>{tierCost[tier-1]}</b>
+                            <b>{tierCost[tier - 1]}</b>
                         </span>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
@@ -146,7 +146,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
                         </div>
                     </div>
                 ))}
-           
+
             </div>
         </div>
     );

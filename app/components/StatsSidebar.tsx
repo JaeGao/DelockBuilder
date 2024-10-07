@@ -90,23 +90,23 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     console.log('Rendering StatsSidebar with characterStats:', characterStats);
 
     return (
-        <div className="fixed top-0 right-0 w-56 h-screen bg-gray-900 p-3 overflow-y-auto text-sm">
-            <div className="sticky top-0 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
-                <h2 className="text-lg font-bold text-white">{characterName}</h2>
+        <div className="w-1/4 min-w-[200px] max-w-[300px] bg-gray-900">
+            <div className="sticky top-0 p-3 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
+                <h2 className="text-lg  font-bold text-white">{characterName}</h2>
                 <p className="text-xs text-gray-400">{characterClass}</p>
             </div>
             {statGroups.map((group, groupIndex) => (
-                <div key={groupIndex} className="mb-4">
+                <div key={groupIndex} className="mb-4  p-3">
                     <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title}</h4>
-                    <div className="space-y-1">
+                    <div className="space-y-1 ">
                         {group.stats.map((stat) => {
-                            const statValue = characterStats[stat.key as keyof allStats];                             
+                            const statValue = characterStats[stat.key as keyof allStats];
                             console.log(`Stat ${stat.name} (${stat.key}):`, statValue);
                             if (statValue === undefined) return null;
-                            if ((stat.name === "Weapon Damage Increase" || 
-                                stat.name === "Fire Rate" || 
-                                stat.name === "Clip Size Increase" || 
-                                stat.name === "Reload Reduction" || 
+                            if ((stat.name === "Weapon Damage Increase" ||
+                                stat.name === "Fire Rate" ||
+                                stat.name === "Clip Size Increase" ||
+                                stat.name === "Reload Reduction" ||
                                 stat.name === "Bullet Velocity Increase" ||
                                 stat.name === "Bullet Lifesteal" ||
                                 stat.name === "Bullet Resist" ||
@@ -139,7 +139,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                     </div>
                                 );
                             }
-                            
+
                         })}
                     </div>
                 </div>
