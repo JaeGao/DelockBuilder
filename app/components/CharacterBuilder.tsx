@@ -137,7 +137,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     return (
         <div className="flex mt-6">
-            <div className={`
+            <div className={`p-4
         flex flex-col 2xl:flex-row
         w-full
         pr-[clamp(212px,calc(25vw+12px),312px)]
