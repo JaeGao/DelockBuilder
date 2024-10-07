@@ -181,7 +181,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     </div>
                 </div>
 
-                <div>
+                <div className="w-full mr-[4%]">
                     {errorMessage && (
                         <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                             {errorMessage}

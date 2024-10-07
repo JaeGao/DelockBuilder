@@ -9,6 +9,14 @@ interface ItemsDisplayProps {
     equippedItems: Upgrade_with_name[];
 }
 
+interface IGNameMap {
+    [key: string]: string;
+}
+
+
+const nameMap : IGNameMap = require('../data/Items/ItemNameDict.json');
+
+
 const getCategoryColor = (category: string): string => {
     switch (category) {
         case 'Weapon':
@@ -86,7 +94,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
                     )}
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
-                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
+                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{nameMap[itemkey]}</p>
                 </div>
             </div>
         </div>
@@ -127,7 +135,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect,
                     </button>
                 ))}
             </div>
-            <div className="flex flex-col rounded-b-md rounded-r-md">
+            <div className="flex flex-col w-full rounded-b-md rounded-r-md">
                 {[1, 2, 3, 4].map(tier => (
                     <div key={tier}
                         className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} p-1`}>
