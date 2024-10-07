@@ -202,14 +202,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                             equippedItems={allEquippedItems}
                         />
                     </div>
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                         <h3 className="text-xl font-bold mb-2">Equipped Abilities</h3>
                         <ul>
                             {equippedAbilities.map((ability, index) => (
                                 <li key={index}>{ability}</li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <StatsSidebar

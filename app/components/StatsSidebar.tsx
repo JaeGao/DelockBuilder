@@ -55,6 +55,9 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                 { name: "Spirit Resist", key: "ETechArmorDamageReduction" },
                 { name: "Bullet Shield", key: "EBulletShieldHealth" },
                 { name: "Spirit Shield", key: "ETechShieldHealth" },
+                { name: "Heal Amp", key: "EHealingOutput" },
+                { name: "Debuff Resist", key: "EDebuffResist" },
+                { name: "Crit Reduction", key: "ECritDamageReceivedScale" },
             ]
         },
         {
@@ -82,16 +85,24 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                 { name: "Charge Cooldown", key: "ETechCooldownBetweenChargeUses" },
             ]
         },
-        {
-            title: "Other",
-            color: "text-yellow-400",
-            bgColor: "bg-yellow-500",
-            stats: [
-                { name: "Heal Amp", key: "EHealingOutput" },
-                { name: "Debuff Resist", key: "EDebuffResist" },
-                { name: "Crit Reduction", key: "ECritDamageReceivedScale" },
-            ]
-        },
+        // {
+        //     title: "Skills",
+        //     color: "text-amber-400",
+        //     bgColor: "bg-amber-500",
+        //     stats: [
+        //         { name: "Ability Cooldown", key: "AbilityCooldown.m_strValue" },
+        //         { name: "Ability Duration", key: "AbilityDuration.m_strValue" },
+        //         { name: "Ability Cast Range", key: "AbilityCastRange.m_strValue" }
+        //     ]
+        // }
+        // {
+        //     title: "Other",
+        //     color: "text-yellow-400",
+        //     bgColor: "bg-yellow-500",
+        //     stats: [
+
+        //     ]
+        // },
     ];
 
     const percentageStats = [
