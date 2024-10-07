@@ -131,9 +131,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
                 ))}
             </div>
             <div className="flex flex-col rounded-b-md rounded-r-md">
+            
                 {[1, 2, 3, 4].map(tier => (
                     <div key={tier} 
-                        className={`p-1`}>
+                        className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} p-1`}>
                         <span className="text-[#98ffde] text-shadow">
                             <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
                             <b>{tierCost[tier-1]}</b>
