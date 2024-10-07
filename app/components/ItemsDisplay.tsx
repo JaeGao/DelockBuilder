@@ -6,6 +6,7 @@ import Image from 'next/image';
 interface ItemsDisplayProps {
     items: Upgrade_with_name[];
     onItemSelect: (item: Upgrade_with_name) => void;
+    equippedItems: Upgrade_with_name[];
 }
 
 const getCategoryColor = (category: string): string => {
@@ -23,28 +24,28 @@ const getCategoryColor = (category: string): string => {
     }
 };
 
-const getCategory = (itemCat: string): string => {
+const getCategoryBackground = (category: string): string[] => {
+    switch (category) {
+        case 'Weapon':
+            return ['bg-custom-wbg1', 'bg-custom-wbg2'];
+        case 'Vitality':
+            return ['bg-custom-vbg1', 'bg-custom-vbg2'];
+        case 'Spirit':
+            return ['bg-custom-sbg1', 'bg-custom-sbg2'];
+        case 'Utility':
+            return ['bg-gray-400'];
+        default:
+            return ['bg-gray-400'];
+    }
+}
+
+export function getCategory(itemCat: string): string {
     if (itemCat.includes('_WeaponMod')) return 'Weapon';
     if (itemCat.includes('_Armor')) return 'Vitality';
     if (itemCat.includes('_Tech')) return 'Spirit';
     if (itemCat.includes('mods_utility')) return 'Utility';
     return 'Other';
 };
-
-const findCost = (tier: string): string => {
-    switch (tier) {
-        case "EModTier_1":
-            return "500"
-        case "EModTier_2":
-            return "1250"
-        case "EModTier_3":
-            return "3000"
-        case "EModTier_4":
-            return "6200"
-        default:
-            return "N/A"
-    }
-}
 
 const findTier = (tier: string): number => {
     switch (tier) {
@@ -61,40 +62,40 @@ const findTier = (tier: string): number => {
     }
 }
 
-const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ itemkey, upgrade, onSelect }) => {
+const tierCost = ["500", "1,250", "3,000", "6,200"];
 
+const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped: boolean }> = ({ itemkey, upgrade, onSelect, isEquipped }) => {
     const category = getCategory(upgrade.m_eItemSlotType || '');
     const categoryColor = getCategoryColor(category);
 
     return (
-        <div className="w-28 h-40 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
+        <div
+            className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''}`}
+            onClick={onSelect}
+        >
             <div className="w-full h-full flex flex-col">
-                <div className="bg-gray-800 text-xs p-1">
-                    <span className="text-[#98ffde] text-shadow">
-                        <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
-                        <b>{findCost(upgrade.m_iItemTier) ?? 'N/A'}</b>
-                    </span>
-                </div>
-                <div className={`${categoryColor} flex-grow flex items-center justify-center`}>
+                <div className={`${categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
                     {upgrade.m_strAbilityImage && (
-                        <Image src={upgrade.m_strAbilityImage} alt={itemkey} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
+                        <Image
+                            src={upgrade.m_strAbilityImage}
+                            alt={itemkey}
+                            width={40}
+                            height={40}
+                            className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
+                        />
                     )}
                 </div>
-                <div className="bg-[#FFF0D7] p-1">
-                    <p className="text-[#151912] text-xs truncate hover:underline">{itemkey}</p>
-                </div>
-                <div className="bg-gray-200 text-xs text-gray-600 p-1">
-                    Tier {findTier(upgrade.m_iItemTier) ?? 'N/A'}
+                <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
+                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
                 </div>
             </div>
         </div>
     );
 };
-//THIS IS PROBABLY BROKEN
-const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
+
+export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect, equippedItems }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    //const upgradeItems = items.filter(item => item.type === 'upgrade');
-    const categories = ['Weapon', 'Vitality', 'Spirit', 'Utility'];
+    const categories = ['Weapon', 'Vitality', 'Spirit'];
 
     const categorizedItems = items.reduce((acc, item) => {
         const category = getCategory(item.upgrade.m_eItemSlotType || '');
@@ -106,13 +107,17 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
         return acc;
     }, {} as Record<string, Record<number, Upgrade_with_name[]>>);
 
+    const isItemEquipped = (item: Upgrade_with_name) => {
+        return equippedItems.some(equippedItem => equippedItem.itemkey === item.itemkey);
+    };
+
     return (
         <div>
-            <div className="flex mb-4">
+            <div className="flex">
                 {categories.map(category => (
                     <button
                         key={category}
-                        className={`px-4 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
+                        className={`px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
                             ? `${getCategoryColor(category)} text-white`
                             : 'bg-gray-200 text-gray-700'
                             }`}
@@ -122,13 +127,22 @@ const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect }) => {
                     </button>
                 ))}
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg">
+            <div className="flex flex-col rounded-b-md rounded-r-md">
                 {[1, 2, 3, 4].map(tier => (
-                    <div key={tier} className="mb-4">
-                        <h3 className="text-xl font-semibold mb-2 text-white">Tier {tier}</h3>
+                    <div key={tier}
+                        className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} p-1`}>
+                        <span className="text-[#98ffde] text-shadow">
+                            <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                            <b>{tierCost[tier - 1]}</b>
+                        </span>
                         <div className="flex flex-wrap">
                             {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
-                                <ItemCard key={item.itemkey} {...item} onSelect={() => onItemSelect(item)} />
+                                <ItemCard
+                                    key={item.itemkey}
+                                    {...item}
+                                    onSelect={() => onItemSelect(item)}
+                                    isEquipped={isItemEquipped(item)}
+                                />
                             ))}
                         </div>
                     </div>

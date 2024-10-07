@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
-import ItemsDisplay from './ItemsDisplay';
+import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -54,163 +54,162 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         setEquippedAbilities(newAbilities);
     }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
 
-    const handleItemSelect = (item: Upgrade_with_name) => {
-        const isItemAlreadyEquipped = [
+    const handleItemToggle = (item: Upgrade_with_name) => {
+        const category = getCategory(item.upgrade.m_eItemSlotType || '');
+        let primaryGrid: (Upgrade_with_name | null)[];
+        let setPrimaryGrid: React.Dispatch<React.SetStateAction<(Upgrade_with_name | null)[]>>;
+
+        switch (category) {
+            case 'Weapon':
+                primaryGrid = weaponItems;
+                setPrimaryGrid = setWeaponItems;
+                break;
+            case 'Vitality':
+                primaryGrid = vitalityItems;
+                setPrimaryGrid = setVitalityItems;
+                break;
+            case 'Spirit':
+                primaryGrid = spiritItems;
+                setPrimaryGrid = setSpiritItems;
+                break;
+            default:
+                primaryGrid = utilityItems;
+                setPrimaryGrid = setUtilityItems;
+                break;
+        }
+
+        const existingIndex = [
             ...weaponItems,
             ...vitalityItems,
             ...spiritItems,
             ...utilityItems
-        ].some(equippedItem => equippedItem?.itemkey === item.itemkey);
+        ].findIndex(equippedItem => equippedItem?.itemkey === item.itemkey);
 
-        if (isItemAlreadyEquipped) {
-            setErrorMessage('This item is already equipped!');
-            setTimeout(() => setErrorMessage(null), 3000);
-            return;
-        }
+        if (existingIndex !== -1) {
+            // Item is already equipped, so unequip it
+            const gridToUpdate = existingIndex < 4 ? setWeaponItems :
+                existingIndex < 8 ? setVitalityItems :
+                    existingIndex < 12 ? setSpiritItems :
+                        setUtilityItems;
 
-        let targetGrid: (Upgrade_with_name | null)[];
-        let setTargetGrid: React.Dispatch<React.SetStateAction<(Upgrade_with_name | null)[]>>;
-
-        const category = getCategory(item.upgrade.m_strAbilityImage || '');
-        switch (category) {
-            case 'Weapon':
-                targetGrid = weaponItems;
-                setTargetGrid = setWeaponItems;
-                break;
-            case 'Vitality':
-                targetGrid = vitalityItems;
-                setTargetGrid = setVitalityItems;
-                break;
-            case 'Spirit':
-                targetGrid = spiritItems;
-                setTargetGrid = setSpiritItems;
-                break;
-            case 'Utility':
-                targetGrid = utilityItems;
-                setTargetGrid = setUtilityItems;
-                break;
-            default:
-                setErrorMessage('Invalid item category!');
+            gridToUpdate(prev => {
+                const newGrid = [...prev];
+                newGrid[existingIndex % 4] = null;
+                return newGrid;
+            });
+        } else {
+            // Item is not equipped, so try to equip it
+            const emptyIndex = primaryGrid.findIndex(slot => slot === null);
+            if (emptyIndex !== -1) {
+                // There's space in the primary grid
+                setPrimaryGrid(prev => {
+                    const newGrid = [...prev];
+                    newGrid[emptyIndex] = item;
+                    return newGrid;
+                });
+            } else if (category !== 'Utility') {
+                // Primary grid is full, try to place in utility grid
+                const utilityEmptyIndex = utilityItems.findIndex(slot => slot === null);
+                if (utilityEmptyIndex !== -1) {
+                    setUtilityItems(prev => {
+                        const newGrid = [...prev];
+                        newGrid[utilityEmptyIndex] = item;
+                        return newGrid;
+                    });
+                } else {
+                    setErrorMessage('No empty slots available!');
+                    setTimeout(() => setErrorMessage(null), 3000);
+                }
+            } else {
+                setErrorMessage('No empty slots available!');
                 setTimeout(() => setErrorMessage(null), 3000);
-                return;
+            }
         }
-
-        const emptyIndex = targetGrid.findIndex(slot => slot === null);
-        if (emptyIndex === -1) {
-            setErrorMessage('No empty slots in the appropriate grid!');
-            setTimeout(() => setErrorMessage(null), 3000);
-            return;
-        }
-
-        setTargetGrid(prev => {
-            const newGrid = [...prev];
-            newGrid[emptyIndex] = item;
-            return newGrid;
-        });
-    };
-
-    const handleItemRemove = (category: 'Weapon' | 'Vitality' | 'Spirit' | 'Utility', index: number) => {
-        let setTargetGrid: React.Dispatch<React.SetStateAction<(Upgrade_with_name | null)[]>>;
-
-        switch (category) {
-            case 'Weapon':
-                setTargetGrid = setWeaponItems;
-                break;
-            case 'Vitality':
-                setTargetGrid = setVitalityItems;
-                break;
-            case 'Spirit':
-                setTargetGrid = setSpiritItems;
-                break;
-            case 'Utility':
-                setTargetGrid = setUtilityItems;
-                break;
-        }
-
-        setTargetGrid(prev => {
-            const newGrid = [...prev];
-            newGrid[index] = null;
-            return newGrid;
-        });
     };
 
     const filteredItems = items.filter((item) =>
         item.itemkey.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const getCategory = (imageUrl: string): string => {
-        if (imageUrl.includes('mods_weapon')) return 'Weapon';
-        if (imageUrl.includes('mods_armor')) return 'Vitality';
-        if (imageUrl.includes('mods_tech')) return 'Spirit';
-        if (imageUrl.includes('mods_utility')) return 'Utility';
-        return 'Other';
-    };
+    const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
+        (item): item is Upgrade_with_name => item !== null
+    );
 
     return (
-        <div className="flex">
-            <div className="w-[calc(100%-20rem)] p-4">
-                <div className="mb-2 flex items-center">
-                    {character.data.m_strIconHeroCard && (
-                        <Image
-                            src={character.data.m_strIconHeroCard}
-                            alt={heroName}
-                            width={80}
-                            height={80}
-                            className="rounded-full mr-3"
+        <div className="flex mt-6">
+            <div className={`
+        flex flex-col 2xl:flex-row
+        w-full
+        pr-[clamp(212px,calc(25vw+12px),312px)]
+    `}>
+                <div className="flex flex-row 2xl:flex-col flex-wrap min-w-52">
+                    <div className="mb-2 mr-4 flex flex-col justify-items-center float-left">
+                        <div className="">
+                            <h2 className="text-3xl font-bold">{heroName}</h2>
+                        </div>
+                        {character.data.m_strIconHeroCard && (
+                            <Image
+                                src={character.data.m_strIconHeroCard}
+                                alt={heroName}
+                                width={100}
+                                height={100}
+                                className="rounded-full mb-2 object-none"
+                            />
+                        )}
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
+                        <ItemGrid
+                            title="Weapon"
+                            items={weaponItems}
+                            onItemToggle={(item) => handleItemToggle(item)}
                         />
+                        <ItemGrid
+                            title="Vitality"
+                            items={vitalityItems}
+                            onItemToggle={(item) => handleItemToggle(item)}
+                        />
+                        <ItemGrid
+                            title="Spirit"
+                            items={spiritItems}
+                            onItemToggle={(item) => handleItemToggle(item)}
+                        />
+                        <ItemGrid
+                            title="Flex"
+                            items={utilityItems}
+                            onItemToggle={(item) => handleItemToggle(item)}
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    {errorMessage && (
+                        <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
+                            {errorMessage}
+                        </div>
                     )}
-                    <div>
-                        <h2 className="text-lg font-bold">{heroName}</h2>
-                        <p className="text-sm text-gray-300">{character.data._class}</p>
+                    <input
+                        type="text"
+                        placeholder="Search upgrade items..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
+                    />
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold mb-2">Available Items</h3>
+                        <ItemsDisplay
+                            items={filteredItems}
+                            onItemSelect={handleItemToggle}
+                            equippedItems={allEquippedItems}
+                        />
                     </div>
-                </div>
-                {errorMessage && (
-                    <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
-                        {errorMessage}
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold mb-2">Equipped Abilities</h3>
+                        <ul>
+                            {equippedAbilities.map((ability, index) => (
+                                <li key={index}>{ability}</li>
+                            ))}
+                        </ul>
                     </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                    <ItemGrid
-                        title="Weapon"
-                        items={weaponItems}
-                        onItemRemove={(index) => handleItemRemove('Weapon', index)}
-                    />
-                    <ItemGrid
-                        title="Vitality"
-                        items={vitalityItems}
-                        onItemRemove={(index) => handleItemRemove('Vitality', index)}
-                    />
-                    <ItemGrid
-                        title="Spirit"
-                        items={spiritItems}
-                        onItemRemove={(index) => handleItemRemove('Spirit', index)}
-                    />
-                    <ItemGrid
-                        title="Utility"
-                        items={utilityItems}
-                        onItemRemove={(index) => handleItemRemove('Utility', index)}
-                    />
-                </div>
-
-                <input
-                    type="text"
-                    placeholder="Search upgrade items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full p-2 mb-4 bg-gray-700 text-white rounded"
-                />
-                <div className="mb-4">
-                    <h3 className="text-xl font-bold mb-2">Available Items</h3>
-                    <ItemsDisplay items={filteredItems} onItemSelect={handleItemSelect} />
-                </div>
-                <div className="mb-4">
-                    <h3 className="text-xl font-bold mb-2">Equipped Abilities</h3>
-                    <ul>
-                        {equippedAbilities.map((ability, index) => (
-                            <li key={index}>{ability}</li>
-                        ))}
-                    </ul>
                 </div>
             </div>
             <StatsSidebar

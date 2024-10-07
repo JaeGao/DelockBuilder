@@ -11,6 +11,8 @@ const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
 type itemkeys = keyof upgrades;
 
+let specialfire = ["hero_lash", "hero_chrono", "hero_gigawatt"]
+
 export interface HeroStats {
     name: string,
     stats: number;
@@ -23,7 +25,7 @@ export interface allStats {
 // Caching variables for processed data
 let cachedCharacters: HeroWithKey[] | null = null;
 let cachedItems: Upgrade_with_name[] | null = null;
-let cachedAbilities: AWithKey[] | null = null;
+export let cachedAbilities: AWithKey[] | null = null;
 
 // Caching variables for raw JSON data
 let cachedCharactersJson: Heroes | null = null;
@@ -178,6 +180,7 @@ const vODS = 'm_vecOtherDisplayStats';
 export async function getHeroStartingStats(name: string): Promise<allStats> {
     try {
         const GameHeroes = await getCharactersJson();
+        const HeroAbilities = cachedAbilities;
         const hero_id = `hero_${name.toLowerCase()}` as HeroKey;
         const allStatNames: Array<string> = Object.values([
             ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]),
@@ -187,6 +190,7 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
             ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
         ]);
         const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
+        const weaponStats = HeroAbilities?.find((element) => element.heroname === hero_id)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
 
         var StatsZero = {} as allStats;
         allStatNames.map((item) => {
@@ -198,6 +202,28 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
             for (key in startStats) {
                 if (allStatNames[i] === key) {
                     StatsZero[allStatNames[i]] = startStats[key];
+                }
+                if (allStatNames[i] === "EBulletDamage" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = weaponStats.m_flBulletDamage;
+                }
+                if (!specialfire.includes(hero_id) && allStatNames[i] === "ERoundsPerSecond" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = (1 / weaponStats.m_flCycleTime);
+                } else if (specialfire.includes(hero_id) && allStatNames[i] === "ERoundsPerSecond" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = (weaponStats.m_iBurstShotCount / (weaponStats.m_flCycleTime + ((weaponStats.m_flIntraBurstCycleTime ? weaponStats.m_flIntraBurstCycleTime : 0) * weaponStats.m_iBurstShotCount)));
+                } else if (hero_id === "hero_forge" && allStatNames[i] === "ERoundsPerSecond" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = 1 / weaponStats.m_flMaxSpinCycleTime;
+                }
+                if (allStatNames[i] === "EClipSize" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = weaponStats.m_iClipSize;
+                }
+                if (allStatNames[i] === "EReloadTime" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = weaponStats.m_reloadDuration;
+                }
+                if (allStatNames[i] === "EBulletSpeed" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = weaponStats.m_BulletSpeedCurve.m_vDomainMaxs[1] * 0.0254;
+                }
+                if (allStatNames[i] === "EStaminaCooldown" && weaponStats !== undefined) {
+                    StatsZero[allStatNames[i]] = 1 / startStats["EStaminaRegenPerSecond"];
                 }
             }
         }
