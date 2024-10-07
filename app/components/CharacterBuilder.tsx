@@ -145,14 +145,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 <div className="flex flex-row 2xl:flex-col flex-wrap min-w-52">
                     <div className="mb-2 mr-4 flex flex-col justify-items-center float-left">
                         <div className="">
-                            <h2 className="text-3xl font-bold">{heroName}</h2>
+                            <h2 className="text-3xl p-3 font-bold">{heroName}</h2>
                         </div>
                         {character.data.m_strIconHeroCard && (
                             <Image
                                 src={character.data.m_strIconHeroCard}
                                 alt={heroName}
-                                width={100}
-                                height={100}
+                                width={80}
+                                height={80}
                                 className="rounded-full mb-2 object-none"
                             />
                         )}
