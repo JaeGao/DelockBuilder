@@ -136,28 +136,28 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     );
 
     return (
-        <div className="flex mt-6">
+        <div className="flex mt-4">
             <div className={`p-4
-        flex flex-col 2xl:flex-row
-        w-full
-        pr-[clamp(212px,calc(25vw+12px),312px)]
-    `}>
+                flex flex-col 2xl:flex-row
+                w-full
+                pr-[clamp(212px,calc(25vw+12px),312px)]
+                `}>
                 <div className="flex flex-row 2xl:flex-col flex-wrap min-w-52">
-                    <div className="mb-2 mr-4 flex flex-col justify-items-center float-left">
+                    <div className="mb-2 mr-8 flex flex-col items-center float-left">
                         <div className="">
-                            <h2 className="text-3xl p-3 font-bold">{heroName}</h2>
+                            <h2 className="text-3xl font-bold">{heroName}</h2>
                         </div>
                         {character.data.m_strIconHeroCard && (
                             <Image
                                 src={character.data.m_strIconHeroCard}
                                 alt={heroName}
-                                width={80}
-                                height={80}
+                                width={120}
+                                height={120}
                                 className="rounded-full mb-2 object-none"
                             />
                         )}
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
+                    <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
                         <ItemGrid
                             title="Weapon"
                             items={weaponItems}
@@ -181,7 +181,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     </div>
                 </div>
 
-                <div className="w-full mr-[4%]">
+                <div className="w-full mr-[4%] mt-2">
                     {errorMessage && (
                         <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                             {errorMessage}
