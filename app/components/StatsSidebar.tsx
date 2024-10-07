@@ -124,8 +124,6 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     return (
         <div className="fixed top-0 right-0 w-1/4 min-w-[200px] max-w-[300px] h-screen bg-gray-900 overflow-y-auto">
             <div className="sticky top-0 p-3 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
-                <h2 className="text-lg font-bold text-white">{characterName}</h2>
-                <p className="text-xs text-gray-400 mb-2">{characterClass}</p>
                 <div className="flex mb-2">
                     <button
                         className={`px-3 py-1 text-sm font-medium rounded-l-lg ${activeTab === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
