@@ -23,7 +23,7 @@ const config: Config = {
         'custom-sbg2': '#261137',
       },
       screens: {
-        'md' : '880px',
+        'lg' : '1120px',
         '2xl': '1300px',
       },
     },

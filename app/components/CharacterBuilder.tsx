@@ -140,69 +140,72 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     return (
         <div className="flex mt-6">
-            <div className="w-[calc(100%-14rem)] p-2">
-                <div className="mb-2 flex flex-col float-left">
-                    <div className="ml-3">
-                        <h2 className="text-3xl font-bold">{heroName}</h2>
-                        {/* <p className="text-sm text-gray-300">{character.data._class}</p> */}
+            <div className="flex flex-col 2xl:flex-row w-[calc(100%-14rem)] p-2">
+                <div className="flex flex-row 2xl:flex-col flex-wrap min-w-52">
+                    <div className="mb-2 mr-4 flex flex-col justify-items-center float-left">
+                        <div className="">
+                            <h2 className="text-3xl font-bold">{heroName}</h2>
+                            {/* <p className="text-sm text-gray-300">{character.data._class}</p> */}
+                        </div>
+                        {character.data.m_strIconHeroCard && (
+                            <Image
+                                src={character.data.m_strIconHeroCard}
+                                alt={heroName}
+                                width={120}
+                                height={120}
+                                className="rounded-full mb-2 object-none"
+                            />
+                        )}
                     </div>
-                    {character.data.m_strIconHeroCard && (
-                        <Image
-                            src={character.data.m_strIconHeroCard}
-                            alt={heroName}
-                            width={120}
-                            height={120}
-                            className="rounded-full mt-8 mr-4 object-none"
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
+                        <ItemGrid
+                            title="Weapon"
+                            items={weaponItems}
+                            onItemRemove={(index) => handleItemRemove('Weapon', index)}
                         />
-                    )}
-                </div>
-                {errorMessage && (
-                    <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
-                        {errorMessage}
+                        <ItemGrid
+                            title="Vitality"
+                            items={vitalityItems}
+                            onItemRemove={(index) => handleItemRemove('Vitality', index)}
+                        />
+                        <ItemGrid
+                            title="Spirit"
+                            items={spiritItems}
+                            onItemRemove={(index) => handleItemRemove('Spirit', index)}
+                        />
+                        <ItemGrid
+                            title="Flex"
+                            items={utilityItems}
+                            onItemRemove={(index) => handleItemRemove('Utility', index)}
+                        />
                     </div>
-                )}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 justify-items-center gap-x-8 gap-y-1 mb-4">
-                    <ItemGrid
-                        title="Weapon"
-                        items={weaponItems}
-                        onItemRemove={(index) => handleItemRemove('Weapon', index)}
-                    />
-                    <ItemGrid
-                        title="Vitality"
-                        items={vitalityItems}
-                        onItemRemove={(index) => handleItemRemove('Vitality', index)}
-                    />
-                    <ItemGrid
-                        title="Spirit"
-                        items={spiritItems}
-                        onItemRemove={(index) => handleItemRemove('Spirit', index)}
-                    />
-                    <ItemGrid
-                        title="Flex"
-                        items={utilityItems}
-                        onItemRemove={(index) => handleItemRemove('Utility', index)}
-                    />
                 </div>
                 
-
-                <input
-                    type="text"
-                    placeholder="Search upgrade items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
-                />
-                <div className="mb-4">
-                    <h3 className="text-xl font-bold mb-2">Available Items</h3>
-                    <ItemsDisplay items={filteredItems} onItemSelect={handleItemSelect} />
-                </div>
-                <div className="mb-4">
-                    <h3 className="text-xl font-bold mb-2">Equipped Abilities</h3>
-                    <ul>
-                        {equippedAbilities.map((ability, index) => (
-                            <li key={index}>{ability}</li>
-                        ))}
-                    </ul>
+                <div>
+                    {errorMessage && (
+                        <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
+                            {errorMessage}
+                        </div>
+                    )}
+                    <input
+                        type="text"
+                        placeholder="Search upgrade items..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
+                    />
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold mb-2">Available Items</h3>
+                        <ItemsDisplay items={filteredItems} onItemSelect={handleItemSelect} />
+                    </div>
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold mb-2">Equipped Abilities</h3>
+                        <ul>
+                            {equippedAbilities.map((ability, index) => (
+                                <li key={index}>{ability}</li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </div>
             <StatsSidebar
