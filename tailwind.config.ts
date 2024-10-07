@@ -7,6 +7,7 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+
     extend: {
       fontFamily: {
         'Deadlock-black': ['var(--font-Deadlock-black)'],
@@ -20,6 +21,10 @@ const config: Config = {
         'custom-vbg2': '#345506',
         'custom-sbg1': '#301844',
         'custom-sbg2': '#261137',
+      },
+      screens: {
+        'md' : '880px',
+        '2xl': '1300px',
       },
     },
   },

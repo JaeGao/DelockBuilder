@@ -47,7 +47,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemRemove }) => {
                             <div className="flex flex-col h-full">
                                 <div className={`${getCategoryColor(item.upgrade.m_eItemSlotType)} flex-grow flex items-center justify-center relative rounded-t-md`}>
                                     {item.upgrade.m_strAbilityImage && (
-                                        <div className="relative w-3/4 h-3/4">
+                                        <div className="relative w-3/4 h-3/4 z-10">
                                             <Image
                                                 src={item.upgrade.m_strAbilityImage}
                                                 alt={item.itemkey}

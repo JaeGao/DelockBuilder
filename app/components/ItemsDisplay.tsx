@@ -84,18 +84,15 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void }> = ({ item
     const categoryColor = getCategoryColor(category);
 
     return (
-        <div className="w-28 h-40 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
+        <div className="w-24 h-28 m-2 cursor-pointer overflow-hidden" onClick={onSelect}>
             <div className="w-full h-full flex flex-col">
                 <div className={`${categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
                     {upgrade.m_strAbilityImage && (
                         <Image src={upgrade.m_strAbilityImage} alt={itemkey} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
                     )}
                 </div>
-                <div className="bg-[#FFF0D7] p-1">
-                    <p className="text-[#151912] text-xs truncate hover:underline">{itemkey}</p>
-                </div>
-                <div className="bg-gray-200 text-xs text-gray-600 p-1 rounded-b-md">
-                    Tier {findTier(upgrade.m_iItemTier) ?? 'N/A'}
+                <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
+                    <p className="text-[#151912] text-xs text-balance hover:underline">{itemkey}</p>
                 </div>
             </div>
         </div>
@@ -136,7 +133,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect 
             <div className="flex flex-col rounded-b-md rounded-r-md">
                 {[1, 2, 3, 4].map(tier => (
                     <div key={tier} 
-                        className={`p-2`}>
+                        className={`p-1`}>
                         <span className="text-[#98ffde] text-shadow">
                             <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
                             <b>{tierCost[tier-1]}</b>

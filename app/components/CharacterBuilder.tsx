@@ -139,14 +139,13 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     );
 
     return (
-        <div className="flex">
-            <div className="w-[calc(100%-16rem)] p-2">
-                <div className="ml-3">
-                    <h2 className="text-2xl font-bold">{heroName}</h2>
-                    {/* <p className="text-sm text-gray-300">{character.data._class}</p> */}
-                </div>
-                
-                <div className="mb-2 flex float-left">
+        <div className="flex mt-6">
+            <div className="w-[calc(100%-14rem)] p-2">
+                <div className="mb-2 flex flex-col float-left">
+                    <div className="ml-3">
+                        <h2 className="text-3xl font-bold">{heroName}</h2>
+                        {/* <p className="text-sm text-gray-300">{character.data._class}</p> */}
+                    </div>
                     {character.data.m_strIconHeroCard && (
                         <Image
                             src={character.data.m_strIconHeroCard}
@@ -162,7 +161,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         {errorMessage}
                     </div>
                 )}
-                <div className="flex flex-row-reverse flex-wrap h-fit gap-x-8 gap-y-1 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 justify-items-center gap-x-8 gap-y-1 mb-4">
                     <ItemGrid
                         title="Weapon"
                         items={weaponItems}
