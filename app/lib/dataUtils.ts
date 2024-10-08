@@ -22,6 +22,13 @@ export interface allStats {
     [key: string]: number;
 }
 
+interface IGNameMap {
+    [key: string]: string;
+}
+
+
+const nameMap : IGNameMap = require('../data/Items/ItemNameDict.json');
+
 // Caching variables for processed data
 let cachedCharacters: HeroWithKey[] | null = null;
 let cachedItems: Upgrade_with_name[] | null = null;
@@ -121,7 +128,8 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                     value.m_bDisabled === undefined ||
                     value.m_bDisabled === "false") &&
                     Array.isArray(value._multibase) &&
-                    value._multibase[0].includes("_base") !== true;
+                    value._multibase[0].includes("_base") !== true &&
+                    value._multibase[0] !== "common_properties";
             }).map(([itemkey, item]) => ({
                 upgrade: {
                     ...item,
@@ -129,9 +137,31 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                         ? convertImagePath(item.m_strAbilityImage)
                         : undefined
                 },
-                itemkey
+                itemkey : nameMap[itemkey],
             }));
 
+        itemslist.sort((a, b) => {
+            let a_Active : boolean = false;
+            let b_Active : boolean = false;
+
+            for (let i=0; i < a.upgrade.m_vecTooltipSectionInfo.length; i++) {
+                if (a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                    a_Active = true;
+                    break;
+                }
+            }
+
+            for (let i=0; i < b.upgrade.m_vecTooltipSectionInfo.length; i++) {
+                if (b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                    b_Active = true;
+                    break;
+                }
+            }
+            return a_Active
+            ? (b_Active ? (a.itemkey).localeCompare((b.itemkey)) : 1) 
+            : (b_Active ? -1 : (a.itemkey).localeCompare((b.itemkey)))
+
+        })
         cachedItems = itemslist;
         return itemslist;
     } catch (error) {
@@ -242,6 +272,14 @@ export function clearCache(): void {
     cachedItemsJson = null;
     cachedAbilitiesJson = null;
 }
+
+// getItems().then(idata => {
+//     for (let i=0; i < idata.length; i++) {
+//         for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
+//             console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
+//         }
+//     }
+// })
 // getHeroStartingStats('haze').then(hazeStats =>
 //     console.log(hazeStats)
 // )

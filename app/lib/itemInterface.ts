@@ -13600,6 +13600,7 @@ export interface Upgradebase {
   m_strCastAnimSequenceName: string;
   m_strSelectionNameOverride: string;
   m_PreviewPathParticle: string;
+  m_vecTooltipSectionInfo: any;
   [key: string]: any;
 }
 export interface Upgrade_with_name {

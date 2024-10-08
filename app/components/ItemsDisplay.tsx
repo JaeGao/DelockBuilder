@@ -9,13 +9,6 @@ interface ItemsDisplayProps {
     equippedItems: Upgrade_with_name[];
 }
 
-interface IGNameMap {
-    [key: string]: string;
-}
-
-
-const nameMap : IGNameMap = require('../data/Items/ItemNameDict.json');
-
 
 const getCategoryColor = (category: string): string => {
     switch (category) {
@@ -94,7 +87,7 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
                     )}
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
-                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{nameMap[itemkey]}</p>
+                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
                 </div>
             </div>
         </div>
@@ -135,10 +128,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect,
                     </button>
                 ))}
             </div>
-            <div className="flex flex-col w-full rounded-b-md rounded-r-md">
+            <div className="flex flex-col w-full">
                 {[1, 2, 3, 4].map(tier => (
                     <div key={tier}
-                        className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} p-1`}>
+                        className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} ${tier === 1 ? 'rounded-tr-lg' : ''} ${tier === 4 ? 'rounded-b-lg' : ''} p-1`}>
                         <span className="text-[#98ffde] text-shadow">
                             <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
                             <b>{tierCost[tier - 1]}</b>
