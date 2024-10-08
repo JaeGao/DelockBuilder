@@ -17,9 +17,9 @@ export default async function Home() {
   characters.sort((a, b) => getHeroName(a.key).localeCompare(getHeroName(b.key), undefined, { numeric: true, sensitivity: 'base' }));
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Character Selection</h1>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="p-12">
+      <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
+      <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {characters.map(({ data: character, key }) => {
           const heroName = getHeroName(key);
           return (

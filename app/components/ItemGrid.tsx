@@ -29,11 +29,11 @@ const findTier = (tier: string | undefined): string => {
 
 const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemToggle }) => {
     return (
-        <div className="w-36 shrink-0">
+        <div className="w-34 shrink-0">
             <h2 className="text-lg font-semibold">{title}</h2>
-            <div className="grid grid-cols-2 bg-gray-800 rounded-md ">
+            <div className="grid w-fit grid-cols-2 bg-gray-800 rounded-md ">
                 {items.map((item, index) => (
-                    <div key={index} className="bg-gray-800 p-1 rounded overflow-hidden flex flex-col aspect-square w-full h-16 rounded-md">
+                    <div key={index} className="bg-gray-800 p-1 overflow-hidden flex flex-col aspect-square w-16 h-16 rounded-md">
                         {item ? (
                             <div
                                 className="flex flex-col h-full cursor-pointer"
@@ -57,7 +57,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemToggle }) => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                            <div className="w-full h-full bg-gray-700 flex items-center justify-center rounded-md">
                                 <span className="text-gray-500 text-[10px]">Empty</span>
                             </div>
                         )}
