@@ -3,7 +3,7 @@ import path from 'path';
 import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, AWithKey } from './abilityInterface';
-
+import statMap from './statmap.json';
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
@@ -25,9 +25,32 @@ export interface allStats {
 interface IGNameMap {
     [key: string]: string;
 }
+export interface ItemModifiers {
+    [key: string]: number;
+}
 
+export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
+    const modifiers: ItemModifiers = {};
 
-const nameMap : IGNameMap = require('../data/Items/ItemNameDict.json');
+    for (const [key, value] of Object.entries(item.upgrade.m_mapAbilityProperties)) {
+        if (typeof value === 'object' && 'm_eProvidedPropertyType' in value && 'm_strValue' in value) {
+            const propertyType = value.m_eProvidedPropertyType as string;
+            if (propertyType in statMap) {
+                const statInfo = statMap[propertyType as keyof typeof statMap];
+                if (statInfo.mod_type !== 'skip') {
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue)) {
+                        modifiers[statInfo.stat] = numericValue;
+                    }
+                }
+            }
+        }
+    }
+
+    return modifiers;
+}
+
+const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 
 // Caching variables for processed data
 let cachedCharacters: HeroWithKey[] | null = null;
@@ -138,44 +161,44 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                         : undefined,
                     isActive: false,
                 },
-                itemkey : nameMap[itemkey],
+                itemkey: nameMap[itemkey],
             }));
 
         itemslist
-        .sort((a, b) => {
-            let a_Active : boolean = false;
-            let b_Active : boolean = false;
+            .sort((a, b) => {
+                let a_Active: boolean = false;
+                let b_Active: boolean = false;
 
-            for (let i=0; i < a.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                if (a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
-                    a_Active = true;
-                    break;
+                for (let i = 0; i < a.upgrade.m_vecTooltipSectionInfo.length; i++) {
+                    if (a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                        a_Active = true;
+                        break;
+                    }
                 }
-            }
 
-            for (let i=0; i < b.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                if (b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
-                    b_Active = true;
-                    break;
+                for (let i = 0; i < b.upgrade.m_vecTooltipSectionInfo.length; i++) {
+                    if (b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                        b_Active = true;
+                        break;
+                    }
                 }
-            }
-            return a_Active
-            ? (b_Active ? (a.itemkey).localeCompare((b.itemkey)) : 1) 
-            : (b_Active ? -1 : (a.itemkey).localeCompare((b.itemkey)))
+                return a_Active
+                    ? (b_Active ? (a.itemkey).localeCompare((b.itemkey)) : 1)
+                    : (b_Active ? -1 : (a.itemkey).localeCompare((b.itemkey)))
 
-        }).map((element) => { 
-            for (let i=0; i < element.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                if (element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
-                    //console.log(element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType)
-                    element.upgrade.isActive = true;
-                    return {
-                        element
-                        } 
-                    break;
+            }).map((element) => {
+                for (let i = 0; i < element.upgrade.m_vecTooltipSectionInfo.length; i++) {
+                    if (element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                        //console.log(element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType)
+                        element.upgrade.isActive = true;
+                        return {
+                            element
+                        }
+                        break;
+                    }
                 }
-            }
-        },
-        )
+            },
+            )
         cachedItems = itemslist;
         return itemslist;
     } catch (error) {
@@ -288,7 +311,7 @@ export function clearCache(): void {
 }
 
 getItems().then(idata => {
-    for (let i=0; i < idata.length; i++) {
+    for (let i = 0; i < idata.length; i++) {
         console.log(idata[i].upgrade.isActive)
         // for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
         //     console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)

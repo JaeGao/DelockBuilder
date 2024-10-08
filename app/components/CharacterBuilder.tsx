@@ -9,13 +9,20 @@ import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
 
+// New interface for item modifiers
+interface ItemModifier {
+    itemkey: string;
+    modifiers: { [key: string]: number };
+}
+
 interface CharacterBuilderProps {
     character: HeroWithKey;
     items: Upgrade_with_name[];
     initialStats: allStats;
+    itemModifiers: ItemModifier[];
 }
 
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats }) => {
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
@@ -34,11 +41,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const calculateStats = (equippedItems: Upgrade_with_name[]) => {
         let newStats = { ...initialStats };
         equippedItems.forEach(item => {
-            Object.entries(item.upgrade).forEach(([key, value]) => {
-                if (typeof value === 'number' && key in newStats) {
-                    newStats[key as keyof allStats] += value;
-                }
-            });
+            const modifiers = itemModifiers.find(mod => mod.itemkey === item.itemkey)?.modifiers;
+            if (modifiers) {
+                Object.entries(modifiers).forEach(([stat, value]) => {
+                    if (stat in newStats) {
+                        newStats[stat as keyof allStats] += value;
+                    }
+                });
+            }
         });
         return newStats;
     };
@@ -202,14 +212,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                             equippedItems={allEquippedItems}
                         />
                     </div>
-                    {/* <div className="mb-4">
-                        <h3 className="text-xl font-bold mb-2">Equipped Abilities</h3>
-                        <ul>
-                            {equippedAbilities.map((ability, index) => (
-                                <li key={index}>{ability}</li>
-                            ))}
-                        </ul>
-                    </div> */}
                 </div>
             </div>
             <StatsSidebar
