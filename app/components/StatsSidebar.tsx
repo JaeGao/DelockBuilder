@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { allStats } from '../lib/dataUtils';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 
 interface StatsSidebarProps {
     characterStats: allStats;
@@ -10,10 +11,36 @@ interface StatsSidebarProps {
 const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass }) => {
     const [activeTab, setActiveTab] = useState<'all' | 'custom'>('all');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [changedStats, setChangedStats] = useState<string[]>([]);
+    const previousStatsRef = useRef<allStats | null>(null);
+    const baseStatsRef = useRef<allStats | null>(null);
+
+    useEffect(() => {
+        if (!baseStatsRef.current) {
+            baseStatsRef.current = { ...characterStats };
+        }
+
+        if (previousStatsRef.current) {
+            const newChangedStats = Object.keys(characterStats).filter(
+                key => characterStats[key as keyof allStats] !== previousStatsRef.current![key as keyof allStats]
+            );
+            setChangedStats(newChangedStats);
+        }
+
+        return () => {
+            previousStatsRef.current = characterStats;
+        };
+    }, [characterStats]);
 
     const formatStat = (value: number | undefined): string => {
         if (value === undefined) return 'N/A';
         return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    };
+
+    const calculatePercentChange = (current: number, previous: number): string => {
+        if (previous === 0) return current > 0 ? '+∞%' : '0%';
+        const percentChange = ((current - previous) / Math.abs(previous)) * 100;
+        return `${percentChange > 0 ? '+' : ''}${percentChange.toFixed(2)}%`;
     };
 
     const statGroups = [
@@ -85,24 +112,6 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                 { name: "Charge Cooldown", key: "ETechCooldownBetweenChargeUses" },
             ]
         },
-        // {
-        //     title: "Skills",
-        //     color: "text-amber-400",
-        //     bgColor: "bg-amber-500",
-        //     stats: [
-        //         { name: "Ability Cooldown", key: "AbilityCooldown.m_strValue" },
-        //         { name: "Ability Duration", key: "AbilityDuration.m_strValue" },
-        //         { name: "Ability Cast Range", key: "AbilityCastRange.m_strValue" }
-        //     ]
-        // }
-        // {
-        //     title: "Other",
-        //     color: "text-yellow-400",
-        //     bgColor: "bg-yellow-500",
-        //     stats: [
-
-        //     ]
-        // },
     ];
 
     const percentageStats = [
@@ -118,6 +127,38 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             prev.includes(category)
                 ? prev.filter(c => c !== category)
                 : [...prev, category]
+        );
+    };
+
+    const renderStatValue = (statKey: string, statName: string) => {
+        const currentValue = characterStats[statKey as keyof allStats];
+        const previousValue = previousStatsRef.current?.[statKey as keyof allStats];
+        const baseValue = baseStatsRef.current?.[statKey as keyof allStats];
+        const isPercentageStat = percentageStats.includes(statName);
+        const isChanged = changedStats.includes(statKey);
+        const isEnhanced = baseValue !== undefined && currentValue !== baseValue;
+
+        if (currentValue === undefined) return 'N/A';
+
+        return (
+            <div className="flex items-center justify-end text-xs font-medium">
+                {isChanged && previousValue !== undefined ? (
+                    <>
+                        <span className="text-gray-400">
+                            {formatStat(previousValue)}{isPercentageStat ? "%" : ""}
+                        </span>
+                        <ArrowRightIcon className="w-3 h-3 mx-1 text-gray-500" />
+                    </>
+                ) : null}
+                <span className={isEnhanced ? 'text-yellow-500' : 'text-white'}>
+                    {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
+                </span>
+                {isChanged && previousValue !== undefined ? (
+                    <span className={`ml-1 text-xs ${currentValue > previousValue ? 'text-green-500' : 'text-red-500'}`}>
+                        ({calculatePercentChange(currentValue, previousValue)})
+                    </span>
+                ) : null}
+            </div>
         );
     };
 
@@ -145,8 +186,8 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                 key={index}
                                 onClick={() => toggleCategory(group.title)}
                                 className={`px-2 py-1 text-xs font-medium rounded ${selectedCategories.includes(group.title)
-                                        ? `${group.bgColor} text-white`
-                                        : 'bg-gray-700 text-gray-300'
+                                    ? `${group.bgColor} text-white`
+                                    : 'bg-gray-700 text-gray-300'
                                     }`}
                             >
                                 {group.title}
@@ -164,20 +205,12 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                         <div key={groupIndex} className="mb-4">
                             <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
                             <div className="space-y-1">
-                                {group.stats.map((stat) => {
-                                    const statValue = characterStats[stat.key as keyof allStats];
-                                    if (statValue === undefined) return null;
-                                    const isPercentageStat = percentageStats.includes(stat.name);
-
-                                    return (
-                                        <div key={stat.key} className="flex justify-between items-center">
-                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                            <span className="text-white text-xs font-medium">
-                                                {formatStat(statValue)}{isPercentageStat ? " %" : ""}
-                                            </span>
-                                        </div>
-                                    );
-                                })}
+                                {group.stats.map((stat) => (
+                                    <div key={stat.key} className="flex justify-between items-center">
+                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                        {renderStatValue(stat.key, stat.name)}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     );
