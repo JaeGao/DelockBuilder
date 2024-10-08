@@ -15,9 +15,9 @@ const getCategoryColor = (category: string): string => {
         case 'Weapon':
             return 'bg-[#d17a23]';
         case 'Vitality':
-            return 'bg-[#86c921]';
+            return 'bg-[#5ca404]';
         case 'Spirit':
-            return 'bg-[#de9cff]';
+            return 'bg-[#c374fa]';
         case 'Utility':
             return 'bg-[#4d9bfc]';
         default:
