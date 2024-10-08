@@ -13,7 +13,7 @@ interface ItemsDisplayProps {
 const getCategoryColor = (category: string): string => {
     switch (category) {
         case 'Weapon':
-            return 'bg-[#FCAC4D]';
+            return 'bg-[#d17a23]';
         case 'Vitality':
             return 'bg-[#86c921]';
         case 'Spirit':
@@ -24,6 +24,22 @@ const getCategoryColor = (category: string): string => {
             return 'bg-gray-400';
     }
 };
+
+const getCategoryActiveColor = (category: string): string => {
+    switch (category) {
+        case 'Weapon':
+            return 'bg-[#fcba6a]';
+        case 'Vitality':
+            return 'bg-[#b1f571]';
+        case 'Spirit':
+            return 'bg-[#dbb2f7]';
+        case 'Utility':
+            return 'bg-[#4d9bfc]';
+        default:
+            return 'bg-gray-400';
+    }
+};
+
 
 const getCategoryBackground = (category: string): string[] => {
     switch (category) {
@@ -68,14 +84,15 @@ const tierCost = ["500", "1,250", "3,000", "6,200"];
 const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped: boolean }> = ({ itemkey, upgrade, onSelect, isEquipped }) => {
     const category = getCategory(upgrade.m_eItemSlotType || '');
     const categoryColor = getCategoryColor(category);
+    const actColor = getCategoryActiveColor(category);
 
     return (
         <div
             className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''}`}
             onClick={onSelect}
         >
-            <div className="w-full h-full flex flex-col">
-                <div className={`${categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
+            <div className="w-full h-full flex flex-col relative justify-center">
+                <div className={`${upgrade.isActive === true ? actColor : categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
                     {upgrade.m_strAbilityImage && (
                         <Image
                             src={upgrade.m_strAbilityImage}
@@ -88,6 +105,9 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
                     <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
+                </div>
+                <div className = {`absolute left-1/2 -translate-x-1/2 ${upgrade.isActive !== undefined && upgrade.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
+                    <p className= "text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
                 </div>
             </div>
         </div>

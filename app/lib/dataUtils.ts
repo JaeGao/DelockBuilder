@@ -135,12 +135,14 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                     ...item,
                     m_strAbilityImage: 'm_strAbilityImage' in item && typeof item.m_strAbilityImage === 'string'
                         ? convertImagePath(item.m_strAbilityImage)
-                        : undefined
+                        : undefined,
+                    isActive: false,
                 },
                 itemkey : nameMap[itemkey],
             }));
 
-        itemslist.sort((a, b) => {
+        itemslist
+        .sort((a, b) => {
             let a_Active : boolean = false;
             let b_Active : boolean = false;
 
@@ -161,7 +163,19 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
             ? (b_Active ? (a.itemkey).localeCompare((b.itemkey)) : 1) 
             : (b_Active ? -1 : (a.itemkey).localeCompare((b.itemkey)))
 
-        })
+        }).map((element) => { 
+            for (let i=0; i < element.upgrade.m_vecTooltipSectionInfo.length; i++) {
+                if (element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                    //console.log(element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType)
+                    element.upgrade.isActive = true;
+                    return {
+                        element
+                        } 
+                    break;
+                }
+            }
+        },
+        )
         cachedItems = itemslist;
         return itemslist;
     } catch (error) {
@@ -273,13 +287,14 @@ export function clearCache(): void {
     cachedAbilitiesJson = null;
 }
 
-// getItems().then(idata => {
-//     for (let i=0; i < idata.length; i++) {
-//         for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
-//             console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
-//         }
-//     }
-// })
+getItems().then(idata => {
+    for (let i=0; i < idata.length; i++) {
+        console.log(idata[i].upgrade.isActive)
+        // for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
+        //     console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
+        // }
+    }
+})
 // getHeroStartingStats('haze').then(hazeStats =>
 //     console.log(hazeStats)
 // )
