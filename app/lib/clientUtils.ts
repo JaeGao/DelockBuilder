@@ -51,7 +51,7 @@ const vODS = 'm_vecOtherDisplayStats';
 
 export async function getHeroStartingStats(name: string): Promise<allStats> {
     try {
-        const GameHeroes = cachedCharacters ? cachedCharacters : await getCharacters();
+        const GameHeroes : Heroes = require('..//data/CharactersV2/CharactersV3.json');
         const HeroAbilities = cachedAbilities;
         const hero_id = `hero_${name.toLowerCase()}` as HeroKey;
         const allStatNames: Array<string> = Object.values([
