@@ -26,10 +26,7 @@ export interface RootObject {
 export type abilityKeys = keyof RootObject;
 export type AData = RootObject[abilityKeys];
 
-export interface Signature_base {
-    [key: string]: any | null;
 
-}
 
 export interface AWithKey {
     heroname: string;
