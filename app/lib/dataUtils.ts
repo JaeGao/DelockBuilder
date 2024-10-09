@@ -42,7 +42,7 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
             const propertyType = value.m_eProvidedPropertyType as string;
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
-                if (statInfo.mod_type !== 'skip' && statInfo.mod_type !== 'percent') {
+                if (statInfo.mod_type !== 'skip' && statInfo.mod_type !== 'percent' && value.m_UsageFlags !== "APUsageFlag_ModifierConditional") {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
