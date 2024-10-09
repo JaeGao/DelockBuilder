@@ -55,10 +55,10 @@ export async function calculateCharacterStats(
             } else {
                 if (modifierValues[stat] === undefined) {
                     modifierValues[stat] = value;
-                    console.log("declare")
+                    //console.log("declare")
                 } else {
                     modifierValues[stat] += value;
-                    console.log("append")
+                    //console.log("append")
                 }
             }
         })
@@ -124,6 +124,10 @@ export async function calculateCharacterStats(
         } else if (mkey[i] === "EBulletArmorReduction") {
             newStats["EBulletArmorDamageReduction"] += modifierValues[mkey[i]];
             //console.log("ran")
+        } else if (mkey[i] === "ETechPower") {
+            if (newStats[mkey[i]] === undefined) {
+                newStats[mkey[i]] = modifierValues[mkey[i]];
+            }
         } else if (mkey[i] !== "EBulletDamage") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             //console.log("ran")
@@ -132,7 +136,17 @@ export async function calculateCharacterStats(
     newStats["ELightMeleeDamage"] = Math.ceil(newStats["ELightMeleeDamage"]);
     newStats["EHeavyMeleeDamage"] = Math.ceil(newStats["EHeavyMeleeDamage"]);
     newStats["EClipSize"] = Math.ceil(newStats["EClipSize"]);
-    console.log(newStats['EBulletDamage'])
+
+    if (Object.keys(character.data.m_mapScalingStats).length > 0) {
+        if (newStats["ETechPower"] !== undefined && newStats["ETechPower"] !== 0) {
+            Object.entries(character.data.m_mapScalingStats).forEach(([key, value]) => {
+                console.log(key)
+                newStats[key] += (newStats[value.eScalingStat] * value.flScale);
+            })
+        }
+    }
+
+
     // // Calculate derived stats
     // stats.EDPS = stats.EBulletDamage * (stats.ERoundsPerSecond || 1);
     // stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);
