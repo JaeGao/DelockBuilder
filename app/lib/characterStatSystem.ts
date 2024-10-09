@@ -140,27 +140,29 @@ export async function calculateCharacterStats(
     if (Object.keys(character.data.m_mapScalingStats).length > 0) {
         if (newStats["ETechPower"] !== undefined && newStats["ETechPower"] !== 0) {
             Object.entries(character.data.m_mapScalingStats).forEach(([key, value]) => {
-                console.log(key)
-                newStats[key] += (newStats[value.eScalingStat] * value.flScale);
+                if (key === "ERoundsPerSecond") {
+
+                } else {
+                    newStats[key] += (newStats[value.eScalingStat] * value.flScale);
+                }
             })
         }
     }
 
+    console.log(newStats)
+    if ((character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
+        newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
+    } else if (character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+        newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + newStats["EFireRate"] / 100));
+    } else if ((character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
+        newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100));
+        console.log("RPS")
+    }
 
     // // Calculate derived stats
     // stats.EDPS = stats.EBulletDamage * (stats.ERoundsPerSecond || 1);
     // stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);
 
-    // Apply specific calculations based on the hero type
-    // if (character.key === 'hero_lash' || character.key === 'hero_chrono' || character.key === 'hero_gigawatt') {
-    //     stats.ERoundsPerSecond = character.m_WeaponInfo?.m_iBurstShotCount /
-    //         ((character.m_WeaponInfo?.m_flCycleTime || 1) * (1 + stats.EFireRate / 100) +
-    //             (character.m_WeaponInfo?.m_flIntraBurstCycleTime || 0) * (character.m_WeaponInfo?.m_iBurstShotCount || 1));
-    // } else if (character.key === 'hero_forge') {
-    //     stats.ERoundsPerSecond = 1 / ((character.m_WeaponInfo?.m_flMaxSpinCycleTime || 1) / (1 + stats.EFireRate / 100));
-    // } else {
-    //     stats.ERoundsPerSecond = 1 / ((character.m_WeaponInfo?.m_flCycleTime || 1) / (1 + stats.EFireRate / 100));
-    // }
 
     //console.log(stats, 'this is the CharacterStats log')
     return newStats;
