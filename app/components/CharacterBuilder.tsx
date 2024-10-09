@@ -72,7 +72,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             .then(newStats => {
                 setCurrentStats(newStats);
                 const newAbilities = allEquippedItems.map(item => item.itemkey);
-                //setEquippedAbilities(newAbilities);
+                setEquippedAbilities(newAbilities);
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
