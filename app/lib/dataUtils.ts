@@ -46,20 +46,43 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
                 if (statInfo.mod_type !== 'skip' 
-                    && statInfo.mod_type !== 'percent' 
+                    && statInfo.mod_type !== 'percent'
                     && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
-                    && !(key.includes("When") || key.includes("With") || key.includes("Charged"))) {
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )
+                    && item.itemkey !== "Divine Barrier" && item.itemkey !== "Crippling Headshot") {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
                     }
-                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                }  else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat + '_percent'] = numericValue;
                     }
-                } 
+                } else if (statInfo.mod_type !== 'skip' 
+                    && statInfo.mod_type !== 'percent' 
+                    && item.itemkey === "Divine Barrier"
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )) {
+
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue) && key !== "BonusMoveSpeed") {
+                        modifiers[statInfo.stat] = numericValue;
+                    }
+                } else if (statInfo.mod_type !== 'skip' 
+                    && statInfo.mod_type !== 'percent' 
+                    && item.itemkey === "Crippling Headshot"
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )) {
+
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue) && !(key.includes("ResistReduction"))) {
+                        modifiers[statInfo.stat] = numericValue;
+                    }
+                }
             }
         }
     }

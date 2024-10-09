@@ -36,6 +36,12 @@ export interface AWithKey {
     adata: AData;
 }
 
+export interface Signature_base {
+    [key: string]: any | null;
+
+}
+
+
 // export interface Habilities {
 //     abilities: W_Import_Base[];
 //     heroname: string;
