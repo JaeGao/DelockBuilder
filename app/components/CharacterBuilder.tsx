@@ -5,9 +5,7 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-
-import { AWithKey, Signature_base } from '../lib/abilityInterface';
-
+import { AWithKey, Signature_base} from '../lib/abilityInterface';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -28,32 +26,24 @@ interface CharacterBuilderProps {
 }
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
-
-
-    const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
-
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [spiritItems, setSpiritItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
-
-    const [equippedAbilities, setEquippedAbilities] = useState<Signature_base[] | null>(
-        abdatagrabber() ?? []
-    );
+    const [equippedAbilities, setEquippedAbilities] = useState<Signature_base[] | null>(abdatagrabber());
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
     function abdatagrabber() {
-        const ability = abilities.find((element) => element.heroname === character.key);
+        let abdata = abilities.find((element) => element.heroname === character.key)?.adata;
+        return [abdata?.ESlot_Signature_1, abdata?.ESlot_Signature_2, abdata?.ESlot_Signature_3, abdata?.ESlot_Signature_4];
 
-        if (ability) {
-            const abdata = ability.adata;
-            return [abdata.ESlot_Signature_1, abdata.ESlot_Signature_2, abdata.ESlot_Signature_3, abdata.ESlot_Signature_4];
-        }
     }
-
+    
+    
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);

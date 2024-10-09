@@ -24,8 +24,6 @@ export default async function BuilderPage({ params }: { params: { characterName:
         items={items}
         initialStats={initialStats}
         itemModifiers={itemModifiers}
-
-        abilities={abilities}
-        abilities-test
+        abilities ={abilities}
     />;
 }
