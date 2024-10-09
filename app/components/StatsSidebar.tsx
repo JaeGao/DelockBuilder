@@ -115,7 +115,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     ];
 
     const percentageStats = [
-        "Weapon Damage Increase", "Fire Rate", "Clip Size Increase", "Reload Reduction",
+        "Weapon Damage", "Fire Rate", "Clip Size Increase", "Reload Reduction",
         "Bullet Velocity Increase", "Bullet Lifesteal", "Bullet Resist", "Spirit Resist",
         "Heal Amp", "Debuff Resist", "Crit Reduction", "Stamina Recovery",
         "Ability Cooldown", "Ability Duration", "Ability Range", "Spirit Lifesteal",

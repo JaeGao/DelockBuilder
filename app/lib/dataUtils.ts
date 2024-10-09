@@ -29,6 +29,10 @@ export interface ItemModifiers {
     [key: string]: number;
 }
 
+export interface ModifierValues {
+    [key: string]: number;
+}
+
 export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
     const modifiers: ItemModifiers = {};
 
@@ -37,10 +41,15 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
             const propertyType = value.m_eProvidedPropertyType as string;
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
-                if (statInfo.mod_type !== 'skip') {
+                if (statInfo.mod_type !== 'skip' && statInfo.mod_type !== 'percent') {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
+                    }
+                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue)) {
+                        modifiers[statInfo.stat + '_percent'] = numericValue;
                     }
                 }
             }
@@ -289,8 +298,14 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                 if (allStatNames[i] === "EBulletSpeed" && weaponStats !== undefined) {
                     StatsZero[allStatNames[i]] = weaponStats.m_BulletSpeedCurve.m_vDomainMaxs[1] * 0.0254;
                 }
-                if (allStatNames[i] === "EStaminaCooldown" && weaponStats !== undefined) {
+                if (allStatNames[i] === "EStaminaCooldown" && startStats !== undefined) {
                     StatsZero[allStatNames[i]] = 1 / startStats["EStaminaRegenPerSecond"];
+                }
+                if (allStatNames[i] === "ECritDamageReceivedScale" || 
+                    allStatNames[i] === "EReloadSpeed" || 
+                    allStatNames[i] === "ETechDuration" || 
+                    allStatNames[i] === "ETechRange" ) {
+                        StatsZero[allStatNames[i]] = 0;
                 }
             }
         }
@@ -310,6 +325,13 @@ export function clearCache(): void {
     cachedAbilitiesJson = null;
 }
 
+// getItems().then(ilist => { 
+//     for (let i = 0; i in ilist; i++) {
+//         console.log(ilist[i].itemkey)
+//         console.log(extractItemModifiers(ilist[i]))
+//     }}
+// )
+
 // getItems().then(idata => {
 //     for (let i = 0; i < idata.length; i++) {
 //         console.log(idata[i].upgrade.isActive)
@@ -318,6 +340,6 @@ export function clearCache(): void {
 //         // }
 //     }
 // })
-// getHeroStartingStats('haze').then(hazeStats =>
-//     console.log(hazeStats)
-// )
+getHeroStartingStats('bebop').then(hazeStats =>
+    console.log(hazeStats)
+)
