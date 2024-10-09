@@ -17,13 +17,28 @@ export async function calculateCharacterStats(
     let modifierValues = {} as ModifierValues;
 
     equippedItems.forEach(item => {
+        var icat = item.upgrade.m_eItemSlotType.includes('_Weapon') ? "Weapon" : (item.upgrade.m_eItemSlotType.includes('_Armor') ? "Vitality" : "Spirit");
+        var itier = item.upgrade.m_iItemTier.includes("Tier_1") ? 1 : (item.upgrade.m_iItemTier.includes("Tier_2") ? 2 : (item.upgrade.m_iItemTier.includes("Tier_3") ? 3 : 4));
+
+        if (icat === "Weapon") {
+            if (modifierValues['EBaseWeaponDamageIncrease'] !== undefined) {modifierValues['EBaseWeaponDamageIncrease'] += itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18));}
+            else {modifierValues['EBaseWeaponDamageIncrease'] = itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18))}
+        } else if (icat === "Vitality") {
+            if (modifierValues["EBaseHealth_percent"] !== undefined) {modifierValues["EBaseHealth_percent"] += itier === 1 ? 11 : (itier === 2 ? 14 : (itier === 3 ? 17 : 20));}
+            else {modifierValues["EBaseHealth_percent"] = itier === 1 ? 11 : (itier === 2 ? 14 : (itier === 3 ? 17 : 20));}
+        } else if (icat === "Spirit") {
+            if (modifierValues["ETechPower"] !== undefined) {modifierValues["ETechPower"] += itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16))} 
+            else {modifierValues["ETechPower"] = itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16));}
+        }
         const itemModifiers: ItemModifiers = extractItemModifiers(item);
-        console.log(itemModifiers)
         Object.entries(itemModifiers).forEach(([stat, value]) => {
             if (stat.includes('_percent')) {
                 if (modifierValues[stat] === undefined) {
                     modifierValues[stat] = value;
+                } else {
+                    modifierValues[stat] += value;
                 }
+                console.log("health")
             } else if (stat === "EBulletArmorDamageReduction" || stat === "ETechArmorDamageReduction") {
                 if (modifierValues[stat] === undefined) {
                     modifierValues[stat] = (1-value / 100);
@@ -33,59 +48,64 @@ export async function calculateCharacterStats(
             } else {
                 if (modifierValues[stat] === undefined) {
                     modifierValues[stat] = value;
+                    console.log("reset")
                 } else {
                     modifierValues[stat] += value;
+                    console.log("append")
                 }
             }
         })
     });
-    console.log(modifierValues)
     let mkey = Object.keys(modifierValues);
+    mkey.sort((a,b) => {
+        return a === "EMaxHealth_percent" ? 1 : (b === "EMaxHealth_percent" ? -1 : (a).localeCompare((b)))
+    })
+    console.log(modifierValues)
     for (let i = 0; i < mkey.length; i++) {
-        if (mkey[i] in stats) {
-            if (mkey[i] === "EBaseWeaponDamageIncrease") {
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                stats['EBulletDamage'] *= (1 + modifierValues[mkey[i]]/100);
-            } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                stats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
-                console.log("YOU ARE LASH OR CHRONO OR GIGAWATT");
-            } else if (mkey[i] === "EFireRate" && character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + modifierValues[mkey[i]] / 100));
-                console.log("YOU ARE FORGE");
-            } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100));
-                console.log("YOU ARE NOT LASH OR CHRONO OR GIGAWATT OR FORGE");
-            } else if (mkey[i] === "EClipSizeIncrease") {
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                stats["EClipSize"] *= (1 + modifierValues[mkey[i]]/100);
-                console.log("Clip size")
-            } else if (mkey[i] === "EBulletSpeedIncrease") {
+        if (mkey[i] === "EBaseWeaponDamageIncrease") {
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+            stats['EBulletDamage'] *= (1 + modifierValues[mkey[i]]/100);
+            //console.log("damage")
+        } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+            stats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
+            //console.log("BurstFire");
+        } else if (mkey[i] === "EFireRate" && character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+            stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + modifierValues[mkey[i]] / 100));
+            //console.log("McGinnis");
+        } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+            stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100));
+            //console.log("FireRate");
+        } else if (mkey[i] === "EClipSizeIncrease") {
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+            stats["EClipSize"] *= (1 + modifierValues[mkey[i]]/100);
+        } else if (mkey[i] === "EBulletSpeedIncrease") {
+            stats[mkey[i]] += modifierValues[mkey[i]];
+            stats["EBulletSpeed"] *= (1 + modifierValues[mkey[i]]/100)
+        } else if (mkey[i] === "EMaxHealth") {
+            if (modifierValues["EBaseHealth_percent"] !== undefined) {
+                stats[mkey[i]] *= (1 + modifierValues.EBaseHealth_percent/100);
                 stats[mkey[i]] += modifierValues[mkey[i]];
-                stats["EBulletSpeed"] *= (1 + modifierValues[mkey[i]]/100)
-            } else if (mkey[i] === "EMaxHealth") {
-                if (modifierValues.Health_Max_Percent !== undefined) {
-                    stats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] * (1 + modifierValues.Health_Max_Percent));
-                } else {
-                    stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                }
-            } else if (mkey[i] === "EBulletArmorDamageReduction" || mkey[i] === "ETechArmorDamageReduction") {
-                if (stats[mkey[i] as keyof allStats] !== 0) {
-                    stats[mkey[i] as keyof allStats] = (1 - ((1 - stats[mkey[i] as keyof allStats]/100) * modifierValues[mkey[i]]))*100;
-                } else {
-                    stats[mkey[i] as keyof allStats] = 1 - modifierValues[mkey[i]];
-                }
-            } else if (mkey[i] === "EStaminaRegenIncrease") {
-                stats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]]/100));
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                console.log("Changed stamina")
-            } else if (mkey[i] !== "EBulletDamage" && mkey[i] !== "") {
-                console.log(mkey[i])
-                stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
-                console.log("ran")
+            } else {
+                stats[mkey[i]] += modifierValues[mkey[i]];
             }
+        } else if (mkey[i] === "EMaxHealth_percent") {
+
+            stats["EMaxHealth"] *= (1 + modifierValues[mkey[i]]/100);
+        }else if (mkey[i] === "EBulletArmorDamageReduction" || mkey[i] === "ETechArmorDamageReduction") {
+            if (stats[mkey[i] as keyof allStats] !== 0) {
+                stats[mkey[i] as keyof allStats] = (1 - ((1 - stats[mkey[i] as keyof allStats]/100) * modifierValues[mkey[i]]))*100;
+            } else {
+                stats[mkey[i] as keyof allStats] = 1 - modifierValues[mkey[i]];
+            }
+        } else if (mkey[i] === "EStaminaRegenIncrease") {
+            stats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]]/100));
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+        } else if (mkey[i] !== "EBulletDamage") {
+            stats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+            //console.log("ran")
         }
     };
     // // Calculate derived stats
