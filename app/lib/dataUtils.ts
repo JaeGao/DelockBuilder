@@ -49,7 +49,7 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
                     && statInfo.mod_type !== 'percent' 
                     && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
-                    && !(key.includes("When") || key.includes("With"))) {
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged"))) {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
