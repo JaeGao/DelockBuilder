@@ -102,7 +102,7 @@ export async function calculateCharacterStats(
             if (newStats[mkey[i] as keyof allStats] !== 0) {
                 newStats[mkey[i] as keyof allStats] = (1 - ((1 - newStats[mkey[i] as keyof allStats]/100) * modifierValues[mkey[i]]))*100;
             } else {
-                newStats[mkey[i] as keyof allStats] = 1 - modifierValues[mkey[i]];
+                newStats[mkey[i] as keyof allStats] = (1 - modifierValues[mkey[i]])*100;
             }
         } else if (mkey[i] === "EStaminaRegenIncrease") {
             newStats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]]/100));
