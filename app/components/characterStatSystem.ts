@@ -87,7 +87,7 @@ export async function calculateCharacterStats(
                 stats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenIncrease'] * (1 + modifierValues.mkey));
                 stats[mkey as keyof allStats] += modifierValues.mkey;
             } else {
-                stats[mkey as keyof allStats] = 1 - modifierValues.mkey;
+                stats[mkey as keyof allStats] += modifierValues.mkey;
             }
     
         }
