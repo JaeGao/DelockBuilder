@@ -114,6 +114,7 @@ export async function calculateCharacterStats(
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
         } else if (mkey[i] === "ELightMeleeDamage") {
             newStats[mkey[i] as keyof allStats] *= 1 + modifierValues[mkey[i]]/100;
+            newStats["EHeavyMeleeDamage"] *= 1 + modifierValues[mkey[i]]/100; 
         } else if (mkey[i] === "EHealingOutput") {
             newStats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] > 0 ? modifierValues[mkey[i]] : 0);
             console.log("healbane")
