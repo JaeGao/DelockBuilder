@@ -310,14 +310,14 @@ export function clearCache(): void {
     cachedAbilitiesJson = null;
 }
 
-getItems().then(idata => {
-    for (let i = 0; i < idata.length; i++) {
-        console.log(idata[i].upgrade.isActive)
-        // for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
-        //     console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
-        // }
-    }
-})
+// getItems().then(idata => {
+//     for (let i = 0; i < idata.length; i++) {
+//         console.log(idata[i].upgrade.isActive)
+//         // for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
+//         //     console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
+//         // }
+//     }
+// })
 // getHeroStartingStats('haze').then(hazeStats =>
 //     console.log(hazeStats)
 // )
