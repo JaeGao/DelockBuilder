@@ -59,8 +59,8 @@ BS: Base Stats
 //    'EBulletSpeed' - m_BulletSpeedcurve[m_vDomainMaxs][2] * (1 + MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT)
 +    'EBulletSpeedIncrease' - MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT 
 +    'EBulletLifesteal' - MODIFIER_VALUE_BULLET_LIFESTEAL 
-    'ELightMeleeDamage' - Ceil(BS * (1 + MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT) + BS * (0.5*EBaseWeaponDamageIncrease))
-    'EHeavyMeleeDamage' - Ceil(BS * (1 + MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT) + BS * (0.5*EBaseWeaponDamageIncrease))
+//    'ELightMeleeDamage' - Ceil(BS * (1 + MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT) + BS * (0.5*EBaseWeaponDamageIncrease))
+//    'EHeavyMeleeDamage' - Ceil(BS * (1 + MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT) + BS * (0.5*EBaseWeaponDamageIncrease))
 //    'EMaxHealth' - ( BS + MODIFIER_VALUE_HEALTH_MAX ) * ( 1 + MODIFIER_VALUE_HEALTH_MAX_PERCENT )
 +    'EBaseHealthRegen' - BS + MODIFIER_VALUE_HEALTH_REGEN_PER_SECOND 
 //    'EBulletArmorDamageReduction' -  1 - (1 - MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST_1) * (1 - MODIFIER_VALUE_BULLET_ARMOR_RESITS_2)

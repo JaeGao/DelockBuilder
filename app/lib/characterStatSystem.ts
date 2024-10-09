@@ -107,14 +107,16 @@ export async function calculateCharacterStats(
         } else if (mkey[i] === "EStaminaRegenIncrease") {
             newStats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]]/100));
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+        } else if (mkey[i] === "ELightMeleeDamage") {
+            newStats[mkey[i] as keyof allStats] *= 1 + modifierValues[mkey[i]]/100;
+        } else if (mkey[i] === "EHealingOutput") {
+            newStats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] > 0 ? modifierValues[mkey[i]] : 0);
+            console.log("healbane")
         } else if (mkey[i] !== "EBulletDamage") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             //console.log("ran")
-        } else if (mkey[i] === "ELightMeleeDamage") {
-            newStats[mkey[i] as keyof allStats] *= 1 + modifierValues[mkey[i]]/100;
         }
     };
-
     newStats["ELightMeleeDamage"] = Math.ceil(newStats["ELightMeleeDamage"]);
     newStats["EHeavyMeleeDamage"] = Math.ceil(newStats["EHeavyMeleeDamage"]);
     newStats["EClipSize"] = Math.ceil(newStats["EClipSize"]);
