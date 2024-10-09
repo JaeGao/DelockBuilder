@@ -1,6 +1,9 @@
 import { start } from 'repl';
 import { Heroes } from './herointerface';
 import * as fs from 'fs';
+import { getAbilitiesbyHero, allStats, ModifierValues, getItems } from './dataUtils';
+import { ItemModifiers, extractItemModifiers, getHeroStartingStats } from './clientUtils';
+import { Upgrade_with_name } from './itemInterface';
 
 const jsonpath = "../data/CharactersV2/CharactersV3.json";
 
@@ -57,40 +60,6 @@ export async function getInGameHeroes(): Promise<HeroFilteredList[]> {
 }
 
 
-export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
-    const hero_id = `hero_${name.toLowerCase()}` as HeroID;
-    const hero_ids = (`hero_${name.toLowerCase()}`).toString(); //Gets Hero name as string
-    const w_vDS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]);
-    const w_vODS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]);
-    const v_vDS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]);
-    const v_vODS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]);
-    const s_vDS: Array<string> = Object.values(GameHeroes[hero_id][SSD][eSSD][vDS]);
-    const allStatNames: Array<string> = Object.values([...w_vDS, ...w_vODS, ...v_vDS, ...v_vODS, ...s_vDS]);
-    const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
-    var StatsZero = [] as HeroStats[];
-    allStatNames.map((key, index) => {
-        StatsZero[index] = { name: key, stats: 0 }
-    });
-
-    let key: keyof typeof startStats;
-    for (key in startStats) {
-        StatsZero = StatsZero.map(({ name, stats }) => {
-            if (name === key) {
-                return {
-                    name,
-                    stats: startStats[key] !== undefined ? startStats[key] : 0,
-                }
-            } else {
-                return { name, stats, }
-            }
-        });
-    }
-    return StatsZero;
-}
-
-
-
-
 // const w_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eWSD][vDS]);
 // const w_vODS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eWSD][vODS]);
 // const v_vDS : Array<string> = Object.values(CV3['hero_inferno'][SSD][eVSD][vDS]);
@@ -109,11 +78,101 @@ export async function getHeroStartingStats(name: string): Promise<HeroStats[]> {
 
 //console.log(GameHeroes['hero_haze']['m_mapStartingStats']['EMaxMoveSpeed'])
 
-getHeroStartingStats('haze').then(hazeStats =>
-    console.log(hazeStats)
-)
 
 // getInGameHeroes().then(heroesdata => {
 //     console.log(heroesdata[0].data.m_strIcon)
 // })
+async function testStatCalc(equippedItems: Upgrade_with_name[]): Promise<allStats> {
+    const heron = 'hero_bebop';
+    let stats = await getHeroStartingStats('bebop');
+    const ogstats = await getAbilitiesbyHero();
+    const weaponStats = ogstats?.find((element) => element.heroname === heron)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
+    // Extract and apply item modifiers
+    let modifierValues = {} as ModifierValues;
+    
+    equippedItems.forEach(item => {
+        const itemModifiers: ItemModifiers = extractItemModifiers(item);
+        let i = 1;
+        for (const [stat, value] of Object.entries(itemModifiers)) {
+            if (itemModifiers) {
+                Object.entries(itemModifiers).forEach(([stat, value]) => {
+                    if (stat in stats) {
+                        if (stat.includes('_percent')) {
+                            if (modifierValues['Health_Max_Percent'] === undefined) {
+                                modifierValues[stat] = value;
+                            }
+                            modifierValues['Health_Max_Percent'] += value;
+                        } else if (stat === "EBulletArmorDamageReduction" || "ETechArmorDamageReduction") {
+                            if (modifierValues[stat] === 0) {
+                                modifierValues[stat] = value / 100;
+                            } else {
+                                modifierValues[stat] *= (1 - value / 100)
+                            }
+                        } else {
+                            modifierValues[stat] += value;
+                        }
+                    }
+                });
+            }
+        }
+    });
+    
+    let mkey: keyof typeof modifierValues;
+    for (mkey in modifierValues) {
+        if (mkey in stats)
+            if (mkey === "EBaseWeaponDamageIncrease") {
+                stats[mkey as keyof allStats] += modifierValues.mkey;
+                stats['EBulletDamage'] *= (1 + modifierValues.mkey);
+            }
+            if (mkey === "EFireRate" && (heron.replace('hero_', '') === "lash" || "chrono" || "gigawatt") && weaponStats !== undefined) {
+                stats[mkey as keyof allStats] += modifierValues.mkey;
+                stats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues.mkey / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
+    
+            } else if (mkey === "EFireRate" && heron.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+                stats[mkey as keyof allStats] += modifierValues.mkey;
+                stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + modifierValues.mkey / 100));
+    
+            } else if (mkey === "EFireRate" && (heron.replace('hero_', '') !== "lash" || "chrono" || "gigawatt" || "forge") && weaponStats !== undefined) {
+                stats[mkey as keyof allStats] += modifierValues.mkey;
+                stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + modifierValues.mkey / 100));
+    
+            }
+            if (mkey === "EClipSizeIncrease" || mkey === "EReloadTime" || mkey === "EBulletSpeed") {
+                stats[mkey as keyof allStats] *= (1 + modifierValues.mkey);
+            }
+            if (mkey === "EMaxHealth") {
+                stats[mkey as keyof allStats] = (stats[mkey as keyof allStats] + modifierValues.mkey) * (1 + modifierValues.Health_Max_Percent);
+            }
+            if (mkey === "EBulletArmorDamageReduction" || mkey === "ETechArmorDamageReduction") {
+                if (stats[mkey as keyof allStats] !== 0) {
+                    stats[mkey as keyof allStats] = 1 - (1 - stats[mkey as keyof allStats]) * modifierValues.mkey;
+                } else {
+                    stats[mkey as keyof allStats] = 1 - modifierValues.mkey;
+                }
+    
+            }
+            if (mkey === "EStaminaRegenIncrease") {
+                stats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenIncrease'] * (1 + modifierValues.mkey));
+                stats[mkey as keyof allStats] += modifierValues.mkey;
+            } else {
+                stats[mkey as keyof allStats] += modifierValues.mkey;
+            }
+        }
+        return stats
+}
 
+
+getItems().then(ilist => {
+    var testItems : Upgrade_with_name[] = [];
+    for (let i = 0; i < ilist.length; i++) {
+        if (ilist[i].itemkey === "upgrade_blitz_bullets" || ilist[i].itemkey === "upgrade_glass_cannon")
+            if (testItems.length === 0) {
+                testItems[0] = ilist[i];
+            } else {
+                testItems[1] = ilist[i];
+            }
+    }
+    testStatCalc(ilist).then(testStats =>
+        console.log(testStats)
+    )
+})

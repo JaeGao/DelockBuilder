@@ -22,7 +22,6 @@ export default function RootLayout({
     <html lang="en" className={`${Deadlock.variable}`}>
       <body className="font-forevs-black text-custom-beige">
         <div className="flex">
-          <Navbar />
           <main className="flex-1 p-2">
             {children}
           </main>

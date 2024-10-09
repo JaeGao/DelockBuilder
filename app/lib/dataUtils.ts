@@ -4,6 +4,7 @@ import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
+import { start } from 'repl';
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
@@ -29,20 +30,29 @@ export interface ItemModifiers {
     [key: string]: number;
 }
 
+export interface ModifierValues {
+    [key: string]: number;
+}
+
 export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
     const modifiers: ItemModifiers = {};
 
     for (const [key, value] of Object.entries(item.upgrade.m_mapAbilityProperties)) {
-        if (typeof value === 'object' && 'm_eProvidedPropertyType' in value && 'm_strValue' in value) {
+        if (typeof value === 'object' && 'm_eProvidedPropertyType' in value && 'm_strValue' in value && parseFloat(value.m_strValue) !== 0) {
             const propertyType = value.m_eProvidedPropertyType as string;
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
-                if (statInfo.mod_type !== 'skip') {
+                if (statInfo.mod_type !== 'skip' && statInfo.mod_type !== 'percent') {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
                     }
-                }
+                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue)) {
+                        modifiers[statInfo.stat + '_percent'] = numericValue;
+                    }
+                } 
             }
         }
     }
@@ -206,7 +216,6 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         throw error;
     }
 }
-//NOT WORKING
 export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
     if (cachedAbilities) {
         return cachedAbilities;
@@ -289,11 +298,20 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                 if (allStatNames[i] === "EBulletSpeed" && weaponStats !== undefined) {
                     StatsZero[allStatNames[i]] = weaponStats.m_BulletSpeedCurve.m_vDomainMaxs[1] * 0.0254;
                 }
-                if (allStatNames[i] === "EStaminaCooldown" && weaponStats !== undefined) {
+                if (allStatNames[i] === "EStaminaCooldown" && startStats !== undefined) {
                     StatsZero[allStatNames[i]] = 1 / startStats["EStaminaRegenPerSecond"];
+                    StatsZero["EStaminaRegenPerSecond"] = startStats.EStaminaRegenPerSecond;
+                }
+                if (allStatNames[i] === "ECritDamageReceivedScale" ||
+                    allStatNames[i] === "EReloadSpeed" ||
+                    allStatNames[i] === "ETechDuration" ||
+                    allStatNames[i] === "ETechRange") {
+                    StatsZero[allStatNames[i]] = 0;
                 }
             }
         }
+
+
         return StatsZero;
     } catch (error) {
         console.error('Error processing starting stats:', error);
@@ -310,14 +328,21 @@ export function clearCache(): void {
     cachedAbilitiesJson = null;
 }
 
-getItems().then(idata => {
-    for (let i = 0; i < idata.length; i++) {
-        console.log(idata[i].upgrade.isActive)
-        // for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
-        //     console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
-        // }
-    }
-})
-// getHeroStartingStats('haze').then(hazeStats =>
+// getItems().then(ilist => {
+//     for (let i = 0; i in ilist; i++) {
+//         console.log(ilist[i].itemkey)
+//         console.log(extractItemModifiers(ilist[i]))
+//     }}
+// )
+
+// getItems().then(idata => {
+//     for (let i = 0; i < idata.length; i++) {
+//         console.log(idata[i].upgrade.isActive)
+//         // for (let p=0; p < idata[i].upgrade.m_vecTooltipSectionInfo.length; p++) {
+//         //     console.log(idata[i].upgrade.m_vecTooltipSectionInfo[p].m_eAbilitySectionType)
+//         // }
+//     }
+// })
+// getHeroStartingStats('bebop').then(hazeStats =>
 //     console.log(hazeStats)
 // )

@@ -72,7 +72,7 @@
 		"stat": "ELightMeleeDamage"
 	},
     "MODIFIER_VALUE_CLOSE_RANGE_BONUS_BASE_DAMAGE_PERCENT":{
-		"mod_type": "add", 
+		"mod_type": "skip", 
 		"stat": "EBaseWeaponDamageIncrease"
 	},
     "MODIFIER_VALUE_BONUS_WEAPON_DAMAGE_CLOSE_RANGE_MAX_RANGE":{
@@ -80,7 +80,7 @@
 		"stat": "EBaseWeaponDamageIncrease"
 	},
     "MODIFIER_VALUE_LONG_RANGE_BONUS_BASE_DAMAGE_PERCENT":{
-		"mod_type": "add", 
+		"mod_type": "skip", 
 		"stat": "EBaseWeaponDamageIncrease"
 	},
     "MODIFIER_VALUE_BONUS_WEAPON_DAMAGE_LONG_RANGE_MIN_RANGE":{
@@ -108,7 +108,7 @@
 		"stat": "EBulletShieldHealth"
 	},
     "MODIFIER_VALUE_HEIGHT_ADVANTAGE_BONUS_BASE_DAMAGE_PERCENT":{
-		"mod_type": "add", 
+		"mod_type": "skip", 
 		"stat": "EBaseWeaponDamageIncrease"
 	},
     "MODIFIER_VALUE_SPRINT_SPEED_BONUS":{
@@ -156,7 +156,7 @@
 		"stat": "EReloadSpeed"
 	},
     "MODIFIER_VALUE_TECH_ARMOR":{
-		"mod_type": "add", 
+		"mod_type": "skip", 
 		"stat": "ETechArmorDamageReduction"
 	},
     "MODIFIER_VALUE_STATUS_RESISTANCE":{
@@ -252,7 +252,7 @@
 		"stat": "ImbuedBonusDamage"
 	},
     "MODIFIER_VALUE_HEALTH_MAX_PERCENT":{
-		"mod_type": "add", 
+		"mod_type": "percent", 
 		"stat": "EMaxHealth"
 	},
     "MODIFIER_VALUE_BASE_BULLET_DAMAGE_PERCENT":{

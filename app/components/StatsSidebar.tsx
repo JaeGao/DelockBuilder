@@ -32,9 +32,9 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         };
     }, [characterStats]);
 
-    const formatStat = (value: number | undefined): string => {
-        if (value === undefined) return 'N/A';
-        return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    const formatStat = (value: number | undefined | null): string => {
+        if (value === undefined || value === null) return 'N/A';
+        return Number.isInteger(value) ? value.toString() : Number(value).toFixed(2);
     };
 
     const calculatePercentChange = (current: number, previous: number): string => {
@@ -115,7 +115,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     ];
 
     const percentageStats = [
-        "Weapon Damage Increase", "Fire Rate", "Clip Size Increase", "Reload Reduction",
+        "Weapon Damage", "Fire Rate", "Clip Size Increase", "Reload Reduction",
         "Bullet Velocity Increase", "Bullet Lifesteal", "Bullet Resist", "Spirit Resist",
         "Heal Amp", "Debuff Resist", "Crit Reduction", "Stamina Recovery",
         "Ability Cooldown", "Ability Duration", "Ability Range", "Spirit Lifesteal",
