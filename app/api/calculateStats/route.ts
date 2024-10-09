@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
         const { characterName, equippedItems } = body;
 
-        console.log('Fetching character:', characterName);
+        //console.log('Fetching character:', characterName);
         const character = await getCharacter(characterName);
         // console.log('Received character:', JSON.stringify(character, null, 2));
 

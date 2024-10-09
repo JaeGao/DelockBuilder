@@ -52,8 +52,8 @@ BS: Base Stats
         - 1 / (m_flMaxSpinCycleTime / (1+ (MODIFIER_VALUE_FIRE_RATE) / 100)) - McGinnis
 
 //    'EFireRate' - Sum(MODIFIER_VALUE_FIRE_RATE)
-+    'EClipSize' - BS + MODIFIER_VALUE_AMMO_CLIP_SIZE 
-//    'EClipSizeIncrease' - BS * (1 + MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT)
+//    'EClipSize' - BS + MODIFIER_VALUE_AMMO_CLIP_SIZE 
+//    'EClipSizeIncrease' - BS + MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT
 //    'EReloadTime' - BS * (1 + MODIFIER_VALUE_RELOAD_SPEED)
 +    'EReloadSpeed' - MODIFIER_VALUE_RELOAD_SPEED (Only Active Reload)
 //    'EBulletSpeed' - m_BulletSpeedcurve[m_vDomainMaxs][2] * (1 + MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT)
