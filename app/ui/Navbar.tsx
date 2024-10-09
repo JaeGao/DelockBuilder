@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
-      <nav className={`bg-gray-800 h-full w-1/5 max-w-52 min-w-36 fixed left-0 top-0 p-4 z-40 transition-transform duration-300 ease-in-out transform 
+      <nav className={`bg-gray-800 h-full w-1/5 max-w-60 min-w-36 fixed left-0 top-0 p-4 z-40 transition-transform duration-300 ease-in-out transform 
         ${isOpen ? 'translate-x-100' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
           <Link href="/" className="text-custom-beige text-2xl font-bold mb-8 mt-6">

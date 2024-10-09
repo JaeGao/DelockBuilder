@@ -8,6 +8,7 @@ import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
+import Navbar from '../ui/Navbar';
 
 // New interface for item modifiers
 interface ItemModifier {
@@ -146,13 +147,15 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     );
 
     return (
+        <div>
+        <Navbar />
         <div className="flex mt-4">
             <div className={`p-4
                 flex flex-col 2xl:flex-row
                 w-full
                 pr-[clamp(212px,calc(25vw+12px),312px)]
                 `}>
-                <div className="flex flex-row 2xl:flex-col flex-wrap min-w-52">
+                <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60">
                     <div className="mb-2 mr-8 flex flex-col items-center float-left">
                         <div className="">
                             <h2 className="text-3xl font-bold">{heroName}</h2>
@@ -220,6 +223,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 characterClass={character.data._class}
             />
         </div>
+    </div>
     );
 };
 
