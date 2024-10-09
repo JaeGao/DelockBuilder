@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+// app/layout.tsx
+import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";
-import Navbar from "./ui/Navbar";
 
 const Deadlock = localFont({
   src: './fonts/Deadlock-Black.otf',
@@ -11,6 +11,13 @@ const Deadlock = localFont({
 export const metadata: Metadata = {
   title: "Deadlock Stats Calculator",
   description: "Calculate stats for Deadlock characters",
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 0.5,
+  maximumScale: 0.5,
+  userScalable: false,
 };
 
 export default function RootLayout({
