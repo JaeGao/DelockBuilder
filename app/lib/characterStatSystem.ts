@@ -65,8 +65,8 @@ export async function calculateCharacterStats(
     });
     let mkey = Object.keys(modifierValues);
     mkey.sort((a,b) => {
-        return (a === "EMaxHealth_percent" || a === "EBaseWeaponDamageIncrease")
-        ? 1 : ((b === "EMaxHealth_percent" || b === "EBaseWeaponDamageIncrease") ? -1 : (a).localeCompare((b)))
+        return (a === "EMaxHealth_percent" || a === "EBaseWeaponDamageIncrease" || a === "EBulletArmorReduction")
+        ? 1 : ((b === "EMaxHealth_percent" || b === "EBaseWeaponDamageIncrease" || b === "EBulletArmorReduction") ? -1 : (a).localeCompare((b)))
     })
     console.log(modifierValues)
     for (let i = 0; i < mkey.length; i++) {
@@ -121,6 +121,9 @@ export async function calculateCharacterStats(
         } else if (mkey[i] === "ETechCooldown") {
             newStats[mkey[i] as keyof allStats] = Math.round((1 - modifierValues[mkey[i]])*100);
             console.log("cooldown")
+        } else if (mkey[i] === "EBulletArmorReduction") {
+            newStats["EBulletArmorDamageReduction"] += modifierValues[mkey[i]];
+            //console.log("ran")
         } else if (mkey[i] !== "EBulletDamage") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             //console.log("ran")

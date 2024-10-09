@@ -46,7 +46,7 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
                 if (statInfo.mod_type !== 'skip' 
-                    && statInfo.mod_type !== 'percent' 
+                    && statInfo.mod_type !== 'percent'
                     && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
                     && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )
@@ -55,7 +55,7 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
                     }
-                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                }  else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat + '_percent'] = numericValue;
