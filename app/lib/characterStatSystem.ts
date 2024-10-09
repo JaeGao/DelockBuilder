@@ -46,6 +46,12 @@ export async function calculateCharacterStats(
                 } else {
                     modifierValues[stat] *= (1 - value / 100)
                 }
+            } else if (stat === "ETechCooldown") {
+                if (modifierValues[stat] === undefined) {
+                    modifierValues[stat] = (1 - value/100);
+                } else {
+                    modifierValues[stat] *= (1 - value/100);
+                }
             } else {
                 if (modifierValues[stat] === undefined) {
                     modifierValues[stat] = value;
@@ -64,7 +70,6 @@ export async function calculateCharacterStats(
     })
     console.log(modifierValues)
     for (let i = 0; i < mkey.length; i++) {
-        console.log(modifierValues[mkey[i]])
         if (mkey[i] === "EBaseWeaponDamageIncrease") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['EBulletDamage'] *= (1 + modifierValues[mkey[i]]/100);
@@ -112,6 +117,9 @@ export async function calculateCharacterStats(
         } else if (mkey[i] === "EHealingOutput") {
             newStats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] > 0 ? modifierValues[mkey[i]] : 0);
             console.log("healbane")
+        } else if (mkey[i] === "ETechCooldown") {
+            newStats[mkey[i] as keyof allStats] = Math.round((1 - modifierValues[mkey[i]])*100);
+            console.log("cooldown")
         } else if (mkey[i] !== "EBulletDamage") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             //console.log("ran")
