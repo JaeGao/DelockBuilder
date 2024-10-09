@@ -34,7 +34,7 @@ export default async function Home() {
                       alt={heroName}
                       width={100}
                       height={100}
-                      className="object-scale-down object-contain h-24 w-24 mx-auto mb-2 rounded-full"
+                      className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
                     />
                   )}
                   <p className="text-center">{heroName}</p>
@@ -46,6 +46,6 @@ export default async function Home() {
         </div>
       </div>
     </div>
-    
+
   );
 }
