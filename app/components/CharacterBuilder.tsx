@@ -5,6 +5,7 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
+import { AWithKey } from '../lib/abilityInterface';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -21,6 +22,7 @@ interface CharacterBuilderProps {
     items: Upgrade_with_name[];
     initialStats: allStats;
     itemModifiers: ItemModifier[];
+    //abilities: AWithKey[];
 }
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers }) => {
@@ -148,82 +150,82 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     return (
         <div>
-        <Navbar />
-        <div className="flex mt-4">
-            <div className={`p-4
+            <Navbar />
+            <div className="flex mt-4">
+                <div className={`p-4
                 flex flex-col 2xl:flex-row
                 w-full
                 pr-[clamp(212px,calc(25vw+12px),312px)]
                 `}>
-                <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60">
-                    <div className="mb-2 mr-8 flex flex-col items-center float-left">
-                        <div className="">
-                            <h2 className="text-3xl font-bold">{heroName}</h2>
+                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60">
+                        <div className="mb-2 mr-8 flex flex-col items-center float-left">
+                            <div className="">
+                                <h2 className="text-3xl font-bold">{heroName}</h2>
+                            </div>
+                            {character.data.m_strIconHeroCard && (
+                                <Image
+                                    src={character.data.m_strIconHeroCard}
+                                    alt={heroName}
+                                    width={120}
+                                    height={120}
+                                    className="rounded-full mb-2 object-none"
+                                />
+                            )}
                         </div>
-                        {character.data.m_strIconHeroCard && (
-                            <Image
-                                src={character.data.m_strIconHeroCard}
-                                alt={heroName}
-                                width={120}
-                                height={120}
-                                className="rounded-full mb-2 object-none"
+                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
+                            <ItemGrid
+                                title="Weapon"
+                                items={weaponItems}
+                                onItemToggle={(item) => handleItemToggle(item)}
                             />
-                        )}
-                    </div>
-                    <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
-                        <ItemGrid
-                            title="Weapon"
-                            items={weaponItems}
-                            onItemToggle={(item) => handleItemToggle(item)}
-                        />
-                        <ItemGrid
-                            title="Vitality"
-                            items={vitalityItems}
-                            onItemToggle={(item) => handleItemToggle(item)}
-                        />
-                        <ItemGrid
-                            title="Spirit"
-                            items={spiritItems}
-                            onItemToggle={(item) => handleItemToggle(item)}
-                        />
-                        <ItemGrid
-                            title="Flex"
-                            items={utilityItems}
-                            onItemToggle={(item) => handleItemToggle(item)}
-                        />
-                    </div>
-                </div>
-
-                <div className="w-full mr-[4%] mt-2">
-                    {errorMessage && (
-                        <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
-                            {errorMessage}
+                            <ItemGrid
+                                title="Vitality"
+                                items={vitalityItems}
+                                onItemToggle={(item) => handleItemToggle(item)}
+                            />
+                            <ItemGrid
+                                title="Spirit"
+                                items={spiritItems}
+                                onItemToggle={(item) => handleItemToggle(item)}
+                            />
+                            <ItemGrid
+                                title="Flex"
+                                items={utilityItems}
+                                onItemToggle={(item) => handleItemToggle(item)}
+                            />
                         </div>
-                    )}
-                    <input
-                        type="text"
-                        placeholder="Search upgrade items..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
-                    />
-                    <div className="mb-4">
-                        <h3 className="text-xl font-bold mb-2">Available Items</h3>
-                        <ItemsDisplay
-                            items={filteredItems}
-                            onItemSelect={handleItemToggle}
-                            equippedItems={allEquippedItems}
+                    </div>
+
+                    <div className="w-full mr-[4%] mt-2">
+                        {errorMessage && (
+                            <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
+                                {errorMessage}
+                            </div>
+                        )}
+                        <input
+                            type="text"
+                            placeholder="Search upgrade items..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
                         />
+                        <div className="mb-4">
+                            <h3 className="text-xl font-bold mb-2">Available Items</h3>
+                            <ItemsDisplay
+                                items={filteredItems}
+                                onItemSelect={handleItemToggle}
+                                equippedItems={allEquippedItems}
+                            />
+                        </div>
                     </div>
                 </div>
+                <StatsSidebar
+                    characterStats={currentStats || initialStats}
+                    characterName={heroName}
+                    characterClass={character.data._class}
+                />
             </div>
-            <StatsSidebar
-                characterStats={currentStats || initialStats}
-                characterName={heroName}
-                characterClass={character.data._class}
-            />
         </div>
-    </div>
     );
 };
 

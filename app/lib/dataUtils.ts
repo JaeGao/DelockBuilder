@@ -215,7 +215,6 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         throw error;
     }
 }
-//NOT WORKING
 export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
     if (cachedAbilities) {
         return cachedAbilities;
@@ -301,11 +300,11 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                 if (allStatNames[i] === "EStaminaCooldown" && startStats !== undefined) {
                     StatsZero[allStatNames[i]] = 1 / startStats["EStaminaRegenPerSecond"];
                 }
-                if (allStatNames[i] === "ECritDamageReceivedScale" || 
-                    allStatNames[i] === "EReloadSpeed" || 
-                    allStatNames[i] === "ETechDuration" || 
-                    allStatNames[i] === "ETechRange" ) {
-                        StatsZero[allStatNames[i]] = 0;
+                if (allStatNames[i] === "ECritDamageReceivedScale" ||
+                    allStatNames[i] === "EReloadSpeed" ||
+                    allStatNames[i] === "ETechDuration" ||
+                    allStatNames[i] === "ETechRange") {
+                    StatsZero[allStatNames[i]] = 0;
                 }
             }
         }

@@ -2,7 +2,7 @@
 
 import { HeroType } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
-import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues} from '../lib/dataUtils';
+import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from '../lib/dataUtils';
 
 export async function calculateCharacterStats(
     character: HeroType,
@@ -17,7 +17,7 @@ export async function calculateCharacterStats(
     let modifierValues = {} as ModifierValues;
 
     equippedItems.forEach(item => {
-        const itemModifiers : ItemModifiers = extractItemModifiers(item);
+        const itemModifiers: ItemModifiers = extractItemModifiers(item);
         let i = 1;
         for (const [stat, value] of Object.entries(itemModifiers)) {
             if (stat in stats) {
@@ -39,43 +39,47 @@ export async function calculateCharacterStats(
         }
     });
 
-    let mkey : keyof typeof modifierValues;
+    let mkey: keyof typeof modifierValues;
     for (mkey in modifierValues) {
+        console.log(mkey);
         if (mkey in stats)
             if (mkey === "EBaseWeaponDamageIncrease") {
                 stats[mkey as keyof allStats] += modifierValues.mkey;
                 stats['EBulletDamage'] *= (1 + modifierValues.mkey);
-            } 
-            if (mkey === "EFireRate" && (character.key.replace('hero_', '') === "hero_lash" || "hero_chrono" || "hero_gigawatt") && weaponStats !== undefined) {
-                stats[mkey as keyof allStats] += modifierValues.mkey;
-                stats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1+ modifierValues.mkey/100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
-            } else if (mkey === "EFireRate" && character.key.replace('hero_', '') === "hero_forge" && weaponStats !== undefined) {
-                stats[mkey as keyof allStats] += modifierValues.mkey;
-                stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + modifierValues.mkey / 100));
-            } else if (mkey === "EFireRate" && (character.key.replace('hero_', '') !== "hero_lash" || "hero_chrono" || "hero_gigawatt" || "hero_forge") && weaponStats !== undefined) {
-                stats[mkey as keyof allStats] += modifierValues.mkey;
-                stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + modifierValues.mkey / 100));
             }
-            if (mkey === "EClipSizeIncrease" || mkey === "EReloadTime" || mkey === "EBulletSpeed") {
-                stats[mkey as keyof allStats] *= (1 + modifierValues.mkey);
-            }
-            if (mkey === "EMaxHealth") { 
-                stats[mkey as keyof allStats] = (stats[mkey as keyof allStats] + modifierValues.mkey) * (1 + modifierValues.Health_Max_Percent);
-            }
-            if (mkey === "EBulletArmorDamageReduction" || mkey === "ETechArmorDamageReduction") {
-                if (stats[mkey as keyof allStats] !== 0) {
-                    stats[mkey as keyof allStats] = 1 - (1 - stats[mkey as keyof allStats]) * modifierValues.mkey;
-                } else {
-                    stats[mkey as keyof allStats] = 1 - modifierValues.mkey;
-                }
-
-            }
-            if (mkey === "EStaminaRegenIncrease") {
-                stats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenIncrease'] * (1 + modifierValues.mkey));
-                stats[mkey as keyof allStats] += modifierValues.mkey;
+        if (mkey === "EFireRate" && (character.key.replace('hero_', '') === "lash" || "chrono" || "gigawatt") && weaponStats !== undefined) {
+            stats[mkey as keyof allStats] += modifierValues.mkey;
+            stats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues.mkey / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
+            console.log("YOU ARE LASH OR CHRONO OR GIGAWATT");
+        } else if (mkey === "EFireRate" && character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+            stats[mkey as keyof allStats] += modifierValues.mkey;
+            stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + modifierValues.mkey / 100));
+            console.log("YOU ARE FORGE");
+        } else if (mkey === "EFireRate" && (character.key.replace('hero_', '') !== "lash" || "chrono" || "gigawatt" || "forge") && weaponStats !== undefined) {
+            stats[mkey as keyof allStats] += modifierValues.mkey;
+            stats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + modifierValues.mkey / 100));
+            console.log("YOU ARE NOT LASH OR CHRONO OR GIGAWATT OR FORGE");
+        }
+        if (mkey === "EClipSizeIncrease" || mkey === "EReloadTime" || mkey === "EBulletSpeed") {
+            stats[mkey as keyof allStats] *= (1 + modifierValues.mkey);
+        }
+        if (mkey === "EMaxHealth") {
+            stats[mkey as keyof allStats] = (stats[mkey as keyof allStats] + modifierValues.mkey) * (1 + modifierValues.Health_Max_Percent);
+        }
+        if (mkey === "EBulletArmorDamageReduction" || mkey === "ETechArmorDamageReduction") {
+            if (stats[mkey as keyof allStats] !== 0) {
+                stats[mkey as keyof allStats] = 1 - (1 - stats[mkey as keyof allStats]) * modifierValues.mkey;
             } else {
-                stats[mkey as keyof allStats] += modifierValues.mkey;
+                stats[mkey as keyof allStats] = 1 - modifierValues.mkey;
             }
+
+        }
+        if (mkey === "EStaminaRegenIncrease") {
+            stats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenIncrease'] * (1 + modifierValues.mkey));
+            stats[mkey as keyof allStats] += modifierValues.mkey;
+        } else {
+            stats[mkey as keyof allStats] += modifierValues.mkey;
+        }
     }
 
     // Calculate derived stats
