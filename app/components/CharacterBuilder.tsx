@@ -33,16 +33,20 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [spiritItems, setSpiritItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
-    const [equippedAbilities, setEquippedAbilities] = useState<Signature_base[] | null>(abdatagrabber());
+    const [equippedAbilities, setEquippedAbilities] = useState<Signature_base[] | null>(
+        abdatagrabber() ?? []
+    );
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 
     function abdatagrabber() {
-        let abdata = abilities.find((element) => element.heroname === character.key)?.adata;
-        return [abdata?.ESlot_Signature_1, abdata?.ESlot_Signature_2, abdata?.ESlot_Signature_3, abdata?.ESlot_Signature_4];
+        const ability = abilities.find((element) => element.heroname === character.key);
 
+        if (ability) {
+            const abdata = ability.adata;
+            return [abdata.ESlot_Signature_1, abdata.ESlot_Signature_2, abdata.ESlot_Signature_3, abdata.ESlot_Signature_4];
+        }
     }
-
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
