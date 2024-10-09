@@ -132,6 +132,7 @@ export async function calculateCharacterStats(
     newStats["ELightMeleeDamage"] = Math.ceil(newStats["ELightMeleeDamage"]);
     newStats["EHeavyMeleeDamage"] = Math.ceil(newStats["EHeavyMeleeDamage"]);
     newStats["EClipSize"] = Math.ceil(newStats["EClipSize"]);
+    console.log(newStats['EBulletDamage'])
     // // Calculate derived stats
     // stats.EDPS = stats.EBulletDamage * (stats.ERoundsPerSecond || 1);
     // stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);

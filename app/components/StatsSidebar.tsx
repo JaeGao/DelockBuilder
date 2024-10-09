@@ -34,7 +34,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
     const formatStat = (value: number | undefined | null): string => {
         if (value === undefined || value === null) return 'N/A';
-        return Number.isInteger(value) ? value.toString() : Number(value).toFixed(2);
+        return Number.isInteger(value) ? value.toString() : Number(value).toFixed(3);
     };
 
     const calculatePercentChange = (current: number, previous: number): string => {
