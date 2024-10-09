@@ -1,11 +1,11 @@
 // File: app/lib/characterStatSystem.ts
 
-import { HeroType } from '../lib/herointerface';
-import { Upgrade_with_name } from '../lib/itemInterface';
-import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from '../lib/dataUtils';
+import { HeroType, HeroWithKey } from './herointerface';
+import { Upgrade_with_name } from './itemInterface';
+import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
 
 export async function calculateCharacterStats(
-    character: HeroType,
+    character: HeroWithKey,
     equippedItems: Upgrade_with_name[],
     allItems: Upgrade_with_name[]
 ): Promise<allStats> {
@@ -41,7 +41,7 @@ export async function calculateCharacterStats(
 
     let mkey: keyof typeof modifierValues;
     for (mkey in modifierValues) {
-        console.log(mkey);
+        // console.log(mkey);
         if (mkey in stats)
             if (mkey === "EBaseWeaponDamageIncrease") {
                 stats[mkey as keyof allStats] += modifierValues.mkey;
@@ -97,6 +97,6 @@ export async function calculateCharacterStats(
     //     stats.ERoundsPerSecond = 1 / ((character.m_WeaponInfo?.m_flCycleTime || 1) / (1 + stats.EFireRate / 100));
     // }
 
-
+    console.log(stats, 'this is the CharacterStats log')
     return stats;
 }

@@ -36,36 +36,41 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
-
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
-
-    const calculateStats = (equippedItems: Upgrade_with_name[]) => {
-        let newStats = { ...initialStats };
-        equippedItems.forEach(item => {
-            const modifiers = itemModifiers.find(mod => mod.itemkey === item.itemkey)?.modifiers;
-            if (modifiers) {
-                Object.entries(modifiers).forEach(([stat, value]) => {
-                    if (stat in newStats) {
-                        newStats[stat as keyof allStats] += value;
-                    }
-                });
-            }
-        });
-        return newStats;
-    };
 
     useEffect(() => {
         const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
             (item): item is Upgrade_with_name => item !== null
         );
-        const newStats = calculateStats(allEquippedItems);
-        setCurrentStats(newStats);
 
-        const newAbilities = allEquippedItems.map(item => item.itemkey);
-        setEquippedAbilities(newAbilities);
-    }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
+        fetch('/api/calculateStats', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                characterName: character.key.replace(/^hero_/, ''),
+                equippedItems: allEquippedItems,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Network response was not ok') });
+                }
+                return response.json();
+            })
+            .then(newStats => {
+                setCurrentStats(newStats);
+                const newAbilities = allEquippedItems.map(item => item.itemkey);
+                setEquippedAbilities(newAbilities);
+            })
+            .catch(error => {
+                console.error('Error calculating stats:', error);
+                setErrorMessage(error.message || 'Error calculating stats');
+            });
+    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems]);
 
     const handleItemToggle = (item: Upgrade_with_name) => {
         const category = getCategory(item.upgrade.m_eItemSlotType || '');

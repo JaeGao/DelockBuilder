@@ -324,7 +324,7 @@ export function clearCache(): void {
     cachedAbilitiesJson = null;
 }
 
-// getItems().then(ilist => { 
+// getItems().then(ilist => {
 //     for (let i = 0; i in ilist; i++) {
 //         console.log(ilist[i].itemkey)
 //         console.log(extractItemModifiers(ilist[i]))
@@ -339,6 +339,9 @@ export function clearCache(): void {
 //         // }
 //     }
 // })
-getHeroStartingStats('bebop').then(hazeStats =>
-    console.log(hazeStats)
-)
+
+
+
+// getHeroStartingStats('bebop').then(hazeStats =>
+//     console.log(hazeStats, 'this is the haze log in datautils')
+// )
