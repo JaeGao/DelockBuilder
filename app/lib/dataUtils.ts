@@ -38,11 +38,18 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
     const modifiers: ItemModifiers = {};
 
     for (const [key, value] of Object.entries(item.upgrade.m_mapAbilityProperties)) {
-        if (typeof value === 'object' && 'm_eProvidedPropertyType' in value && 'm_strValue' in value && parseFloat(value.m_strValue) !== 0) {
+        if (typeof value === 'object' 
+            && 'm_eProvidedPropertyType' in value 
+            && 'm_strValue' in value 
+            && parseFloat(value.m_strValue) !== 0) {
             const propertyType = value.m_eProvidedPropertyType as string;
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
-                if (statInfo.mod_type !== 'skip' && statInfo.mod_type !== 'percent' && value.m_UsageFlags !== "APUsageFlag_ModifierConditional") {
+                if (statInfo.mod_type !== 'skip' 
+                    && statInfo.mod_type !== 'percent' 
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
+                    && !(key.includes("When") || key.includes("With"))) {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
