@@ -134,8 +134,6 @@ export async function calculateCharacterStats(
     newStats["ELightMeleeDamage"] = Math.ceil(newStats["ELightMeleeDamage"]);
     newStats["EHeavyMeleeDamage"] = Math.ceil(newStats["EHeavyMeleeDamage"]);
     newStats["EClipSize"] = Math.ceil(newStats["EClipSize"]);
-<<<<<<< Updated upstream
-=======
 
     if (Object.keys(character.data.m_mapScalingStats).length > 0) {
         if (newStats["ETechPower"] !== undefined && newStats["ETechPower"] !== 0) {
@@ -157,7 +155,6 @@ export async function calculateCharacterStats(
         newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100));
     }
 
->>>>>>> Stashed changes
     // // Calculate derived stats
     // stats.EDPS = stats.EBulletDamage * (stats.ERoundsPerSecond || 1);
     // stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);

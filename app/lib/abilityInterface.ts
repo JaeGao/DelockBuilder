@@ -33,13 +33,6 @@ export interface AWithKey {
     adata: AData;
 }
 
-<<<<<<< Updated upstream
-export interface Signature_base {
-    [key: string]: any | null;
-
-}
-
-=======
 export interface SkillsData {
     [key: string] : {
         [key: string] : any;
@@ -55,7 +48,6 @@ export interface skillDisplayGroups {
     name: string;
     key: string;
 }
->>>>>>> Stashed changes
 
 // export interface Habilities {
 //     abilities: W_Import_Base[];

@@ -5,13 +5,7 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-<<<<<<< Updated upstream
-
-import { AWithKey, Signature_base } from '../lib/abilityInterface';
-
-=======
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
->>>>>>> Stashed changes
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -32,37 +26,15 @@ interface CharacterBuilderProps {
 }
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
-<<<<<<< Updated upstream
-
-
-    const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
-
-=======
->>>>>>> Stashed changes
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [spiritItems, setSpiritItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
-
-    const [equippedAbilities, setEquippedAbilities] = useState<Signature_base[] | null>(
-        abdatagrabber() ?? []
-    );
+    const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-<<<<<<< Updated upstream
-
-    function abdatagrabber() {
-        const ability = abilities.find((element) => element.heroname === character.key);
-
-        if (ability) {
-            const abdata = ability.adata;
-            return [abdata.ESlot_Signature_1, abdata.ESlot_Signature_2, abdata.ESlot_Signature_3, abdata.ESlot_Signature_4];
-        }
-    }
-
-=======
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
     let heroSkills = [] as SkillsData[];
     let skillProps = {} as skillProperties;
@@ -85,6 +57,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
     })
 
+    console.log(skillProps)
+
+
     let skey : keyof typeof skillProps;
     for (skey in skillProps) {
         let slabel : string;
@@ -98,9 +73,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             key: skey,
             name: slabel,
         })
+
     };
     
->>>>>>> Stashed changes
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
@@ -129,11 +104,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             })
             .then(newStats => {
                 setCurrentStats(newStats);
-<<<<<<< Updated upstream
-                const newAbilities = allEquippedItems.map(item => item.itemkey);
-                //setEquippedAbilities(newAbilities);
-=======
->>>>>>> Stashed changes
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
