@@ -41,38 +41,38 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     let skillDG = [] as skillDisplayGroups[];
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
-            heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)), 
-                         JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
-                         JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
-                         JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4)) ];
+            heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
+            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
+            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
+            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))];
             break;
         }
 
     }
     heroSkills.forEach((element) => {
-        for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
-            if (parseFloat(value.m_strValue) !== 0) {
+        for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
+            if (parseFloat(value.m_strValue) !== 0 && value.m_bFunctionDisabled !== true) {
                 skillProps[skey] = parseFloat(value.m_strValue);
             }
         }
     })
 
-    let skey : keyof typeof skillProps;
+    let skey: keyof typeof skillProps;
     for (skey in skillProps) {
-        let slabel : string;
+        let slabel: string;
         if (skey.includes("Ability")) {
             slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
         } else {
             slabel = skey.replace(/([A-Z])/g, ' $1').trim();
         }
 
-        skillDG.push( {
+        skillDG.push({
             key: skey,
             name: slabel,
         })
 
     };
-    
+
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
@@ -90,7 +90,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.key.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
-                heroSkills : heroSkills,
+                heroSkills: heroSkills,
             }),
         })
             .then(response => {
