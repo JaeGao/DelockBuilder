@@ -12,7 +12,6 @@ interface BuilderBoxProps {
     description: string;
     items: Upgrade_with_name[];
 }
-
 interface BuilderTabProps {
     items: Upgrade_with_name[];
     onAddItem: (item: Upgrade_with_name) => void;
