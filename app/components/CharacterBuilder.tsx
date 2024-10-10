@@ -41,7 +41,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     let skillDG = [] as skillDisplayGroups[];
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
-            heroSkills = [ JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)), 
+            heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)), 
                          JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
                          JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
                          JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4)) ];
@@ -56,9 +56,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             }
         }
     })
-
-    console.log(skillProps)
-
 
     let skey : keyof typeof skillProps;
     for (skey in skillProps) {
