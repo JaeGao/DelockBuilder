@@ -8,10 +8,15 @@ interface ItemsDisplayProps {
     items: Upgrade_with_name[];
     onItemSelect: (item: Upgrade_with_name) => void;
     equippedItems: Upgrade_with_name[];
-    builderItems: Upgrade_with_name[];
-    onAddItemToBuilder: (item: Upgrade_with_name) => void;
-    onRemoveItemFromBuilder: (item: Upgrade_with_name) => void;
 }
+
+interface BuilderBoxProps {
+    id: string;
+    title: string;
+    description: string;
+    items: Upgrade_with_name[];
+}
+
 const getCategoryColor = (category: string): string => {
     switch (category) {
         case 'Weapon':
@@ -121,13 +126,12 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     items,
     onItemSelect,
     equippedItems,
-    builderItems,
-    onAddItemToBuilder,
-    onRemoveItemFromBuilder
 }) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
     const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
+    const [builderItems, setBuilderItems] = useState<Upgrade_with_name[]>([]);
+    const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
 
     const categorizedItems = items.reduce((acc, item) => {
         const category = getCategory(item.upgrade.m_eItemSlotType || '');
@@ -158,8 +162,62 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         const itemData = e.dataTransfer.getData('text/plain');
         if (itemData) {
             const item = JSON.parse(itemData) as Upgrade_with_name;
-            onAddItemToBuilder(item);
+            addItemToBuilder(item);
         }
+    };
+
+    const addItemToBuilder = (item: Upgrade_with_name) => {
+        setBuilderItems(prev => [...prev, item]);
+    };
+
+    const removeItemFromBuilder = (item: Upgrade_with_name) => {
+        setBuilderItems(prev => prev.filter(i => i.itemkey !== item.itemkey));
+    };
+
+    const addNewBox = (title: string, description: string) => {
+        setBuilderBoxes(prevBoxes => [
+            ...prevBoxes,
+            {
+                id: `box-${prevBoxes.length + 1}`,
+                title,
+                description,
+                items: [],
+            },
+        ]);
+    };
+
+    const moveItemBetweenBoxes = (itemId: string, sourceBoxId: string, destinationBoxId: string) => {
+        setBuilderBoxes(prevBoxes => {
+            const newBoxes = [...prevBoxes];
+            let movedItem: Upgrade_with_name | undefined;
+
+            if (sourceBoxId === 'unassigned') {
+                movedItem = builderItems.find(item => item.itemkey === itemId);
+                setBuilderItems(prev => prev.filter(item => item.itemkey !== itemId));
+            } else {
+                const sourceBox = newBoxes.find(box => box.id === sourceBoxId);
+                if (sourceBox) {
+                    const itemIndex = sourceBox.items.findIndex(item => item.itemkey === itemId);
+                    if (itemIndex !== -1) {
+                        movedItem = sourceBox.items[itemIndex];
+                        sourceBox.items.splice(itemIndex, 1);
+                    }
+                }
+            }
+
+            if (movedItem) {
+                if (destinationBoxId === 'unassigned') {
+                    setBuilderItems(prev => [...prev, movedItem!]);
+                } else {
+                    const destBox = newBoxes.find(box => box.id === destinationBoxId);
+                    if (destBox) {
+                        destBox.items.push(movedItem);
+                    }
+                }
+            }
+
+            return newBoxes;
+        });
     };
 
     return (
@@ -182,8 +240,11 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                 {activeCategory === 'Builder' ? (
                     <BuilderTab
                         items={builderItems}
-                        onAddItem={onAddItemToBuilder}
-                        onRemoveItem={onRemoveItemFromBuilder}
+                        boxes={builderBoxes}
+                        onAddItem={addItemToBuilder}
+                        onRemoveItem={removeItemFromBuilder}
+                        onAddBox={addNewBox}
+                        onMoveItem={moveItemBetweenBoxes}
                     />
                 ) : (
                     <div className="flex">

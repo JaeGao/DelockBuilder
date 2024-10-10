@@ -31,7 +31,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [builderItems, setBuilderItems] = useState<Upgrade_with_name[]>([]);
 
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
@@ -144,14 +143,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
     };
 
-    const addItemToBuilder = (item: Upgrade_with_name) => {
-        setBuilderItems(prev => [...prev, item]);
-    };
-
-    const removeItemFromBuilder = (item: Upgrade_with_name) => {
-        setBuilderItems(prev => prev.filter(i => i.itemkey !== item.itemkey));
-    };
-
     const filteredItems = items.filter((item) =>
         item.itemkey.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -227,9 +218,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 items={filteredItems}
                                 onItemSelect={handleItemToggle}
                                 equippedItems={allEquippedItems}
-                                builderItems={builderItems}
-                                onAddItemToBuilder={addItemToBuilder}
-                                onRemoveItemFromBuilder={removeItemFromBuilder}
                             />
                         </div>
                     </div>

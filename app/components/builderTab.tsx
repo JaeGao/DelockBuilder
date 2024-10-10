@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import Image from 'next/image';
 
@@ -12,10 +10,14 @@ interface BuilderBoxProps {
     description: string;
     items: Upgrade_with_name[];
 }
+
 interface BuilderTabProps {
     items: Upgrade_with_name[];
+    boxes: BuilderBoxProps[];
     onAddItem: (item: Upgrade_with_name) => void;
     onRemoveItem: (item: Upgrade_with_name) => void;
+    onAddBox: (title: string, description: string) => void;
+    onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void;
 }
 
 const getCategoryColor = (itemCat: string | undefined): string => {
@@ -27,10 +29,7 @@ const getCategoryColor = (itemCat: string | undefined): string => {
     return 'bg-gray-400';
 };
 
-const BuilderBox = ({ id, title, description, items, onRemoveItem, onMoveItem }: BuilderBoxProps & {
-    onRemoveItem: (item: Upgrade_with_name) => void;
-    onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void
-}) => {
+const BuilderBox: React.FC<BuilderBoxProps & { onRemoveItem: (item: Upgrade_with_name) => void; onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void }> = ({ id, title, description, items, onRemoveItem, onMoveItem }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -91,15 +90,9 @@ const BuilderBox = ({ id, title, description, items, onRemoveItem, onMoveItem }:
     );
 };
 
-const BuilderTab: React.FC<BuilderTabProps> = ({ items, onAddItem, onRemoveItem }) => {
-    const [boxes, setBoxes] = useState<BuilderBoxProps[]>([]);
+const BuilderTab: React.FC<BuilderTabProps> = ({ items, boxes, onAddItem, onRemoveItem, onAddBox, onMoveItem }) => {
     const [newBoxTitle, setNewBoxTitle] = useState('');
     const [newBoxDescription, setNewBoxDescription] = useState('');
-    const [unassignedItems, setUnassignedItems] = useState<Upgrade_with_name[]>([]);
-
-    useEffect(() => {
-        setUnassignedItems(items);
-    }, [items]);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -112,63 +105,19 @@ const BuilderTab: React.FC<BuilderTabProps> = ({ items, onAddItem, onRemoveItem 
         const { active, over } = event;
 
         if (active.id !== over?.id) {
-            setBoxes((boxes) => {
-                const oldIndex = boxes.findIndex((box) => box.id === active.id);
-                const newIndex = boxes.findIndex((box) => box.id === over?.id);
+            const oldIndex = boxes.findIndex((box) => box.id === active.id);
+            const newIndex = boxes.findIndex((box) => box.id === over?.id);
 
-                return arrayMove(boxes, oldIndex, newIndex);
-            });
+            onMoveItem(active.id as string, boxes[oldIndex].id, boxes[newIndex].id);
         }
     };
 
     const addNewBox = () => {
         if (newBoxTitle) {
-            setBoxes(prevBoxes => [
-                ...prevBoxes,
-                {
-                    id: `box-${prevBoxes.length + 1}`,
-                    title: newBoxTitle,
-                    description: newBoxDescription,
-                    items: [],
-                },
-            ]);
+            onAddBox(newBoxTitle, newBoxDescription);
             setNewBoxTitle('');
             setNewBoxDescription('');
         }
-    };
-
-    const moveItem = (itemId: string, sourceBoxId: string, destinationBoxId: string) => {
-        setBoxes(prevBoxes => {
-            const newBoxes = [...prevBoxes];
-            let movedItem: Upgrade_with_name | undefined;
-
-            if (sourceBoxId === 'unassigned') {
-                movedItem = unassignedItems.find(item => item.itemkey === itemId);
-                setUnassignedItems(prev => prev.filter(item => item.itemkey !== itemId));
-            } else {
-                const sourceBox = newBoxes.find(box => box.id === sourceBoxId);
-                if (sourceBox) {
-                    const itemIndex = sourceBox.items.findIndex(item => item.itemkey === itemId);
-                    if (itemIndex !== -1) {
-                        movedItem = sourceBox.items[itemIndex];
-                        sourceBox.items.splice(itemIndex, 1);
-                    }
-                }
-            }
-
-            if (movedItem) {
-                if (destinationBoxId === 'unassigned') {
-                    setUnassignedItems(prev => [...prev, movedItem!]);
-                } else {
-                    const destBox = newBoxes.find(box => box.id === destinationBoxId);
-                    if (destBox) {
-                        destBox.items.push(movedItem);
-                    }
-                }
-            }
-
-            return newBoxes;
-        });
     };
 
     return (
@@ -202,10 +151,10 @@ const BuilderTab: React.FC<BuilderTabProps> = ({ items, onAddItem, onRemoveItem 
                     const itemData = e.dataTransfer.getData('text/plain');
                     if (itemData) {
                         const { itemId, sourceBoxId } = JSON.parse(itemData);
-                        moveItem(itemId, sourceBoxId, 'unassigned');
+                        onMoveItem(itemId, sourceBoxId, 'unassigned');
                     }
                 }}>
-                    {unassignedItems.map((item) => (
+                    {items.map((item) => (
                         <div key={item.itemkey} className="w-20 h-24 m-2 relative" draggable onDragStart={(e) => {
                             e.dataTransfer.setData('text/plain', JSON.stringify({ itemId: item.itemkey, sourceBoxId: 'unassigned' }));
                         }}>
@@ -250,7 +199,7 @@ const BuilderTab: React.FC<BuilderTabProps> = ({ items, onAddItem, onRemoveItem 
                             key={box.id}
                             {...box}
                             onRemoveItem={onRemoveItem}
-                            onMoveItem={moveItem}
+                            onMoveItem={onMoveItem}
                         />
                     ))}
                 </SortableContext>
