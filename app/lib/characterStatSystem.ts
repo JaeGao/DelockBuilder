@@ -3,11 +3,13 @@
 import { HeroType, HeroWithKey } from './herointerface';
 import { Upgrade_with_name } from './itemInterface';
 import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
+import { SkillsData } from './abilityInterface';
 
 export async function calculateCharacterStats(
     character: HeroWithKey,
     equippedItems: Upgrade_with_name[],
-    allItems: Upgrade_with_name[]
+    allItems: Upgrade_with_name[],
+    heroSkills: SkillsData,
 ): Promise<allStats> {
     // Get base stats
     let stats = await getHeroStartingStats(character.key.replace('hero_', ''));
@@ -132,6 +134,30 @@ export async function calculateCharacterStats(
     newStats["ELightMeleeDamage"] = Math.ceil(newStats["ELightMeleeDamage"]);
     newStats["EHeavyMeleeDamage"] = Math.ceil(newStats["EHeavyMeleeDamage"]);
     newStats["EClipSize"] = Math.ceil(newStats["EClipSize"]);
+<<<<<<< Updated upstream
+=======
+
+    if (Object.keys(character.data.m_mapScalingStats).length > 0) {
+        if (newStats["ETechPower"] !== undefined && newStats["ETechPower"] !== 0) {
+            Object.entries(character.data.m_mapScalingStats).forEach(([key, value]) => {
+                if (key === "ERoundsPerSecond") {
+
+                } else {
+                    newStats[key] += (newStats[value.eScalingStat] * value.flScale);
+                }
+            })
+        }
+    }
+
+    if ((character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
+        newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
+    } else if (character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+        newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + newStats["EFireRate"] / 100));
+    } else if ((character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
+        newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100));
+    }
+
+>>>>>>> Stashed changes
     // // Calculate derived stats
     // stats.EDPS = stats.EBulletDamage * (stats.ERoundsPerSecond || 1);
     // stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);

@@ -9,7 +9,7 @@ export async function POST(request: Request) {
         const body = await request.json();
         // console.log('Received body:', JSON.stringify(body, null, 2));
 
-        const { characterName, equippedItems } = body;
+        const { characterName, equippedItems, heroSkills } = body;
 
         //console.log('Fetching character:', characterName);
         const character = await getCharacter(characterName);
@@ -24,7 +24,8 @@ export async function POST(request: Request) {
         const stats = await calculateCharacterStats(
             character,
             equippedItems as Upgrade_with_name[],
-            allItems
+            allItems,
+            heroSkills
         );
 
         return NextResponse.json(stats);

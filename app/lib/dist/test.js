@@ -5,4 +5,4 @@ const data = await fs.readFile(charactersPath, 'utf8');
 const characters = JSON.parse(data, (key, value) => {
     return value.m_bDisabled === false && value.m_bInDevelopment === false ? value : undefined;
 });
-console.log(Object.keys(characters));
+//console.log(Object.keys(characters));

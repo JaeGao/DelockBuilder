@@ -5,9 +5,13 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
+<<<<<<< Updated upstream
 
 import { AWithKey, Signature_base } from '../lib/abilityInterface';
 
+=======
+import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
+>>>>>>> Stashed changes
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -28,10 +32,13 @@ interface CharacterBuilderProps {
 }
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
+<<<<<<< Updated upstream
 
 
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
+=======
+>>>>>>> Stashed changes
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
@@ -44,6 +51,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     );
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+<<<<<<< Updated upstream
 
     function abdatagrabber() {
         const ability = abilities.find((element) => element.heroname === character.key);
@@ -54,6 +62,45 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
     }
 
+=======
+    const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+    let heroSkills = [] as SkillsData[];
+    let skillProps = {} as skillProperties;
+    let skillDG = [] as skillDisplayGroups[];
+    for (let i = 0; i < abilities.length; i++) {
+        if (abilities[i].heroname === character.key) {
+            heroSkills = [ JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)), 
+                         JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
+                         JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
+                         JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4)) ];
+            break;
+        }
+
+    }
+    heroSkills.forEach((element) => {
+        for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
+            if (parseFloat(value.m_strValue) !== 0) {
+                skillProps[skey] = parseFloat(value.m_strValue);
+            }
+        }
+    })
+
+    let skey : keyof typeof skillProps;
+    for (skey in skillProps) {
+        let slabel : string;
+        if (skey.includes("Ability")) {
+            slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
+        } else {
+            slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+        }
+
+        skillDG.push( {
+            key: skey,
+            name: slabel,
+        })
+    };
+    
+>>>>>>> Stashed changes
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
@@ -71,6 +118,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.key.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
+                heroSkills : heroSkills,
             }),
         })
             .then(response => {
@@ -81,8 +129,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             })
             .then(newStats => {
                 setCurrentStats(newStats);
+<<<<<<< Updated upstream
                 const newAbilities = allEquippedItems.map(item => item.itemkey);
                 //setEquippedAbilities(newAbilities);
+=======
+>>>>>>> Stashed changes
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
@@ -246,6 +297,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterStats={currentStats || initialStats}
                     characterName={heroName}
                     characterClass={character.data._class}
+                    characterSkillsData={skillProps}
+                    skillLabels={skillDG}
                 />
             </div>
         </div>
