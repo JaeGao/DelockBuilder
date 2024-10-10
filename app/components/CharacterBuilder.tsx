@@ -5,13 +5,11 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-import { AWithKey } from '../lib/abilityInterface';
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 
-// New interface for item modifiers
 interface ItemModifier {
     itemkey: string;
     modifiers: { [key: string]: number };
@@ -22,7 +20,6 @@ interface CharacterBuilderProps {
     items: Upgrade_with_name[];
     initialStats: allStats;
     itemModifiers: ItemModifier[];
-    //abilities: AWithKey[];
 }
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers }) => {
@@ -36,6 +33,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
