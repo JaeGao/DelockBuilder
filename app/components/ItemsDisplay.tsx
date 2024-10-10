@@ -147,6 +147,11 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         return equippedItems.some(equippedItem => equippedItem.itemkey === item.itemkey);
     };
 
+    const isItemInBuilder = (item: Upgrade_with_name) => {
+        return builderItems.some(builderItem => builderItem.itemkey === item.itemkey) ||
+            builderBoxes.some(box => box.items.some(boxItem => boxItem.itemkey === item.itemkey));
+    };
+
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
         setIsDraggingToBuilder(true);
@@ -167,11 +172,17 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     };
 
     const addItemToBuilder = (item: Upgrade_with_name) => {
-        setBuilderItems(prev => [...prev, item]);
+        if (!isItemInBuilder(item)) {
+            setBuilderItems(prev => [...prev, item]);
+        }
     };
 
     const removeItemFromBuilder = (item: Upgrade_with_name) => {
         setBuilderItems(prev => prev.filter(i => i.itemkey !== item.itemkey));
+        setBuilderBoxes(prev => prev.map(box => ({
+            ...box,
+            items: box.items.filter(i => i.itemkey !== item.itemkey)
+        })));
     };
 
     const addNewBox = (title: string, description: string) => {
@@ -207,10 +218,12 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
 
             if (movedItem) {
                 if (destinationBoxId === 'unassigned') {
-                    setBuilderItems(prev => [...prev, movedItem!]);
+                    if (!builderItems.some(item => item.itemkey === movedItem!.itemkey)) {
+                        setBuilderItems(prev => [...prev, movedItem!]);
+                    }
                 } else {
                     const destBox = newBoxes.find(box => box.id === destinationBoxId);
-                    if (destBox) {
+                    if (destBox && !destBox.items.some(item => item.itemkey === movedItem!.itemkey)) {
                         destBox.items.push(movedItem);
                     }
                 }
@@ -262,7 +275,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                                 key={item.itemkey}
                                                 {...item}
                                                 onSelect={() => onItemSelect(item)}
-                                                isEquipped={isItemEquipped(item)}
+                                                isEquipped={isItemEquipped(item) || isItemInBuilder(item)}
                                             />
                                         ))}
                                     </div>
