@@ -12,58 +12,57 @@ export async function calculateCharacterStats(
     heroSkills: SkillsData,
 ): Promise<allStats> {
     // Get base stats
-    let stats = await getHeroStartingStats(character.key.replace('hero_', ''));
-    let newStats = stats;
+    const stats = await getHeroStartingStats(character.key.replace('hero_', ''));
+    let newStats : allStats = Object.assign({}, stats);
     const ogstats = await getAbilitiesbyHero();
     const weaponStats = ogstats?.find((element) => element.heroname === character.key)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
     // Extract and apply item modifiers
     let modifierValues = {} as ModifierValues;
-
     equippedItems.forEach(item => {
-        var icat = item.upgrade.m_eItemSlotType.includes('_Weapon') ? "Weapon" : (item.upgrade.m_eItemSlotType.includes('_Armor') ? "Vitality" : "Spirit");
-        var itier = item.upgrade.m_iItemTier.includes("Tier_1") ? 1 : (item.upgrade.m_iItemTier.includes("Tier_2") ? 2 : (item.upgrade.m_iItemTier.includes("Tier_3") ? 3 : 4));
+    var icat = item.upgrade.m_eItemSlotType.includes('_Weapon') ? "Weapon" : (item.upgrade.m_eItemSlotType.includes('_Armor') ? "Vitality" : "Spirit");
+    var itier = item.upgrade.m_iItemTier.includes("Tier_1") ? 1 : (item.upgrade.m_iItemTier.includes("Tier_2") ? 2 : (item.upgrade.m_iItemTier.includes("Tier_3") ? 3 : 4));
 
-        if (icat === "Weapon") {
-            if (modifierValues['EBaseWeaponDamageIncrease'] !== undefined) {modifierValues['EBaseWeaponDamageIncrease'] += itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18));}
-            else {modifierValues['EBaseWeaponDamageIncrease'] = itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18))}
-        } else if (icat === "Vitality") {
-            if (modifierValues["EBaseHealth_percent"] !== undefined) {modifierValues["EBaseHealth_percent"] += itier === 1 ? 11 : (itier === 2 ? 14 : (itier === 3 ? 17 : 20));}
-            else {modifierValues["EBaseHealth_percent"] = itier === 1 ? 11 : (itier === 2 ? 14 : (itier === 3 ? 17 : 20));}
-        } else if (icat === "Spirit") {
-            if (modifierValues["ETechPower"] !== undefined) {modifierValues["ETechPower"] += itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16))} 
-            else {modifierValues["ETechPower"] = itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16));}
-        }
-        const itemModifiers: ItemModifiers = extractItemModifiers(item);
-        Object.entries(itemModifiers).forEach(([stat, value]) => {
-            if (stat.includes('_percent')) {
-                if (modifierValues[stat] === undefined) {
-                    modifierValues[stat] = value;
-                } else {
-                    modifierValues[stat] += value;
-                }
-                console.log("health")
-            } else if (stat === "EBulletArmorDamageReduction" || stat === "ETechArmorDamageReduction") {
-                if (modifierValues[stat] === undefined) {
-                    modifierValues[stat] = (1-value / 100);
-                } else {
-                    modifierValues[stat] *= (1 - value / 100)
-                }
-            } else if (stat === "ETechCooldown") {
-                if (modifierValues[stat] === undefined) {
-                    modifierValues[stat] = (1 - value/100);
-                } else {
-                    modifierValues[stat] *= (1 - value/100);
-                }
+    if (icat === "Weapon") {
+        if (modifierValues['EBaseWeaponDamageIncrease'] !== undefined) {modifierValues['EBaseWeaponDamageIncrease'] += itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18));}
+        else {modifierValues['EBaseWeaponDamageIncrease'] = itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18))}
+    } else if (icat === "Vitality") {
+        if (modifierValues["EBaseHealth_percent"] !== undefined) {modifierValues["EBaseHealth_percent"] += itier === 1 ? 11 : (itier === 2 ? 14 : (itier === 3 ? 17 : 20));}
+        else {modifierValues["EBaseHealth_percent"] = itier === 1 ? 11 : (itier === 2 ? 14 : (itier === 3 ? 17 : 20));}
+    } else if (icat === "Spirit") {
+        if (modifierValues["ETechPower"] !== undefined) {modifierValues["ETechPower"] += itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16))} 
+        else {modifierValues["ETechPower"] = itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16));}
+    }
+    const itemModifiers: ItemModifiers = extractItemModifiers(item);
+    Object.entries(itemModifiers).forEach(([stat, value]) => {
+        if (stat.includes('_percent')) {
+            if (modifierValues[stat] === undefined) {
+                modifierValues[stat] = value;
             } else {
-                if (modifierValues[stat] === undefined) {
-                    modifierValues[stat] = value;
-                    console.log("declare")
-                } else {
-                    modifierValues[stat] += value;
-                    console.log("append")
-                }
+                modifierValues[stat] += value;
             }
-        })
+            console.log("health")
+        } else if (stat === "EBulletArmorDamageReduction" || stat === "ETechArmorDamageReduction") {
+            if (modifierValues[stat] === undefined) {
+                modifierValues[stat] = (1-value / 100);
+            } else {
+                modifierValues[stat] *= (1 - value / 100)
+            }
+        } else if (stat === "ETechCooldown") {
+            if (modifierValues[stat] === undefined) {
+                modifierValues[stat] = (1 - value/100);
+            } else {
+                modifierValues[stat] *= (1 - value/100);
+            }
+        } else {
+            if (modifierValues[stat] === undefined) {
+                modifierValues[stat] = value;
+                console.log("declare")
+            } else {
+                modifierValues[stat] += value;
+                console.log("append")
+            }
+        }
+    })
     });
     let mkey = Object.keys(modifierValues);
     mkey.sort((a,b) => {
@@ -75,9 +74,11 @@ export async function calculateCharacterStats(
         if (mkey[i] === "EBaseWeaponDamageIncrease") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['EBulletDamage'] *= (1 + modifierValues[mkey[i]]/100);
-            newStats['ELightMeleeDamage'] += stats['ELightMeleeDamage'] * modifierValues[mkey[i]]/200;
-            newStats['EHeavyMeleeDamage'] += stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]]/200;
-            //console.log("damage")
+            newStats['ELightMeleeDamage'] += (stats['ELightMeleeDamage'] * modifierValues[mkey[i]]/200);
+            newStats['EHeavyMeleeDamage'] += (stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]]/200);
+            console.log("damage")
+            console.log(stats["EHeavyMeleeDamage"])
+            console.log(newStats["EHeavyMeleeDamage"])
         } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
@@ -105,6 +106,7 @@ export async function calculateCharacterStats(
             }
         } else if (mkey[i] === "EMaxHealth_percent") {
             newStats["EMaxHealth"] *= (1 + modifierValues[mkey[i]]/100);
+            console.log("Hperc")
         }else if (mkey[i] === "EBulletArmorDamageReduction" || mkey[i] === "ETechArmorDamageReduction") {
             if (newStats[mkey[i] as keyof allStats] !== 0) {
                 newStats[mkey[i] as keyof allStats] = (1 - ((1 - newStats[mkey[i] as keyof allStats]/100) * modifierValues[mkey[i]]))*100;
@@ -117,6 +119,7 @@ export async function calculateCharacterStats(
         } else if (mkey[i] === "ELightMeleeDamage") {
             newStats[mkey[i] as keyof allStats] *= 1 + modifierValues[mkey[i]]/100;
             newStats["EHeavyMeleeDamage"] *= 1 + modifierValues[mkey[i]]/100; 
+            console.log("Melee updated")
         } else if (mkey[i] === "EHealingOutput") {
             newStats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] > 0 ? modifierValues[mkey[i]] : 0);
             console.log("healbane")
