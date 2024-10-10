@@ -10,13 +10,12 @@ export async function calculateCharacterStats(
     allItems: Upgrade_with_name[]
 ): Promise<allStats> {
     // Get base stats
-    let stats = await getHeroStartingStats(character.key.replace('hero_', ''));
-    let newStats = stats;
+    const stats = await getHeroStartingStats(character.key.replace('hero_', ''));
+    let newStats : allStats = Object.assign({}, stats);
     const ogstats = await getAbilitiesbyHero();
     const weaponStats = ogstats?.find((element) => element.heroname === character.key)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
     // Extract and apply item modifiers
     let modifierValues = {} as ModifierValues;
-
     equippedItems.forEach(item => {
         var icat = item.upgrade.m_eItemSlotType.includes('_Weapon') ? "Weapon" : (item.upgrade.m_eItemSlotType.includes('_Armor') ? "Vitality" : "Spirit");
         var itier = item.upgrade.m_iItemTier.includes("Tier_1") ? 1 : (item.upgrade.m_iItemTier.includes("Tier_2") ? 2 : (item.upgrade.m_iItemTier.includes("Tier_3") ? 3 : 4));
@@ -55,13 +54,13 @@ export async function calculateCharacterStats(
             } else {
                 if (modifierValues[stat] === undefined) {
                     modifierValues[stat] = value;
-                    //console.log("declare")
+                    console.log("declare")
                 } else {
                     modifierValues[stat] += value;
-                    //console.log("append")
+                    console.log("append")
                 }
             }
-        })
+    })
     });
     let mkey = Object.keys(modifierValues);
     mkey.sort((a,b) => {
@@ -73,9 +72,8 @@ export async function calculateCharacterStats(
         if (mkey[i] === "EBaseWeaponDamageIncrease") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['EBulletDamage'] *= (1 + modifierValues[mkey[i]]/100);
-            newStats['ELightMeleeDamage'] += stats['ELightMeleeDamage'] * modifierValues[mkey[i]]/200;
-            newStats['EHeavyMeleeDamage'] += stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]]/200;
-            //console.log("damage")
+            newStats['ELightMeleeDamage'] += (stats['ELightMeleeDamage'] * modifierValues[mkey[i]]/200);
+            newStats['EHeavyMeleeDamage'] += (stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]]/200);
         } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
@@ -115,6 +113,7 @@ export async function calculateCharacterStats(
         } else if (mkey[i] === "ELightMeleeDamage") {
             newStats[mkey[i] as keyof allStats] *= 1 + modifierValues[mkey[i]]/100;
             newStats["EHeavyMeleeDamage"] *= 1 + modifierValues[mkey[i]]/100; 
+            console.log("Melee updated")
         } else if (mkey[i] === "EHealingOutput") {
             newStats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] > 0 ? modifierValues[mkey[i]] : 0);
             console.log("healbane")
@@ -125,7 +124,9 @@ export async function calculateCharacterStats(
             newStats["EBulletArmorDamageReduction"] += modifierValues[mkey[i]];
             //console.log("ran")
         } else if (mkey[i] === "ETechPower") {
-            if (newStats[mkey[i]] === undefined) {
+            if (modifierValues[mkey[i]] === undefined) {;
+                newStats[mkey[i]] += modifierValues[mkey[i]];
+            } else {
                 newStats[mkey[i]] = modifierValues[mkey[i]];
             }
         } else if (mkey[i] !== "EBulletDamage") {
@@ -143,26 +144,34 @@ export async function calculateCharacterStats(
                 if (key === "ERoundsPerSecond") {
 
                 } else {
-                    newStats[key] += (newStats[value.eScalingStat] * value.flScale);
+                    newStats[key] += newStats[value.eScalingStat] * value.flScale;
                 }
             })
         }
     }
 
-    console.log(newStats)
     if ((character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
         newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
     } else if (character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
         newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + newStats["EFireRate"] / 100));
     } else if ((character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
         newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100));
-        console.log("RPS")
     }
 
     // // Calculate derived stats
     // stats.EDPS = stats.EBulletDamage * (stats.ERoundsPerSecond || 1);
     // stats.EStaminaCooldown = 1 / (stats.EStaminaRegenPerSecond || 1);
 
+    // Apply specific calculations based on the hero type
+    // if (character.key === 'hero_lash' || character.key === 'hero_chrono' || character.key === 'hero_gigawatt') {
+    //     stats.ERoundsPerSecond = character.m_WeaponInfo?.m_iBurstShotCount /
+    //         ((character.m_WeaponInfo?.m_flCycleTime || 1) * (1 + stats.EFireRate / 100) +
+    //             (character.m_WeaponInfo?.m_flIntraBurstCycleTime || 0) * (character.m_WeaponInfo?.m_iBurstShotCount || 1));
+    // } else if (character.key === 'hero_forge') {
+    //     stats.ERoundsPerSecond = 1 / ((character.m_WeaponInfo?.m_flMaxSpinCycleTime || 1) / (1 + stats.EFireRate / 100));
+    // } else {
+    //     stats.ERoundsPerSecond = 1 / ((character.m_WeaponInfo?.m_flCycleTime || 1) / (1 + stats.EFireRate / 100));
+    // }
 
     //console.log(stats, 'this is the CharacterStats log')
     return newStats;
