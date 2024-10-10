@@ -17,6 +17,7 @@ interface BuilderTabProps {
     onAddItem: (item: Upgrade_with_name) => void;
     onRemoveItem: (item: Upgrade_with_name) => void;
     onAddBox: (title: string, description: string) => void;
+    onRemoveBox: (boxId: string) => void;
     onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void;
 }
 
@@ -29,7 +30,11 @@ const getCategoryColor = (itemCat: string | undefined): string => {
     return 'bg-gray-400';
 };
 
-const BuilderBox: React.FC<BuilderBoxProps & { onRemoveItem: (item: Upgrade_with_name) => void; onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void }> = ({ id, title, description, items, onRemoveItem, onMoveItem }) => {
+const BuilderBox: React.FC<BuilderBoxProps & {
+    onRemoveItem: (item: Upgrade_with_name) => void;
+    onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void;
+    onRemoveBox: (boxId: string) => void;
+}> = ({ id, title, description, items, onRemoveItem, onMoveItem, onRemoveBox }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -47,10 +52,16 @@ const BuilderBox: React.FC<BuilderBoxProps & { onRemoveItem: (item: Upgrade_with
 
     return (
         <div
-            className="bg-gray-800 p-4 mb-4 rounded-lg"
+            className="bg-gray-800 p-4 mb-4 rounded-lg relative"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
+            <button
+                onClick={() => onRemoveBox(id)}
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+            >
+                X
+            </button>
             <h3 className="text-xl font-bold mb-2">{title}</h3>
             <p className="mb-2">{description}</p>
             <button onClick={() => setIsExpanded(!isExpanded)} className="mb-2 text-blue-500">
@@ -90,7 +101,15 @@ const BuilderBox: React.FC<BuilderBoxProps & { onRemoveItem: (item: Upgrade_with
     );
 };
 
-const BuilderTab: React.FC<BuilderTabProps> = ({ items, boxes, onAddItem, onRemoveItem, onAddBox, onMoveItem }) => {
+const BuilderTab: React.FC<BuilderTabProps> = ({
+    items,
+    boxes,
+    onAddItem,
+    onRemoveItem,
+    onAddBox,
+    onRemoveBox,
+    onMoveItem
+}) => {
     const [newBoxTitle, setNewBoxTitle] = useState('');
     const [newBoxDescription, setNewBoxDescription] = useState('');
 
@@ -200,6 +219,7 @@ const BuilderTab: React.FC<BuilderTabProps> = ({ items, boxes, onAddItem, onRemo
                             {...box}
                             onRemoveItem={onRemoveItem}
                             onMoveItem={onMoveItem}
+                            onRemoveBox={onRemoveBox}
                         />
                     ))}
                 </SortableContext>

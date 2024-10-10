@@ -197,6 +197,17 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         ]);
     };
 
+    const removeBox = (boxId: string) => {
+        setBuilderBoxes(prevBoxes => {
+            const boxToRemove = prevBoxes.find(box => box.id === boxId);
+            if (boxToRemove) {
+                // Move items from the removed box back to unassigned items
+                setBuilderItems(prev => [...prev, ...boxToRemove.items]);
+            }
+            return prevBoxes.filter(box => box.id !== boxId);
+        });
+    };
+
     const moveItemBetweenBoxes = (itemId: string, sourceBoxId: string, destinationBoxId: string) => {
         setBuilderBoxes(prevBoxes => {
             const newBoxes = [...prevBoxes];
@@ -257,6 +268,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                         onAddItem={addItemToBuilder}
                         onRemoveItem={removeItemFromBuilder}
                         onAddBox={addNewBox}
+                        onRemoveBox={removeBox}
                         onMoveItem={moveItemBetweenBoxes}
                     />
                 ) : (
