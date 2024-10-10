@@ -38,21 +38,51 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
     const modifiers: ItemModifiers = {};
 
     for (const [key, value] of Object.entries(item.upgrade.m_mapAbilityProperties)) {
-        if (typeof value === 'object' && 'm_eProvidedPropertyType' in value && 'm_strValue' in value && parseFloat(value.m_strValue) !== 0) {
+        if (typeof value === 'object' 
+            && 'm_eProvidedPropertyType' in value 
+            && 'm_strValue' in value 
+            && parseFloat(value.m_strValue) !== 0) {
             const propertyType = value.m_eProvidedPropertyType as string;
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
-                if (statInfo.mod_type !== 'skip' && statInfo.mod_type !== 'percent') {
+                if (statInfo.mod_type !== 'skip' 
+                    && statInfo.mod_type !== 'percent'
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )
+                    && item.itemkey !== "Divine Barrier" && item.itemkey !== "Crippling Headshot") {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
                     }
-                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                }  else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat + '_percent'] = numericValue;
                     }
-                } 
+                } else if (statInfo.mod_type !== 'skip' 
+                    && statInfo.mod_type !== 'percent' 
+                    && item.itemkey === "Divine Barrier"
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )) {
+
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue) && key !== "BonusMoveSpeed") {
+                        modifiers[statInfo.stat] = numericValue;
+                    }
+                } else if (statInfo.mod_type !== 'skip' 
+                    && statInfo.mod_type !== 'percent' 
+                    && item.itemkey === "Crippling Headshot"
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )) {
+
+                    const numericValue = parseFloat(value.m_strValue);
+                    if (!isNaN(numericValue) && !(key.includes("ResistReduction"))) {
+                        modifiers[statInfo.stat] = numericValue;
+                    }
+                }
             }
         }
     }

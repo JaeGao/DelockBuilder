@@ -138,7 +138,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect,
                 {categories.map(category => (
                     <button
                         key={category}
-                        className={`px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
+                        className={`px-2 md:px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
                             ? `${getCategoryColor(category)} text-white`
                             : 'bg-gray-200 text-gray-700'
                             }`}

@@ -68,7 +68,7 @@
 		"stat": "EBulletShieldHealth"
 	},
     "MODIFIER_VALUE_BASE_MELEE_DAMAGE_PERCENT":{
-		"mod_type": "percent", 
+		"mod_type": "add", 
 		"stat": "ELightMeleeDamage"
 	},
     "MODIFIER_VALUE_CLOSE_RANGE_BONUS_BASE_DAMAGE_PERCENT":{
@@ -132,7 +132,7 @@
 		"stat": "ETechLifesteal"
 	},
     "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST_REDUCTION":{
-		"mod_type": "skip", 
+		"mod_type": "add", 
 		"stat": "EBulletArmorReduction"
 	},
     "MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST_REDUCTION":{

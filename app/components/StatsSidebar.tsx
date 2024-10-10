@@ -34,7 +34,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
     const formatStat = (value: number | undefined | null): string => {
         if (value === undefined || value === null) return 'N/A';
-        return Number.isInteger(value) ? value.toString() : Number(value).toFixed(2);
+        return Number.isInteger(value) ? value.toString() : Number(value).toFixed(3);
     };
 
     const calculatePercentChange = (current: number, previous: number): string => {
@@ -142,22 +142,22 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
         return (
             <div className="flex items-center justify-end text-xs font-medium">
-                {isChanged && previousValue !== undefined ? (
+                {/* {isChanged && previousValue !== undefined ? (
                     <>
                         <span className="text-gray-400">
                             {formatStat(previousValue)}{isPercentageStat ? "%" : ""}
                         </span>
                         <ArrowRightIcon className="w-3 h-3 mx-1 text-gray-500" />
                     </>
-                ) : null}
+                ) : null} */}
                 <span className={isEnhanced ? 'text-yellow-500' : 'text-white'}>
                     {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
                 </span>
-                {isChanged && previousValue !== undefined ? (
+                {/* {isChanged && previousValue !== undefined ? (
                     <span className={`ml-1 text-xs ${currentValue > previousValue ? 'text-green-500' : 'text-red-500'}`}>
                         ({calculatePercentChange(currentValue, previousValue)})
                     </span>
-                ) : null}
+                ) : null} */}
             </div>
         );
     };
