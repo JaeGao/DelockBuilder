@@ -278,6 +278,7 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
 // let heroSkills = [] as SkillsData[];
 // let skillProps = [{},{},{},{}] as skillProperties[];
 // let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
+// let skillIcons : Array<string> =[];
 // getAbilitiesbyHero().then(adata => {
 //     for (let i = 0; i < adata.length; i++) {
 //         if (adata[i].heroname === 'hero_inferno') {
@@ -295,8 +296,9 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
 //                 skillProps[index][skey] = parseFloat(value.m_strValue);
 //             }
 //         }
+//         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
 //     })
-//     console.log(skillProps[1]['AbilityCooldown'])
+
 //     for (let i = 0; i < skillProps.length; i++) {
 //         const sProp = skillProps[i];
 //         let skey: keyof typeof sProp;

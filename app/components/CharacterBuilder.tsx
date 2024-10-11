@@ -39,6 +39,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     let heroSkills = [] as SkillsData[];
     let skillProps = [{},{},{},{}] as skillProperties[];
     let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
+    let skillIcons : Array<string> = []
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
             heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
@@ -55,7 +56,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 skillProps[index][skey] = parseFloat(value.m_strValue);
             }
         }
+        skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+
     })
+    console.log(skillIcons)
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
         let skey: keyof typeof sProp;
@@ -269,6 +273,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterClass={character.data._class}
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
+                    skillImages = {skillIcons}
                 />
             </div>
         </div>

@@ -195,7 +195,7 @@ export async function calculateCharacterStats(
     });
 
     // Logs
-    console.log('Skill Stats:', skillStats, "this is from characterStatsSystem");
+    // console.log('Skill Stats:', skillStats, "this is from characterStatsSystem");
     //console.log(stats, 'this is the CharacterStats log')
     return { characterStats: newStats, skillStats };
 }

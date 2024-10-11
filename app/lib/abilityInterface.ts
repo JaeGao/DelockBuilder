@@ -33,11 +33,17 @@ export interface AWithKey {
     adata: AData;
 }
 
-export interface SkillsData {
+interface SkillsDataP {
     [key: string]: {
         [key: string]: any;
     }
 }
+
+interface SkillsDataI {
+    [key: string]: string;
+}
+
+export type SkillsData = SkillsDataP & SkillsDataI;
 
 export interface skillProperties {
     [key: string]: number;
