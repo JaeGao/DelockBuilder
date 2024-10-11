@@ -34,7 +34,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
     let heroSkills = [] as SkillsData[];
     let skillProps = {} as skillProperties;
@@ -100,7 +100,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 return response.json();
             })
             .then(newStats => {
-                setCurrentStats(newStats);
+                setCurrentStats(newStats.characterStats);
+                // Add this line to update skill stats
+                setSkillStats(newStats.skillStats);
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
@@ -266,6 +268,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterClass={character.data._class}
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
+                    skillStats={skillStats}
                 />
             </div>
         </div>

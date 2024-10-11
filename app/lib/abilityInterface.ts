@@ -34,19 +34,18 @@ export interface AWithKey {
 }
 
 export interface SkillsData {
-    [key: string] : {
-        [key: string] : any;
-    },
-    'm_strAbilityImage' : any;
+    [key: string]: {
+        [key: string]: any;
+    }
 }
 
 export interface skillProperties {
-    [key: string] : number;
+    [key: string]: number;
 }
 
 export interface skillDisplayGroups {
-    name: string;
     key: string;
+    name: string;
 }
 
 // export interface Habilities {
