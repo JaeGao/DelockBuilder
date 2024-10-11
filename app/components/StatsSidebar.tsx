@@ -19,7 +19,6 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     const previousStatsRef = useRef<allStats | null>(null);
     const baseStatsRef = useRef<allStats | null>(null);
 
-
     useEffect(() => {
         if (!baseStatsRef.current) {
             baseStatsRef.current = { ...characterStats };
@@ -153,41 +152,23 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
         return (
             <div className="flex items-center justify-end text-xs font-medium">
-                {/* {isChanged && previousValue !== undefined ? (
-                    <>
-                        <span className="text-gray-400">
-                            {formatStat(previousValue)}{isPercentageStat ? "%" : ""}
-                        </span>
-                        <ArrowRightIcon className="w-3 h-3 mx-1 text-gray-500" />
-                    </>
-                ) : null} */}
                 <span className={isEnhanced ? 'text-yellow-500' : 'text-white'}>
                     {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
                 </span>
-                {/* {isChanged && previousValue !== undefined ? (
-                    <span className={`ml-1 text-xs ${currentValue > previousValue ? 'text-green-500' : 'text-red-500'}`}>
-                        ({calculatePercentChange(currentValue, previousValue)})
-                    </span>
-                ) : null} */}
             </div>
         );
     };
 
-    const renderSkillStats = () => (
-        <div className="mb-4">
-            <h4 className="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">Skill Stats</h4>
-            <div className="space-y-1">
-                {skillLabels.map((skill) => (
-                    <div key={skill.key} className="flex justify-between items-center">
-                        <span className="text-gray-400 capitalize text-xs">{skill.name}:</span>
-                        <span className="text-white text-xs">
-                            {skillStats[skill.key] ? skillStats[skill.key].toFixed(2) : 'N/A'}
-                        </span>
-                    </div>
-                ))}
+    const renderSkillStatValue = (statKey: string) => {
+        const value = skillStats[statKey];
+        return (
+            <div className="flex items-center justify-end text-xs font-medium">
+                <span className="text-white">
+                    {value !== undefined ? formatStat(value) : 'N/A'}
+                </span>
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="fixed top-0 right-0 w-1/4 min-w-[190px] max-w-[300px] h-screen bg-gray-900 overflow-y-auto">
@@ -232,13 +213,20 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                         <div key={groupIndex} className="mb-4">
                             <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
                             <div className="space-y-1">
-
-                                {group.stats.map((stat) => (
-                                    <div key={stat.key} className="flex justify-between items-center">
-                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                        {group.title === "Skills" ? renderSkillStats() : renderSkillStats()}
-                                    </div>
-                                ))}
+                                {group.title === "Skills"
+                                    ? skillLabels.map((stat) => (
+                                        <div key={stat.key} className="flex justify-between items-center">
+                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                            {renderSkillStatValue(stat.key)}
+                                        </div>
+                                    ))
+                                    : group.stats.map((stat) => (
+                                        <div key={stat.key} className="flex justify-between items-center">
+                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                            {renderStatValue(stat.key, stat.name)}
+                                        </div>
+                                    ))
+                                }
                             </div>
                         </div>
                     );

@@ -186,8 +186,8 @@ export async function calculateCharacterStats(
                             }
                             // Add more scale function types as needed
                         }
-
-                        skillStats[`${skillKey}_${propertyKey}`] = scaledValue;
+                        //console.log(`${skillKey}_${propertyKey}`)
+                        skillStats[propertyKey] = scaledValue;
                     }
                 }
             });
