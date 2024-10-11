@@ -10,9 +10,10 @@ interface StatsSidebarProps {
     characterSkillsData: skillProperties[];
     skillLabels: skillDisplayGroups[][];
     skillImages: Array<string>;
+    skillStats: { [key: string]: number };
 }
 
-const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages }) => {
+const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages, skillStats }) => {
     const [activeTab, setActiveTab] = useState<'all' | 'custom'>('all');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [changedStats, setChangedStats] = useState<string[]>([]);
@@ -165,7 +166,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         const isPercentageStat = percentageStats.includes(statName);
         const isChanged = changedStats.includes(statKey);
         const isEnhanced = baseValue !== undefined && currentValue !== baseValue;
-        console.log("rendered")
+        
         if (currentValue === undefined) return 'N/A';
 
         return (

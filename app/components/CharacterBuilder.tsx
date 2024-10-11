@@ -274,6 +274,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
                     skillImages = {skillIcons}
+                    skillStats={skillStats}
                 />
             </div>
         </div>
