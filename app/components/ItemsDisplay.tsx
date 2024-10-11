@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import Image from 'next/image';
+import BuilderTab from './builderTab';
 
 interface ItemsDisplayProps {
     items: Upgrade_with_name[];
@@ -9,6 +10,12 @@ interface ItemsDisplayProps {
     equippedItems: Upgrade_with_name[];
 }
 
+interface BuilderBoxProps {
+    id: string;
+    title: string;
+    description: string;
+    items: Upgrade_with_name[];
+}
 
 const getCategoryColor = (category: string): string => {
     switch (category) {
@@ -19,6 +26,7 @@ const getCategoryColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#c374fa]';
         case 'Utility':
+        case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
             return 'bg-gray-400';
@@ -34,12 +42,12 @@ const getCategoryActiveColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#dbb2f7]';
         case 'Utility':
+        case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
             return 'bg-gray-400';
     }
 };
-
 
 const getCategoryBackground = (category: string): string[] => {
     switch (category) {
@@ -50,7 +58,8 @@ const getCategoryBackground = (category: string): string[] => {
         case 'Spirit':
             return ['bg-custom-sbg1', 'bg-custom-sbg2'];
         case 'Utility':
-            return ['bg-gray-400'];
+        case 'Builder':
+            return ['bg-gray-800', 'bg-gray-700'];
         default:
             return ['bg-gray-400'];
     }
@@ -66,16 +75,11 @@ export function getCategory(itemCat: string): string {
 
 const findTier = (tier: string): number => {
     switch (tier) {
-        case "EModTier_1":
-            return 1
-        case "EModTier_2":
-            return 2
-        case "EModTier_3":
-            return 3
-        case "EModTier_4":
-            return 4
-        default:
-            return 1
+        case "EModTier_1": return 1;
+        case "EModTier_2": return 2;
+        case "EModTier_3": return 3;
+        case "EModTier_4": return 4;
+        default: return 1;
     }
 }
 
@@ -90,6 +94,10 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
         <div
             className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''}`}
             onClick={onSelect}
+            draggable
+            onDragStart={(e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({ itemkey, upgrade }));
+            }}
         >
             <div className="w-full h-full flex flex-col relative justify-center">
                 <div className={`${upgrade.isActive === true ? actColor : categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
@@ -106,17 +114,24 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
                     <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
                 </div>
-                <div className = {`absolute left-1/2 -translate-x-1/2 ${upgrade.isActive !== undefined && upgrade.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
-                    <p className= "text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
+                <div className={`absolute left-1/2 -translate-x-1/2 ${upgrade.isActive !== undefined && upgrade.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
+                    <p className="text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
                 </div>
             </div>
         </div>
     );
 };
 
-export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect, equippedItems }) => {
+export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
+    items,
+    onItemSelect,
+    equippedItems,
+}) => {
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    const categories = ['Weapon', 'Vitality', 'Spirit'];
+    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder'];
+    const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
+    const [builderItems, setBuilderItems] = useState<Upgrade_with_name[]>([]);
+    const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
 
     const categorizedItems = items.reduce((acc, item) => {
         const category = getCategory(item.upgrade.m_eItemSlotType || '');
@@ -132,8 +147,105 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect,
         return equippedItems.some(equippedItem => equippedItem.itemkey === item.itemkey);
     };
 
+    const isItemInBuilder = (item: Upgrade_with_name) => {
+        return builderItems.some(builderItem => builderItem.itemkey === item.itemkey) ||
+            builderBoxes.some(box => box.items.some(boxItem => boxItem.itemkey === item.itemkey));
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDraggingToBuilder(true);
+    };
+
+    const handleDragLeave = () => {
+        setIsDraggingToBuilder(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDraggingToBuilder(false);
+        const itemData = e.dataTransfer.getData('text/plain');
+        if (itemData) {
+            const item = JSON.parse(itemData) as Upgrade_with_name;
+            addItemToBuilder(item);
+        }
+    };
+
+    const addItemToBuilder = (item: Upgrade_with_name) => {
+        if (!isItemInBuilder(item)) {
+            setBuilderItems(prev => [...prev, item]);
+        }
+    };
+
+    const removeItemFromBuilder = (item: Upgrade_with_name) => {
+        setBuilderItems(prev => prev.filter(i => i.itemkey !== item.itemkey));
+        setBuilderBoxes(prev => prev.map(box => ({
+            ...box,
+            items: box.items.filter(i => i.itemkey !== item.itemkey)
+        })));
+    };
+
+    const addNewBox = (title: string, description: string) => {
+        setBuilderBoxes(prevBoxes => [
+            ...prevBoxes,
+            {
+                id: `box-${prevBoxes.length + 1}`,
+                title,
+                description,
+                items: [],
+            },
+        ]);
+    };
+
+    const removeBox = (boxId: string) => {
+        setBuilderBoxes(prevBoxes => {
+            const boxToRemove = prevBoxes.find(box => box.id === boxId);
+            if (boxToRemove) {
+                // Move items from the removed box back to unassigned items
+                setBuilderItems(prev => [...prev, ...boxToRemove.items]);
+            }
+            return prevBoxes.filter(box => box.id !== boxId);
+        });
+    };
+
+    const moveItemBetweenBoxes = (itemId: string, sourceBoxId: string, destinationBoxId: string) => {
+        setBuilderBoxes(prevBoxes => {
+            const newBoxes = [...prevBoxes];
+            let movedItem: Upgrade_with_name | undefined;
+
+            if (sourceBoxId === 'unassigned') {
+                movedItem = builderItems.find(item => item.itemkey === itemId);
+                setBuilderItems(prev => prev.filter(item => item.itemkey !== itemId));
+            } else {
+                const sourceBox = newBoxes.find(box => box.id === sourceBoxId);
+                if (sourceBox) {
+                    const itemIndex = sourceBox.items.findIndex(item => item.itemkey === itemId);
+                    if (itemIndex !== -1) {
+                        movedItem = sourceBox.items[itemIndex];
+                        sourceBox.items.splice(itemIndex, 1);
+                    }
+                }
+            }
+
+            if (movedItem) {
+                if (destinationBoxId === 'unassigned') {
+                    if (!builderItems.some(item => item.itemkey === movedItem!.itemkey)) {
+                        setBuilderItems(prev => [...prev, movedItem!]);
+                    }
+                } else {
+                    const destBox = newBoxes.find(box => box.id === destinationBoxId);
+                    if (destBox && !destBox.items.some(item => item.itemkey === movedItem!.itemkey)) {
+                        destBox.items.push(movedItem);
+                    }
+                }
+            }
+
+            return newBoxes;
+        });
+    };
+
     return (
-        <div>
+        <div className="relative">
             <div className="flex">
                 {categories.map(category => (
                     <button
@@ -149,25 +261,52 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({ items, onItemSelect,
                 ))}
             </div>
             <div className="flex flex-col w-full">
-                {[1, 2, 3, 4].map(tier => (
-                    <div key={tier}
-                        className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} ${tier === 1 ? 'rounded-tr-lg' : ''} ${tier === 4 ? 'rounded-b-lg' : ''} p-1`}>
-                        <span className="text-[#98ffde] text-shadow">
-                            <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
-                            <b>{tierCost[tier - 1]}</b>
-                        </span>
-                        <div className="flex flex-wrap">
-                            {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
-                                <ItemCard
-                                    key={item.itemkey}
-                                    {...item}
-                                    onSelect={() => onItemSelect(item)}
-                                    isEquipped={isItemEquipped(item)}
-                                />
+                {activeCategory === 'Builder' ? (
+                    <BuilderTab
+                        items={builderItems}
+                        boxes={builderBoxes}
+                        onAddItem={addItemToBuilder}
+                        onRemoveItem={removeItemFromBuilder}
+                        onAddBox={addNewBox}
+                        onRemoveBox={removeBox}
+                        onMoveItem={moveItemBetweenBoxes}
+                    />
+                ) : (
+                    <div className="flex">
+                        <div className="flex-grow">
+                            {[1, 2, 3, 4].map(tier => (
+                                <div key={tier}
+                                    className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} ${tier === 1 ? 'rounded-tr-lg' : ''} ${tier === 4 ? 'rounded-b-lg' : ''} p-1`}>
+                                    <span className="text-[#98ffde] text-shadow">
+                                        <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                                        <b>{tierCost[tier - 1]}</b>
+                                    </span>
+                                    <div className="flex flex-wrap">
+                                        {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
+                                            <ItemCard
+                                                key={item.itemkey}
+                                                {...item}
+                                                onSelect={() => onItemSelect(item)}
+                                                isEquipped={isItemEquipped(item) || isItemInBuilder(item)}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
                             ))}
                         </div>
+                        <div
+                            className={`w-16 border-2 border-dashed rounded-lg flex items-center justify-center transition-all duration-300 ${isDraggingToBuilder ? 'border-green-500 bg-green-100 text-green-700' : 'border-blue-300 bg-blue-50 text-blue-500'
+                                } ${isDraggingToBuilder ? 'opacity-80' : 'opacity-50'}`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                        >
+                            <p className="text-center text-xs font-medium rotate-90 whitespace-nowrap">
+                                {isDraggingToBuilder ? 'Drop to add' : 'Drag items here'}
+                            </p>
+                        </div>
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

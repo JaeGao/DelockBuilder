@@ -60,7 +60,7 @@ export async function calculateCharacterStats(
                     modifierValues[stat] += value;
                 }
             }
-        })
+    })
     });
     let mkey = Object.keys(modifierValues);
     mkey.sort((a, b) => {
@@ -71,9 +71,11 @@ export async function calculateCharacterStats(
     for (let i = 0; i < mkey.length; i++) {
         if (mkey[i] === "EBaseWeaponDamageIncrease") {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
+
             newStats['EBulletDamage'] *= (1 + modifierValues[mkey[i]] / 100);
             newStats['ELightMeleeDamage'] += (stats['ELightMeleeDamage'] * modifierValues[mkey[i]] / 200);
             newStats['EHeavyMeleeDamage'] += (stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]] / 200);
+
         } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
@@ -108,16 +110,20 @@ export async function calculateCharacterStats(
             newStats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]] / 100));
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
         } else if (mkey[i] === "ELightMeleeDamage") {
+
             newStats[mkey[i] as keyof allStats] *= 1 + modifierValues[mkey[i]] / 100;
             newStats["EHeavyMeleeDamage"] *= 1 + modifierValues[mkey[i]] / 100;
+
         } else if (mkey[i] === "EHealingOutput") {
             newStats[mkey[i] as keyof allStats] += (modifierValues[mkey[i]] > 0 ? modifierValues[mkey[i]] : 0);
         } else if (mkey[i] === "ETechCooldown") {
             newStats[mkey[i] as keyof allStats] = Math.round((1 - modifierValues[mkey[i]]) * 100);
         } else if (mkey[i] === "EBulletArmorReduction") {
             newStats["EBulletArmorDamageReduction"] += modifierValues[mkey[i]];
+
         } else if (mkey[i] === "ETechPower") {
             if (modifierValues[mkey[i]] === undefined) {
+
                 newStats[mkey[i]] += modifierValues[mkey[i]];
             } else {
                 newStats[mkey[i]] = modifierValues[mkey[i]];
@@ -129,6 +135,7 @@ export async function calculateCharacterStats(
     newStats["ELightMeleeDamage"] = Math.ceil(newStats["ELightMeleeDamage"]);
     newStats["EHeavyMeleeDamage"] = Math.ceil(newStats["EHeavyMeleeDamage"]);
     newStats["EClipSize"] = Math.ceil(newStats["EClipSize"]);
+
 
     if (Object.keys(character.data.m_mapScalingStats).length > 0) {
         if (newStats["ETechPower"] !== undefined && newStats["ETechPower"] !== 0) {

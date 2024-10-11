@@ -6,12 +6,12 @@ import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
+
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 
-// New interface for item modifiers
 interface ItemModifier {
     itemkey: string;
     modifiers: { [key: string]: number };
@@ -22,10 +22,11 @@ interface CharacterBuilderProps {
     items: Upgrade_with_name[];
     initialStats: allStats;
     itemModifiers: ItemModifier[];
-    abilities: AWithKey[];
 }
 
+
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
+
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
@@ -48,6 +49,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))];
             break;
         }
+
 
     }
     heroSkills.forEach((element, index) => {
@@ -78,6 +80,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     };
 
 
+
     useEffect(() => {
         setCurrentStats(initialStats);
     }, [initialStats]);
@@ -105,9 +108,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 return response.json();
             })
             .then(newStats => {
+
                 setCurrentStats(newStats.characterStats);
                 // Add this line to update skill stats
                 setSkillStats(newStats.skillStats);
+
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
