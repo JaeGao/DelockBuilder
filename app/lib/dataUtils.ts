@@ -5,6 +5,7 @@ import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
+import { SkillsData, skillDisplayGroups, skillProperties } from './abilityInterface';
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
@@ -274,6 +275,51 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         throw error;
     }
 }
+// let heroSkills = [] as SkillsData[];
+// let skillProps = [{},{},{},{}] as skillProperties[];
+// let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
+// let skillIcons : Array<string> =[];
+// getAbilitiesbyHero().then(adata => {
+//     for (let i = 0; i < adata.length; i++) {
+//         if (adata[i].heroname === 'hero_inferno') {
+//             heroSkills = [JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_1)), 
+//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_2)),
+//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_3)),
+//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_4)) ];
+//             break;
+//         }
+
+//     }
+//     heroSkills.forEach((element, index) => {
+//         for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
+//             if ('m_strValue' in value && value.m_strValue !== 0) {
+//                 skillProps[index][skey] = parseFloat(value.m_strValue);
+//             }
+//         }
+//         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+//     })
+
+//     for (let i = 0; i < skillProps.length; i++) {
+//         const sProp = skillProps[i];
+//         let skey: keyof typeof sProp;
+//         for (skey in sProp) {
+//             let slabel: string;
+//             if (skey.includes("Ability")) {
+//                 slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
+//             } else {
+//                 slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+//             }
+//             skillDG[i].push({
+//                 name: slabel,
+//                 key: skey,
+//             })
+//         }
+//     }
+// })
+
+// getCharacter('haze').then(ch =>
+//     console.log(ch.key)
+// )
 
 // Stats Variables
 const SSD = 'm_ShopStatDisplay'

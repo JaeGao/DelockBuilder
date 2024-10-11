@@ -26,9 +26,32 @@ export interface RootObject {
 export type abilityKeys = keyof RootObject;
 export type AData = RootObject[abilityKeys];
 
+
 export interface AWithKey {
     heroname: string;
     adata: AData;
+}
+
+
+interface SkillsDataP {
+    [key: string]: {
+        [key: string]: any;
+    }
+}
+
+interface SkillsDataI {
+    [key: string]: string;
+}
+
+export type SkillsData = SkillsDataP & SkillsDataI;
+
+export interface skillProperties {
+    [key: string]: number;
+}
+
+export interface skillDisplayGroups {
+    key: string;
+    name: string;
 }
 
 // export interface Habilities {

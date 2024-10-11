@@ -5,6 +5,8 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
+import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
+
 import { HeroWithKey } from '../lib/herointerface';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
@@ -22,7 +24,9 @@ interface CharacterBuilderProps {
     itemModifiers: ItemModifier[];
 }
 
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers }) => {
+
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
+
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
@@ -31,8 +35,51 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+    let heroSkills = [] as SkillsData[];
+    let skillProps = [{},{},{},{}] as skillProperties[];
+    let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
+    let skillIcons : Array<string> = []
+    for (let i = 0; i < abilities.length; i++) {
+        if (abilities[i].heroname === character.key) {
+            heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
+            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
+            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
+            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))];
+            break;
+        }
+
+
+    }
+    heroSkills.forEach((element, index) => {
+        for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
+            if (parseFloat(value.m_strValue) !== 0 && value.m_bFunctionDisabled !== true) {
+                skillProps[index][skey] = parseFloat(value.m_strValue);
+            }
+        }
+        skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+
+    })
+    console.log(skillIcons)
+    for (let i = 0; i < skillProps.length; i++) {
+        const sProp = skillProps[i];
+        let skey: keyof typeof sProp;
+        for (skey in sProp) {
+            let slabel: string;
+            if (skey.includes("Ability")) {
+                slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
+            } else {
+                slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+            }
+            skillDG[i].push({
+                key: skey,
+                name: slabel,
+            })
+        }
+    };
+
+
 
     useEffect(() => {
         setCurrentStats(initialStats);
@@ -51,6 +98,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.key.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
+                heroSkills: heroSkills,
             }),
         })
             .then(response => {
@@ -60,9 +108,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 return response.json();
             })
             .then(newStats => {
-                setCurrentStats(newStats);
-                const newAbilities = allEquippedItems.map(item => item.itemkey);
-                setEquippedAbilities(newAbilities);
+
+                setCurrentStats(newStats.characterStats);
+                // Add this line to update skill stats
+                setSkillStats(newStats.skillStats);
+
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
@@ -226,6 +276,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterStats={currentStats || initialStats}
                     characterName={heroName}
                     characterClass={character.data._class}
+                    characterSkillsData={skillProps}
+                    skillLabels={skillDG}
+                    skillImages = {skillIcons}
+                    skillStats={skillStats}
                 />
             </div>
         </div>
