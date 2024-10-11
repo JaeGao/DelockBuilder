@@ -1,8 +1,9 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upgrade_with_name } from '../lib/itemInterface';
 import Image from 'next/image';
 import BuilderTab from './builderTab';
+import { skip } from 'node:test';
 
 interface ItemsDisplayProps {
     items: Upgrade_with_name[];
@@ -26,6 +27,7 @@ const getCategoryColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#c374fa]';
         case 'Utility':
+            return '';
         case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
@@ -42,6 +44,8 @@ const getCategoryActiveColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#dbb2f7]';
         case 'Utility':
+        case 'Save':
+            return 'bg-[#b1f571]';
         case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
@@ -127,8 +131,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     onItemSelect,
     equippedItems,
 }) => {
+    const buildname = useRef<HTMLInputElement>(null);
+    const buildAuthor = useRef<HTMLInputElement>(null);
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder'];
+    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder', 'Save'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
     const [builderItems, setBuilderItems] = useState<Upgrade_with_name[]>([]);
     const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
@@ -248,20 +254,66 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         <div className="relative">
             <div className="flex">
                 {categories.map(category => (
-                    <button
-                        key={category}
-                        className={`px-2 md:px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
-                            ? `${getCategoryColor(category)} text-white`
-                            : 'bg-gray-200 text-gray-700'
-                            }`}
-                        onClick={() => setActiveCategory(category)}
-                    >
-                        {category}
-                    </button>
+                    category === 'Save' ? <div key={'null'}></div> :
+                        (<button
+                            key={category}
+                            className={`px-2 md:px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
+                                ? `${getCategoryColor(category)} text-white`
+                                : 'bg-gray-200 text-gray-700'
+                                }`}
+                            onClick={() => setActiveCategory(category)}
+                        >
+                            {category}
+                        </button>)
                 ))}
+                <div className="flex justify-end md:flex-grow">
+                    <button
+                        key={'Save'}
+                        className={`px-2 md:px-2 py-2 text-sm font-medium rounded ${activeCategory === 'Save' ? `${getCategoryActiveColor('Save')} text-black` : 'bg-blue-500 text-white'} `}
+                        onClick={() => setActiveCategory('Save')}
+                    >
+                        Save/Find Build
+                    </button>
+                </div>
+
             </div>
             <div className="flex flex-col w-full">
-                {activeCategory === 'Builder' ? (
+                {activeCategory === 'Save' ? (
+
+
+                    <div className='p-4 bg-gray-900 rounded-lg'>
+                        <input
+                            key={'buildname'}
+                            type="text"
+                            ref={buildname}
+                            placeholder='Enter Build Name'
+                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                        >
+                        </input>
+                        <input
+                            key={'author'}
+                            type='text'
+                            ref={buildAuthor}
+                            placeholder='Enter Author Name'
+                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                        >
+                        </input>
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            onClick={() => {
+                                console.log('Build Name: ', buildname.current?.value);
+                                console.log('Author Name: ', buildAuthor.current?.value);
+                                console.log('Items: ', builderItems);
+                                console.log('Boxes: ', builderBoxes);
+                            }}
+                        >
+                            Submit
+                        </button>
+                    </div>
+
+
+
+                ) : activeCategory === 'Builder' ? (
                     <BuilderTab
                         items={builderItems}
                         boxes={builderBoxes}
