@@ -183,8 +183,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         const isPercentageStat = percentageStats.includes(statName);
         if (currentValue === undefined) return 'N/A';
         return (
-            <div className="flex items-center justify-end text-xs font-medium">
-                <span className="text-gray-400 capitalize text-xs">{statName}:</span>
+            <div className="flex items-center justify-between text-xs font-medium">
                 <span className={'text-white'}>
                     {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
                 </span>
@@ -240,12 +239,14 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                     src={skillImages[parseFloat(group.title.replace("Skill", ""))-1]}
                                     width="60"
                                     height="60"
-                                    className="mb-2 object-fit"
+                                    className="rounded-full mb-2 mr-2 object-contain"
                                 />
                             </div>
                             <div className="space-y-1">
+                                
                                 {group.stats.map((stat) => (
                                     <div key={stat.key} className="flex justify-between items-center">
+                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
                                         {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
                                     </div>
                                 ))}
@@ -260,12 +261,14 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                     src={skillImages[parseFloat(group.title.replace("Skill", ""))-1]}
                                     width="60"
                                     height="60"
-                                    className="mb-2 object-fit"
+                                    className="rounded-full mb-2 mr-2 object-contain"
                                 />
                             </div>
                             <div className="space-y-1">
+                                
                                 {group.stats.map((stat) => (
                                     <div key={stat.key} className="flex justify-between items-center">
+                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
                                         {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
                                     </div>
                                 ))}
