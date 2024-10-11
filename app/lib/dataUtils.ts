@@ -275,26 +275,43 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         throw error;
     }
 }
-let heroSkills = [] as SkillsData[];
-let skillProps = {} as skillProperties;
-let skillDG = [] as skillDisplayGroups[];
+// let heroSkills = [] as SkillsData[];
+// let skillProps = [{},{},{},{}] as skillProperties[];
+// let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
 // getAbilitiesbyHero().then(adata => {
 //     for (let i = 0; i < adata.length; i++) {
 //         if (adata[i].heroname === 'hero_inferno') {
-//             heroSkills = [ JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_1)), 
+//             heroSkills = [JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_1)), 
 //                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_2)),
 //                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_3)),
 //                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_4)) ];
-//             console.log(heroSkills)
 //             break;
 //         }
-//         heroSkills.forEach((element) => {
-//             for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
-//                 if ('m_strValue' in value && value.m_strValue !== 0) {
-//                     skillProps[skey] = parseFloat(value.m_strValue);
-//                 }
+
+//     }
+//     heroSkills.forEach((element, index) => {
+//         for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
+//             if ('m_strValue' in value && value.m_strValue !== 0) {
+//                 skillProps[index][skey] = parseFloat(value.m_strValue);
 //             }
-//         })
+//         }
+//     })
+//     console.log(skillProps[1]['AbilityCooldown'])
+//     for (let i = 0; i < skillProps.length; i++) {
+//         const sProp = skillProps[i];
+//         let skey: keyof typeof sProp;
+//         for (skey in sProp) {
+//             let slabel: string;
+//             if (skey.includes("Ability")) {
+//                 slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
+//             } else {
+//                 slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+//             }
+//             skillDG[i].push({
+//                 name: slabel,
+//                 key: skey,
+//             })
+//         }
 //     }
 // })
 

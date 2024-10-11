@@ -37,8 +37,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
     let heroSkills = [] as SkillsData[];
-    let skillProps = {} as skillProperties;
-    let skillDG = [] as skillDisplayGroups[];
+    let skillProps = [{},{},{},{}] as skillProperties[];
+    let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
             heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
@@ -49,29 +49,30 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
 
     }
-    heroSkills.forEach((element) => {
+    heroSkills.forEach((element, index) => {
         for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
             if (parseFloat(value.m_strValue) !== 0 && value.m_bFunctionDisabled !== true) {
-                skillProps[skey] = parseFloat(value.m_strValue);
+                skillProps[index][skey] = parseFloat(value.m_strValue);
             }
         }
     })
-
-    let skey: keyof typeof skillProps;
-    for (skey in skillProps) {
-        let slabel: string;
-        if (skey.includes("Ability")) {
-            slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
-        } else {
-            slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+    for (let i = 0; i < skillProps.length; i++) {
+        const sProp = skillProps[i];
+        let skey: keyof typeof sProp;
+        for (skey in sProp) {
+            let slabel: string;
+            if (skey.includes("Ability")) {
+                slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
+            } else {
+                slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+            }
+            skillDG[i].push({
+                key: skey,
+                name: slabel,
+            })
         }
-
-        skillDG.push({
-            key: skey,
-            name: slabel,
-        })
-
     };
+
 
     useEffect(() => {
         setCurrentStats(initialStats);
@@ -268,7 +269,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterClass={character.data._class}
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
-                    skillStats={skillStats}
                 />
             </div>
         </div>
