@@ -21,11 +21,11 @@ interface CharacterBuilderProps {
     character: HeroWithKey;
     items: Upgrade_with_name[];
     initialStats: allStats;
-    itemModifiers: ItemModifier[];
+    abilities: AWithKey[];
 }
 
 
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, abilities }) => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
@@ -33,14 +33,13 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [spiritItems, setSpiritItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
-    const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
     let heroSkills = [] as SkillsData[];
-    let skillProps = [{},{},{},{}] as skillProperties[];
-    let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
-    let skillIcons : Array<string> = []
+    let skillProps = [{}, {}, {}, {}] as skillProperties[];
+    let skillDG = [[], [], [], []] as skillDisplayGroups[][];
+    let skillIcons: Array<string> = []
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
             heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
@@ -278,7 +277,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterClass={character.data._class}
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
-                    skillImages = {skillIcons}
+                    skillImages={skillIcons}
                     skillStats={skillStats}
                 />
             </div>
