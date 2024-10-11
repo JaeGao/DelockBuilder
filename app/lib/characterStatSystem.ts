@@ -154,7 +154,7 @@ export async function calculateCharacterStats(
     const skillStats: { [key: string]: number } = {};
 
     Object.entries(heroSkills).forEach(([skillKey, skillData]) => {
-        if (typeof skillData === 'object' && skillData !== null && 'm_mapAbilityProperties' in skillData) {
+        if (skillData !== null && 'm_mapAbilityProperties' in skillData) {
             const abilityProperties = skillData.m_mapAbilityProperties as Record<string, unknown>;
             Object.entries(abilityProperties).forEach(([propertyKey, propertyValue]) => {
                 if (typeof propertyValue === 'object' && propertyValue !== null && 'm_strValue' in propertyValue) {
