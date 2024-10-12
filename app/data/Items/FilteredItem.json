@@ -7432,7 +7432,7 @@
                 }
             },
             "BuildUpPerShot": {
-                "m_strValue": "0.68",
+                "m_strValue": "0.92",
                 "m_eDisplayType": "EBuildUpRate",
                 "m_subclassScaleFunction": {
                     "subclass": {
@@ -20727,7 +20727,7 @@
         "m_strCancelAbilityKey": "+in_cancel_ability",
         "m_mapAbilityProperties": {
             "AbilityCooldown": {
-                "m_strValue": "0",
+                "m_strValue": 1.5,
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "cooldown",
                 "m_bCanSetTokenOverride": true,
@@ -20848,11 +20848,6 @@
                 "m_bCanSetTokenOverride": true,
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
-            "PulseRate": {
-                "m_strLocTokenOverride": "ProcCooldown",
-                "m_strValue": 1.5,
-                "m_strCSSClass": "cooldown"
-            },
             "BonusHealth": {
                 "m_strValue": "160",
                 "m_strCSSClass": "health",
@@ -20868,7 +20863,7 @@
                         "_class": "scale_function_tech_damage",
                         "_my_subclass_name": "DamagePulseAmount_scale_function",
                         "m_eSpecificStatScaleType": "ETechPower",
-                        "m_flStatScale": 0.33
+                        "m_flStatScale": 0.3
                     }
                 }
             },
@@ -20969,7 +20964,6 @@
                             }
                         ],
                         "m_vecAbilityProperties": [
-                            "PulseRate",
                             "DamagePulseRadius"
                         ]
                     }
@@ -25029,9 +25023,10 @@
                 "m_bCanSetTokenOverride": true,
                 "m_subclassScaleFunction": {
                     "subclass": {
-                        "_class": "scale_function_single_stat",
+                        "_class": "scale_function_base",
                         "_my_subclass_name": "AbilityDuration_scale_function",
-                        "m_eSpecificStatScaleType": "ETechDuration"
+                        "m_eSpecificStatScaleType": "ETechDuration",
+                        "m_bFunctionDisabled": true
                     }
                 },
                 "m_strLocTokenOverride": "ShiftingVeilDuration"
