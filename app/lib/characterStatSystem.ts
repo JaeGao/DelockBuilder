@@ -1,15 +1,15 @@
 // File: app/lib/characterStatSystem.ts
 
 import { HeroType, HeroWithKey } from './herointerface';
-import { Upgrade_with_name } from './itemInterface';
+import { upgradesWithName } from './itemInterfaces';
 import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
 import { SkillsData } from './abilityInterface';
 
 
 export async function calculateCharacterStats(
     character: HeroWithKey,
-    equippedItems: Upgrade_with_name[],
-    allItems: Upgrade_with_name[],
+    equippedItems: upgradesWithName[],
+    allItems: upgradesWithName[],
     heroSkills: SkillsData,
 ): Promise<{ characterStats: allStats, skillStats: { [key: string]: number } }> {
     // Get base stats
@@ -20,8 +20,8 @@ export async function calculateCharacterStats(
     // Extract and apply item modifiers
     let modifierValues = {} as ModifierValues;
     equippedItems.forEach(item => {
-        var icat = item.upgrade.m_eItemSlotType.includes('_Weapon') ? "Weapon" : (item.upgrade.m_eItemSlotType.includes('_Armor') ? "Vitality" : "Spirit");
-        var itier = item.upgrade.m_iItemTier.includes("Tier_1") ? 1 : (item.upgrade.m_iItemTier.includes("Tier_2") ? 2 : (item.upgrade.m_iItemTier.includes("Tier_3") ? 3 : 4));
+        var icat = (item.desc.m_eItemSlotType as string).includes('_Weapon') ? "Weapon" : ((item.desc.m_eItemSlotType as string).includes('_Armor') ? "Vitality" : "Spirit");
+        var itier = (item.desc.m_iItemTier as string).includes("Tier_1") ? 1 : ((item.desc.m_iItemTier as string).includes("Tier_2") ? 2 : ((item.desc.m_iItemTier as string).includes("Tier_3") ? 3 : 4));
 
         if (icat === "Weapon") {
             if (modifierValues['EBaseWeaponDamageIncrease'] !== undefined) { modifierValues['EBaseWeaponDamageIncrease'] += itier === 1 ? 6 : (itier === 2 ? 10 : (itier === 3 ? 14 : 18)); }
@@ -33,7 +33,7 @@ export async function calculateCharacterStats(
             if (modifierValues["ETechPower"] !== undefined) { modifierValues["ETechPower"] += itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16)) }
             else { modifierValues["ETechPower"] = itier === 1 ? 4 : (itier === 2 ? 8 : (itier === 3 ? 12 : 16)); }
         }
-        const itemModifiers: ItemModifiers = extractItemModifiers(item);
+        const itemModifiers: ItemModifiers = extractItemModifiers(item.desc);
         Object.entries(itemModifiers).forEach(([stat, value]) => {
             if (stat.includes('_percent')) {
                 if (modifierValues[stat] === undefined) {

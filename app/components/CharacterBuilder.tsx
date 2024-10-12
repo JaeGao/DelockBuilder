@@ -6,9 +6,8 @@ import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
-
+import { upgradesWithName, upgrades } from '../lib/itemInterfaces';
 import { HeroWithKey } from '../lib/herointerface';
-import { Upgrade_with_name } from '../lib/itemInterface';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 
@@ -19,36 +18,26 @@ interface ItemModifier {
 
 interface CharacterBuilderProps {
     character: HeroWithKey;
-    items: Upgrade_with_name[];
+    items: upgradesWithName[];
     initialStats: allStats;
     itemModifiers: ItemModifier[];
+    abilities: AWithKey[];
 }
 
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [weaponItems, setWeaponItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
-    const [vitalityItems, setVitalityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
-    const [spiritItems, setSpiritItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
-    const [utilityItems, setUtilityItems] = useState<(Upgrade_with_name | null)[]>(Array(4).fill(null));
+    const [weaponItems, setWeaponItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [vitalityItems, setVitalityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [spiritItems, setSpiritItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [utilityItems, setUtilityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
-<<<<<<< Updated upstream
-    let heroSkills = [] as SkillsData[];
-<<<<<<< Updated upstream
-    let skillProps = [{},{},{},{}] as skillProperties[];
-    let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
-    let skillIcons : Array<string> = []
-=======
-    let skillProps = [{}, {}, {}, {}] as skillProperties[];
-    let skillDG = [[], [], [], []] as skillDisplayGroups[][];
-    let skillIcons: Array<string> = []
-=======
-    
+
     // Getting Skills Data
     let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
     let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
@@ -56,8 +45,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     let skillIcons: Array<string> = [] //Gets skill icon paths in array
 
     // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
             heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
@@ -105,7 +93,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     useEffect(() => {
         const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-            (item): item is Upgrade_with_name => item !== null
+            (item): item is upgradesWithName => item !== null
         );
 
         fetch('/api/calculateStats', {
@@ -138,10 +126,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             });
     }, [character, weaponItems, vitalityItems, spiritItems, utilityItems]);
 
-    const handleItemToggle = (item: Upgrade_with_name) => {
-        const category = getCategory(item.upgrade.m_eItemSlotType || '');
-        let primaryGrid: (Upgrade_with_name | null)[];
-        let setPrimaryGrid: React.Dispatch<React.SetStateAction<(Upgrade_with_name | null)[]>>;
+    const handleItemToggle = (item: upgradesWithName) => {
+        const category = getCategory(item.desc.m_eItemSlotType as string || '');
+        let primaryGrid: (upgradesWithName | null)[];
+        let setPrimaryGrid: React.Dispatch<React.SetStateAction<(upgradesWithName | null)[]>>;
 
         switch (category) {
             case 'Weapon':
@@ -167,7 +155,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             ...vitalityItems,
             ...spiritItems,
             ...utilityItems
-        ].findIndex(equippedItem => equippedItem?.itemkey === item.itemkey);
+        ].findIndex(equippedItem => equippedItem?.name === item.name);
 
         if (existingIndex !== -1) {
             // Item is already equipped, so unequip it
@@ -212,11 +200,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     };
 
     const filteredItems = items.filter((item) =>
-        item.itemkey.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-        (item): item is Upgrade_with_name => item !== null
+        (item): item is upgradesWithName => item !== null
     );
 
     return (

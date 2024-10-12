@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { calculateCharacterStats } from '../../lib/characterStatSystem';
 import { getCharacter, getItems } from '../../lib/dataUtils';
 import { HeroWithKey } from '../../lib/herointerface';
-import { Upgrade_with_name } from '../../lib/itemInterface';
+import { upgradesWithName } from '@/app/lib/itemInterfaces';
 import { SkillsData } from '../../lib/abilityInterface';
 
 export async function POST(request: Request) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
         const { characterStats, skillStats } = await calculateCharacterStats(
             character,
-            equippedItems as Upgrade_with_name[],
+            equippedItems as upgradesWithName[],
             allItems,
             heroSkills as SkillsData
         );

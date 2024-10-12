@@ -4,7 +4,7 @@ import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
-import { upgradeNames, upgrades } from './itemInterfaces';
+import { upgrades, upgradesWithName} from './itemInterfaces';
 
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heroes.json');
@@ -12,12 +12,12 @@ const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "Hero
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
-type itemkeys = keyof upgradeNames;
+
 
 let specialfire = ["hero_lash", "hero_chrono", "hero_gigawatt"]
 
 export interface HeroStats {
-    name: string,
+    name: string;
     stats: number;
 }
 
@@ -38,7 +38,6 @@ export interface ModifierValues {
 
 export function extractItemModifiers(item: upgrades): ItemModifiers {
     const modifiers: ItemModifiers = {};
-
     for (const [key, value] of Object.entries(item.m_mapAbilityProperties)) {
         if (typeof value === 'object' 
             && 'm_eProvidedPropertyType' in value 
@@ -96,12 +95,12 @@ const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 
 // Caching variables for processed data
 let cachedCharacters: HeroWithKey[] | null = null;
-let cachedItems: upgrades[] | null = null;
+let cachedItems: upgradesWithName[] | null = null;
 export let cachedAbilities: AWithKey[] | null = null;
 
 // Caching variables for raw JSON data
 let cachedCharactersJson: Heroes | null = null;
-let cachedItemsJson: upgrades | null = null;
+let cachedItemsJson: upgradesWithName | null = null;
 let cachedAbilitiesJson: RootObject | null = null;
 
 export function convertImagePath(imagePath: string): string {
@@ -127,9 +126,9 @@ async function getCharactersJson(): Promise<Heroes> {
     return cachedCharactersJson;
 }
 
-async function getItemsJson(): Promise<upgrades> {
+async function getItemsJson(): Promise<upgradesWithName> {
     if (!cachedItemsJson) {
-        cachedItemsJson = await readJsonFile<upgrades>(itemsPath);
+        cachedItemsJson = await readJsonFile<upgradesWithName>(itemsPath);
     }
     return cachedItemsJson;
 }
@@ -178,7 +177,7 @@ export async function getCharacter(name: string): Promise<HeroWithKey | undefine
     return characters.find(character => character.key === heroKey);
 }
 
-export async function getItems(): Promise<upgrades[]> {
+export async function getItems(): Promise<upgradesWithName[]> {
     if (cachedItems) {
         return cachedItems;
     }
@@ -188,17 +187,17 @@ export async function getItems(): Promise<upgrades[]> {
 
         const itemslist = Object.entries(items)
             .filter((entry) => {
-                const [itemkey, value] = entry;
+                const [itemname, value] = entry;
                 return value !== null;
-            }).map(([itemkey, item]) => ({
-                upgrade: {
+            }).map(([itemname, item]) => ({
+                desc: {
                     ...item,
                     m_strAbilityImage: 'm_strAbilityImage' in item && typeof item.m_strAbilityImage === 'string'
                         ? convertImagePath(item.m_strAbilityImage)
                         : undefined,
                     isActive: false,
                 },
-                itemkey: nameMap[itemkey],
+                name: nameMap[itemname],
             }));
 
         itemslist
@@ -206,28 +205,28 @@ export async function getItems(): Promise<upgrades[]> {
                 let a_Active: boolean = false;
                 let b_Active: boolean = false;
 
-                for (let i = 0; i < a.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                    if (a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                for (let i = 0; i < a.desc.m_vecTooltipSectionInfo.length; i++) {
+                    if (a.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
                         a_Active = true;
                         break;
                     }
                 }
 
-                for (let i = 0; i < b.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                    if (b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                for (let i = 0; i < b.desc.m_vecTooltipSectionInfo.length; i++) {
+                    if (b.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
                         b_Active = true;
                         break;
                     }
                 }
                 return a_Active
-                    ? (b_Active ? (a.itemkey).localeCompare((b.itemkey)) : 1)
-                    : (b_Active ? -1 : (a.itemkey).localeCompare((b.itemkey)))
+                    ? (b_Active ? (a.name).localeCompare((b.name)) : 1)
+                    : (b_Active ? -1 : (a.name).localeCompare((b.name)))
 
             }).map((element) => {
-                for (let i = 0; i < element.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                    if (element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                for (let i = 0; i < element.desc.m_vecTooltipSectionInfo.length; i++) {
+                    if (element.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
                         //console.log(element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType)
-                        element.upgrade.isActive = true;
+                        element.desc.isActive = true;
                         return {
                             element
                         }
@@ -402,8 +401,8 @@ export function clearCache(): void {
 
 // getItems().then(ilist => {
 //     for (let i = 0; i in ilist; i++) {
-//         console.log(ilist[i].itemkey)
-//         console.log(extractItemModifiers(ilist[i]))
+//         console.log(ilist[i].name)
+//         console.log(ilist[i].desc.m_mapAbilityProperties === undefined ? "undefined" : "defined")
 //     }}
 // )
 

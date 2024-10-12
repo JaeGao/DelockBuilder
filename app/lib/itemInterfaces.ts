@@ -1,3 +1,8 @@
+export interface upgradesWithName {
+  name: string;
+  desc: upgrades;
+}
+
 export interface upgradeNames {
   [key:string]: upgrades;
 }

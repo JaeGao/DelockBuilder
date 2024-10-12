@@ -15,8 +15,8 @@ export default async function BuilderPage({ params }: { params: { characterName:
 
     // Extract modifiers for all items
     const itemModifiers = items.map(item => ({
-        itemkey: item.itemkey,
-        modifiers: extractItemModifiers(item)
+        itemkey: item.name,
+        modifiers: extractItemModifiers(item.desc)
     }));
 
     return <CharacterBuilder
