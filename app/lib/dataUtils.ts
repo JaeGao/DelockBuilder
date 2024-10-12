@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { Heroes, HeroWithKey, HeroType } from './herointerface';
+import { allHeroes, heroData, heroesWithName, heroDatamSS } from './herointerfaces';
 import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
@@ -10,9 +10,6 @@ import { upgrades, upgradesWithName} from './itemInterfaces';
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heroes.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
-
-type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
-
 
 let specialfire = ["hero_lash", "hero_chrono", "hero_gigawatt"]
 
@@ -94,12 +91,12 @@ export function extractItemModifiers(item: upgrades): ItemModifiers {
 const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 
 // Caching variables for processed data
-let cachedCharacters: HeroWithKey[] | null = null;
+let cachedCharacters: heroesWithName[] | null = null;
 let cachedItems: upgradesWithName[] | null = null;
 export let cachedAbilities: AWithKey[] | null = null;
 
 // Caching variables for raw JSON data
-let cachedCharactersJson: Heroes | null = null;
+let cachedCharactersJson: allHeroes | null = null;
 let cachedItemsJson: upgradesWithName | null = null;
 let cachedAbilitiesJson: RootObject | null = null;
 
@@ -119,9 +116,9 @@ async function readJsonFile<T>(filePath: string): Promise<T> {
     return JSON.parse(data) as T;
 }
 
-async function getCharactersJson(): Promise<Heroes> {
+async function getCharactersJson(): Promise<allHeroes> {
     if (!cachedCharactersJson) {
-        cachedCharactersJson = await readJsonFile<Heroes>(charactersPath);
+        cachedCharactersJson = await readJsonFile<allHeroes>(charactersPath);
     }
     return cachedCharactersJson;
 }
@@ -140,7 +137,7 @@ async function getAbilitiesJson(): Promise<RootObject> {
     return cachedAbilitiesJson;
 }
 // if you want to see all characters regardless of in-game disabled status, use "m_strIconImageSmall" instead "m_strSelectionImage"
-export async function getCharacters(): Promise<HeroWithKey[]> {
+export async function getCharacters(): Promise<heroesWithName[]> {
     if (cachedCharacters) {
         return cachedCharacters;
     }
@@ -149,18 +146,18 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
         const characters = await getCharactersJson();
 
         const playableCharacters = Object.entries(characters)
-            .filter((entry): entry is [HeroKey, HeroType] => {
+            .filter((entry) => {
                 const [key, value] = entry;
-                return key !== 'generic_data_type' && key !== 'hero_base' && typeof value === 'object' && value !== null && value.m_bDisabled === false && value.m_bInDevelopment === false;
+                return typeof value === 'object' && value !== null && value.m_bPlayerSelectable === true && value.m_bDisabled === false && value.m_bInDevelopment === false;
             })
             .map(([key, character]) => ({
                 data: {
                     ...character,
-                    m_strIconHeroCard: 'm_strIconHeroCard' in character && typeof character.m_strIconHeroCard === 'string'
+                    m_strIconHeroCard: ('m_strIconHeroCard' in character && typeof character.m_strIconHeroCard === 'string')
                         ? convertImagePath(character.m_strIconHeroCard)
-                        : undefined
+                        : "",
                 },
-                key
+                name: key
             }));
 
         cachedCharacters = playableCharacters;
@@ -171,10 +168,10 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
     }
 }
 
-export async function getCharacter(name: string): Promise<HeroWithKey | undefined> {
+export async function getCharacter(name: string): Promise<heroesWithName | undefined> {
     const characters = await getCharacters();
-    const heroKey = `hero_${name.toLowerCase()}` as HeroKey;
-    return characters.find(character => character.key === heroKey);
+    const heroKey = `hero_${name.toLowerCase()}`;
+    return characters.find(character => character.name === heroKey);
 }
 
 export async function getItems(): Promise<upgradesWithName[]> {
@@ -317,8 +314,8 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
 // )
 
 // Stats Variables
-const SSD = 'm_ShopStatDisplay'
-const eWSD = 'm_eWeaponStatsDisplay';
+const SSD = "m_ShopStatDisplay"
+const eWSD = "m_eWeaponStatsDisplay";
 const eVSD = 'm_eVitalityStatsDisplay';
 const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
@@ -328,15 +325,16 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
     try {
         const GameHeroes = await getCharactersJson();
         const HeroAbilities = cachedAbilities;
-        const hero_id = `hero_${name.toLowerCase()}` as HeroKey;
-        const allStatNames: Array<string> = Object.values([
-            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
-        ]);
-        const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
+        const hero_id = `hero_${name.toLowerCase()}`;
+        const heroSSD = GameHeroes[hero_id][SSD]
+        const allStatNames: Array<string> = [
+            ...heroSSD[eWSD as keyof typeof heroSSD][vDS],
+            ...heroSSD[eWSD as keyof typeof heroSSD][vODS],
+            ...heroSSD[eVSD as keyof typeof heroSSD][vDS],
+            ...heroSSD[eVSD as keyof typeof heroSSD][vODS],
+            ...heroSSD[eSSD as keyof typeof heroSSD][vDS]
+        ];
+        const startStats = GameHeroes[hero_id]['m_mapStartingStats'] as {[key:string]: number};
         const weaponStats = HeroAbilities?.find((element) => element.heroname === hero_id)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
 
         var StatsZero = {} as allStats;

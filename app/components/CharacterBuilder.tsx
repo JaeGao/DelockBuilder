@@ -7,7 +7,7 @@ import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import { HeroWithKey } from '../lib/herointerface';
+import { heroesWithName } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 
@@ -17,7 +17,7 @@ interface ItemModifier {
 }
 
 interface CharacterBuilderProps {
-    character: HeroWithKey;
+    character: heroesWithName;
     items: upgradesWithName[];
     initialStats: allStats;
 
@@ -35,7 +35,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
-    const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+    const heroName = character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
 
     // Getting Skills Data
@@ -47,7 +47,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
 
     for (let i = 0; i < abilities.length; i++) {
-        if (abilities[i].heroname === character.key) {
+        if (abilities[i].heroname === character.name) {
             heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
             JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
             JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
@@ -102,7 +102,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                characterName: character.key.replace(/^hero_/, ''),
+                characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
                 heroSkills: heroSkills,
             }),
@@ -223,7 +223,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                             </div>
                             {character.data.m_strIconHeroCard && (
                                 <Image
-                                    src={character.data.m_strIconHeroCard}
+                                    src={character.data.m_strIconHeroCard as string}
                                     alt={heroName}
                                     width={120}
                                     height={120}
@@ -281,7 +281,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 <StatsSidebar
                     characterStats={currentStats || initialStats}
                     characterName={heroName}
-                    characterClass={character.data._class}
+                    characterClass={character.data._class as string}
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
                     skillImages={skillIcons}
