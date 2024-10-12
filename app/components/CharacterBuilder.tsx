@@ -6,7 +6,7 @@ import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
-import { upgradesWithName, upgrades } from '../lib/itemInterfaces';
+import { upgradesWithName } from '../lib/itemInterfaces';
 import { HeroWithKey } from '../lib/herointerface';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
