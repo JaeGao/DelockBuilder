@@ -54,29 +54,6 @@ export interface skillDisplayGroups {
     name: string;
 }
 
-// export interface Habilities {
-//     abilities: W_Import_Base[];
-//     heroname: string;
-// }
-
-// export interface W_Import_Base {
-//     ESlot_Weapon_Primary: ESlotWeaponPrimary4;
-//     ESlot_Weapon_Melee: ESlotWeaponMelee3;
-//     ESlot_Ability_Mantle: ESlotAbilityMantle;
-//     ESlot_Ability_Jump: ESlotAbilityJump;
-//     ESlot_Ability_Slide: ESlotAbilitySlide;
-//     ESlot_Ability_ZipLine: ESlotAbilityZipLine;
-//     ESlot_Ability_ZipLineBoost: ESlotAbilityZipLineBoost;
-//     ESlot_Ability_ClimbRope: ESlotAbilityClimbRope;
-//     ESlot_Ability_Innate_1: ESlotAbilityInnate1;
-//     ESlot_Ability_Innate_2: ESlotAbilityInnate2;
-//     ESlot_Ability_Innate_3: ESlotAbilityInnate3;
-//     ESlot_Signature_1: ESlotSignature122;
-//     ESlot_Signature_2: ESlotSignature222;
-//     ESlot_Signature_3: ESlotSignature322;
-//     ESlot_Signature_4: ESlotSignature422;
-// }
-
 export interface Weapon_base {
     _class: string;
     m_strCancelAbilityKey: string;

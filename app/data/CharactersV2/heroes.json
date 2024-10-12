@@ -1835,7 +1835,7 @@
     "m_hRespawnParticle": "resource_name:\"particles/generic/player_respawn_deploy.vpcf\"",
     "m_nModelSkin": 0,
     "m_mapStartingStats": {
-      "EMaxMoveSpeed": 8.3,
+      "EMaxMoveSpeed": 9,
       "ESprintSpeed": 0,
       "ECrouchSpeed": 4.75,
       "EMoveAcceleration": 4,

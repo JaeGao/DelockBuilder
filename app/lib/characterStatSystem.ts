@@ -1,22 +1,22 @@
 // File: app/lib/characterStatSystem.ts
 
-import { HeroType, HeroWithKey } from './herointerface';
+import { heroesWithName } from './herointerfaces';
 import { upgradesWithName } from './itemInterfaces';
 import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
 import { SkillsData } from './abilityInterface';
 
 
 export async function calculateCharacterStats(
-    character: HeroWithKey,
+    character: heroesWithName,
     equippedItems: upgradesWithName[],
     allItems: upgradesWithName[],
     heroSkills: SkillsData,
 ): Promise<{ characterStats: allStats, skillStats: { [key: string]: number } }> {
     // Get base stats
-    const stats = await getHeroStartingStats(character.key.replace('hero_', ''));
+    const stats = await getHeroStartingStats(character.name.replace('hero_', ''));
     let newStats: allStats = Object.assign({}, stats);
     const ogstats = await getAbilitiesbyHero();
-    const weaponStats = ogstats?.find((element) => element.heroname === character.key)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
+    const weaponStats = ogstats?.find((element) => element.heroname === character.name)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
     // Extract and apply item modifiers
     let modifierValues = {} as ModifierValues;
     equippedItems.forEach(item => {
@@ -76,13 +76,13 @@ export async function calculateCharacterStats(
             newStats['ELightMeleeDamage'] += (stats['ELightMeleeDamage'] * modifierValues[mkey[i]] / 200);
             newStats['EHeavyMeleeDamage'] += (stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]] / 200);
 
-        } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
+        } else if (mkey[i] === "EFireRate" && (character.name.replace('hero_', '') === "lash" || character.name.replace('hero_', '') === "chrono" || character.name.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
-        } else if (mkey[i] === "EFireRate" && character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+        } else if (mkey[i] === "EFireRate" && character.name.replace('hero_', '') === "forge" && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + modifierValues[mkey[i]] / 100));
-        } else if (mkey[i] === "EFireRate" && (character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
+        } else if (mkey[i] === "EFireRate" && (character.name.replace('hero_', '') !== "lash" || character.name.replace('hero_', '') !== "chrono" || character.name.replace('hero_', '') !== "gigawatt" || character.name.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
             newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + modifierValues[mkey[i]] / 100));
         } else if (mkey[i] === "EClipSizeIncrease") {
@@ -149,11 +149,11 @@ export async function calculateCharacterStats(
         }
     }
 
-    if ((character.key.replace('hero_', '') === "lash" || character.key.replace('hero_', '') === "chrono" || character.key.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
+    if ((character.name.replace('hero_', '') === "lash" || character.name.replace('hero_', '') === "chrono" || character.name.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
         newStats['ERoundsPerSecond'] = weaponStats.m_iBurstShotCount / ((weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100)) + (weaponStats.m_flIntraBurstCycleTime * weaponStats.m_iBurstShotCount));
-    } else if (character.key.replace('hero_', '') === "forge" && weaponStats !== undefined) {
+    } else if (character.name.replace('hero_', '') === "forge" && weaponStats !== undefined) {
         newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flMaxSpinCycleTime / (1 + newStats["EFireRate"] / 100));
-    } else if ((character.key.replace('hero_', '') !== "lash" || character.key.replace('hero_', '') !== "chrono" || character.key.replace('hero_', '') !== "gigawatt" || character.key.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
+    } else if ((character.name.replace('hero_', '') !== "lash" || character.name.replace('hero_', '') !== "chrono" || character.name.replace('hero_', '') !== "gigawatt" || character.name.replace('hero_', '') !== "forge") && weaponStats !== undefined) {
         newStats['ERoundsPerSecond'] = 1 / (weaponStats.m_flCycleTime / (1 + newStats["EFireRate"] / 100));
     }
 
