@@ -20,12 +20,12 @@ interface CharacterBuilderProps {
     character: HeroWithKey;
     items: upgradesWithName[];
     initialStats: allStats;
-    itemModifiers: ItemModifier[];
+
     abilities: AWithKey[];
 }
 
 
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, itemModifiers, abilities }) => {
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, abilities }) => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
@@ -33,10 +33,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [spiritItems, setSpiritItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [utilityItems, setUtilityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
-    const [equippedAbilities, setEquippedAbilities] = useState<string[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+
 
     // Getting Skills Data
     let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
@@ -284,7 +284,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterClass={character.data._class}
                     characterSkillsData={skillProps}
                     skillLabels={skillDG}
-                    skillImages = {skillIcons}
+                    skillImages={skillIcons}
                     skillStats={skillStats}
                 />
             </div>
