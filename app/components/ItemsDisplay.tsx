@@ -10,7 +10,7 @@ interface ItemsDisplayProps {
     items: Upgrade_with_name[];
     onItemSelect: (item: Upgrade_with_name) => void;
     equippedItems: Upgrade_with_name[];
-    equipediItemsByCategory: (Upgrade_with_name | null)[][];
+    equipediItemsByCategory?: (Upgrade_with_name | null)[][];
 }
 
 interface BuilderBoxProps {
@@ -173,7 +173,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                     items: box.items.map(item => item.itemkey)
                 })
             ),
-            inbuild: equipediItemsByCategory.map(items => items.map(item => item?.itemkey))
+            inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.itemkey))
         };
         pageinfo = build;
         return build
