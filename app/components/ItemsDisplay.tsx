@@ -4,11 +4,13 @@ import { Upgrade_with_name } from '../lib/itemInterface';
 import Image from 'next/image';
 import BuilderTab from './builderTab';
 import { skip } from 'node:test';
+import build from 'next/dist/build';
 
 interface ItemsDisplayProps {
     items: Upgrade_with_name[];
     onItemSelect: (item: Upgrade_with_name) => void;
     equippedItems: Upgrade_with_name[];
+    equipediItemsByCategory: (Upgrade_with_name | null)[][];
 }
 
 interface BuilderBoxProps {
@@ -129,10 +131,12 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
 export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     items,
     onItemSelect,
-    equippedItems,
+    equippedItems, equipediItemsByCategory
 }) => {
     const buildname = useRef<HTMLInputElement>(null);
     const buildAuthor = useRef<HTMLInputElement>(null);
+    const SaveImportTEMP = useRef<HTMLTextAreaElement>(null);
+    let pageinfo = {};
     const [activeCategory, setActiveCategory] = useState('Weapon');
     const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder', 'Save'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
@@ -157,6 +161,33 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         return builderItems.some(builderItem => builderItem.itemkey === item.itemkey) ||
             builderBoxes.some(box => box.items.some(boxItem => boxItem.itemkey === item.itemkey));
     };
+
+    const handleSave = () => {
+        let build = {
+            buildname: buildname.current?.value,
+            buildAuthor: buildAuthor.current?.value,
+            buildBoxes: builderBoxes.map(
+                box => ({
+                    title: box.title,
+                    description: box.description,
+                    items: box.items.map(item => item.itemkey)
+                })
+            ),
+            inbuild: equipediItemsByCategory.map(items => items.map(item => item?.itemkey))
+        };
+        pageinfo = build;
+        return build
+    }
+    const handleImport = (importjson: any) => {
+        if (importjson.value !== '') {
+            let build = JSON.parse(importjson.value);
+            if (build.buildBoxes) {
+                build.buildBoxes.forEach((box: any) => {
+                    addNewBox(box.title, box.description, box.items.map((itemkey: string) => items.find(item => item.itemkey === itemkey)));
+                })
+            }
+        }
+    }
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -191,14 +222,14 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         })));
     };
 
-    const addNewBox = (title: string, description: string) => {
+    const addNewBox = (title: string, description: string, itemsinbox?: []) => {
         setBuilderBoxes(prevBoxes => [
             ...prevBoxes,
             {
                 id: `box-${prevBoxes.length + 1}`,
                 title,
                 description,
-                items: [],
+                items: itemsinbox ? itemsinbox : [],
             },
         ]);
     };
@@ -299,15 +330,27 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                         >
                         </input>
                         <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            className="hover:bg-blue-400 active:bg-[#b1f571] bg-blue-500 text-white px-4 py-2 rounded"
                             onClick={() => {
-                                console.log('Build Name: ', buildname.current?.value);
-                                console.log('Author Name: ', buildAuthor.current?.value);
-                                console.log('Items: ', builderItems);
-                                console.log('Boxes: ', builderBoxes);
+                                console.log(handleSave())
                             }}
                         >
                             Submit
+                        </button>
+
+                        <textarea
+                            key={'SaveImportTEMP'}
+                            ref={SaveImportTEMP}
+                            placeholder='Paste Build Here'
+                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                        >
+                        </textarea>
+                        <button
+                            key={'SaveImportButton'}
+                            className="hover:bg-blue-400 active:bg-[#b1f571] transition-all bg-blue-500 text-white px-4 py-2 rounded"
+                            onClick={() => { handleImport(SaveImportTEMP.current) }}
+                        >
+                            Import
                         </button>
                     </div>
 
