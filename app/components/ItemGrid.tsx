@@ -1,11 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import { Upgrade_with_name } from '../lib/itemInterface';
+import { upgradesWithName } from '../lib/itemInterfaces';
 
 interface ItemGridProps {
     title: string;
-    items: (Upgrade_with_name | null)[];
-    onItemToggle: (item: Upgrade_with_name) => void;
+    items: (upgradesWithName | null)[];
+    onItemToggle: (item: upgradesWithName) => void;
 }
 
 const getCategoryColor = (itemCat: string | undefined): string => {
@@ -39,12 +39,12 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemToggle }) => {
                                 className="flex flex-col h-full cursor-pointer"
                                 onClick={() => onItemToggle(item)}
                             >
-                                <div className={`${getCategoryColor(item.upgrade.m_eItemSlotType)} flex-grow flex items-center justify-center relative rounded-t-md`}>
-                                    {item.upgrade.m_strAbilityImage && (
+                                <div className={`${getCategoryColor(item.desc.m_eItemSlotType as string)} flex-grow flex items-center justify-center relative rounded-t-md`}>
+                                    {item.desc.m_strAbilityImage && (
                                         <div className="relative w-1/2 h-1/2 z-10">
                                             <Image
-                                                src={item.upgrade.m_strAbilityImage}
-                                                alt={item.itemkey}
+                                                src={item.desc.m_strAbilityImage as string}
+                                                alt={item.name}
                                                 layout="fill"
                                                 objectFit="contain"
                                                 className="filter brightness-0 saturate-100"
@@ -53,7 +53,7 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemToggle }) => {
                                     )}
                                 </div>
                                 <div className="bg-gray-200 text-center text-[12px] text-gray-600 flex-shrink-0 rounded-b-md">
-                                    {findTier(item.upgrade.m_iItemTier)}
+                                    {findTier(item.desc.m_iItemTier as string)}
                                 </div>
                             </div>
                         ) : (
