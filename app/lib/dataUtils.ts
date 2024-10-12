@@ -1,17 +1,18 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
 import { Heroes, HeroWithKey, HeroType } from './herointerface';
 import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
-import { SkillsData, skillDisplayGroups, skillProperties } from './abilityInterface';
-const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
+import { upgradeNames, upgrades } from './itemInterfaces';
+
+
+const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heroes.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
 
 type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
-type itemkeys = keyof upgrades;
+type itemkeys = keyof upgradeNames;
 
 let specialfire = ["hero_lash", "hero_chrono", "hero_gigawatt"]
 
@@ -35,10 +36,10 @@ export interface ModifierValues {
     [key: string]: number;
 }
 
-export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
+export function extractItemModifiers(item: upgrades): ItemModifiers {
     const modifiers: ItemModifiers = {};
 
-    for (const [key, value] of Object.entries(item.upgrade.m_mapAbilityProperties)) {
+    for (const [key, value] of Object.entries(item.m_mapAbilityProperties)) {
         if (typeof value === 'object' 
             && 'm_eProvidedPropertyType' in value 
             && 'm_strValue' in value 
@@ -95,7 +96,7 @@ const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 
 // Caching variables for processed data
 let cachedCharacters: HeroWithKey[] | null = null;
-let cachedItems: Upgrade_with_name[] | null = null;
+let cachedItems: upgrades[] | null = null;
 export let cachedAbilities: AWithKey[] | null = null;
 
 // Caching variables for raw JSON data
@@ -177,7 +178,7 @@ export async function getCharacter(name: string): Promise<HeroWithKey | undefine
     return characters.find(character => character.key === heroKey);
 }
 
-export async function getItems(): Promise<Upgrade_with_name[]> {
+export async function getItems(): Promise<upgrades[]> {
     if (cachedItems) {
         return cachedItems;
     }
@@ -186,14 +187,9 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const items = await getItemsJson();
 
         const itemslist = Object.entries(items)
-            .filter((entry): entry is [itemkeys, Upgradebase] => {
+            .filter((entry) => {
                 const [itemkey, value] = entry;
-                return value !== null && (value.m_bDisabled === false ||
-                    value.m_bDisabled === undefined ||
-                    value.m_bDisabled === "false") &&
-                    Array.isArray(value._multibase) &&
-                    value._multibase[0].includes("_base") !== true &&
-                    value._multibase[0] !== "common_properties";
+                return value !== null;
             }).map(([itemkey, item]) => ({
                 upgrade: {
                     ...item,

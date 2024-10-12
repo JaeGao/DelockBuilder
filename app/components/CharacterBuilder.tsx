@@ -37,10 +37,27 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.key.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+<<<<<<< Updated upstream
     let heroSkills = [] as SkillsData[];
+<<<<<<< Updated upstream
     let skillProps = [{},{},{},{}] as skillProperties[];
     let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
     let skillIcons : Array<string> = []
+=======
+    let skillProps = [{}, {}, {}, {}] as skillProperties[];
+    let skillDG = [[], [], [], []] as skillDisplayGroups[][];
+    let skillIcons: Array<string> = []
+=======
+    
+    // Getting Skills Data
+    let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
+    let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
+    let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Gets the property name and key to use for StatsSidebar
+    let skillIcons: Array<string> = [] //Gets skill icon paths in array
+
+    // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.key) {
             heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
@@ -52,6 +69,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
 
     }
+    // Retrieves non-zero skill properties & skill image path
     heroSkills.forEach((element, index) => {
         for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
             if (parseFloat(value.m_strValue) !== 0 && value.m_bFunctionDisabled !== true) {
@@ -61,7 +79,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
 
     })
-    console.log(skillIcons)
+    // 
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
         let skey: keyof typeof sProp;
