@@ -13,16 +13,10 @@ export default async function BuilderPage({ params }: { params: { characterName:
         return <div>Character not found</div>;
     }
 
-    // Extract modifiers for all items
-    const itemModifiers = items.map(item => ({
-        itemkey: item.itemkey,
-        modifiers: extractItemModifiers(item)
-    }));
-
     return <CharacterBuilder
         character={character}
         items={items}
         initialStats={initialStats}
-        itemModifiers={itemModifiers}
+        abilities={abilities}
     />;
 }

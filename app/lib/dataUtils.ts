@@ -1,21 +1,20 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { upgrades, Upgrade_with_name, Upgradebase } from './itemInterface';
-import { Heroes, HeroWithKey, HeroType } from './herointerface';
+import { allHeroes, heroData, heroesWithName, heroDatamSS } from './herointerfaces';
 import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
-const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'CharactersV3.json');
+import { upgrades, upgradesWithName} from './itemInterfaces';
+
+
+const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heroes.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
-
-type HeroKey = Exclude<keyof Heroes, 'generic_data_type'>;
-type itemkeys = keyof upgrades;
 
 let specialfire = ["hero_lash", "hero_chrono", "hero_gigawatt"]
 
 export interface HeroStats {
-    name: string,
+    name: string;
     stats: number;
 }
 
@@ -34,10 +33,9 @@ export interface ModifierValues {
     [key: string]: number;
 }
 
-export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
+export function extractItemModifiers(item: upgrades): ItemModifiers {
     const modifiers: ItemModifiers = {};
-
-    for (const [key, value] of Object.entries(item.upgrade.m_mapAbilityProperties)) {
+    for (const [key, value] of Object.entries(item.m_mapAbilityProperties)) {
         if (typeof value === 'object' 
             && 'm_eProvidedPropertyType' in value 
             && 'm_strValue' in value 
@@ -93,13 +91,13 @@ export function extractItemModifiers(item: Upgrade_with_name): ItemModifiers {
 const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 
 // Caching variables for processed data
-let cachedCharacters: HeroWithKey[] | null = null;
-let cachedItems: Upgrade_with_name[] | null = null;
+let cachedCharacters: heroesWithName[] | null = null;
+let cachedItems: upgradesWithName[] | null = null;
 export let cachedAbilities: AWithKey[] | null = null;
 
 // Caching variables for raw JSON data
-let cachedCharactersJson: Heroes | null = null;
-let cachedItemsJson: upgrades | null = null;
+let cachedCharactersJson: allHeroes | null = null;
+let cachedItemsJson: upgradesWithName | null = null;
 let cachedAbilitiesJson: RootObject | null = null;
 
 export function convertImagePath(imagePath: string): string {
@@ -118,16 +116,16 @@ async function readJsonFile<T>(filePath: string): Promise<T> {
     return JSON.parse(data) as T;
 }
 
-async function getCharactersJson(): Promise<Heroes> {
+async function getCharactersJson(): Promise<allHeroes> {
     if (!cachedCharactersJson) {
-        cachedCharactersJson = await readJsonFile<Heroes>(charactersPath);
+        cachedCharactersJson = await readJsonFile<allHeroes>(charactersPath);
     }
     return cachedCharactersJson;
 }
 
-async function getItemsJson(): Promise<upgrades> {
+async function getItemsJson(): Promise<upgradesWithName> {
     if (!cachedItemsJson) {
-        cachedItemsJson = await readJsonFile<upgrades>(itemsPath);
+        cachedItemsJson = await readJsonFile<upgradesWithName>(itemsPath);
     }
     return cachedItemsJson;
 }
@@ -139,7 +137,7 @@ async function getAbilitiesJson(): Promise<RootObject> {
     return cachedAbilitiesJson;
 }
 // if you want to see all characters regardless of in-game disabled status, use "m_strIconImageSmall" instead "m_strSelectionImage"
-export async function getCharacters(): Promise<HeroWithKey[]> {
+export async function getCharacters(): Promise<heroesWithName[]> {
     if (cachedCharacters) {
         return cachedCharacters;
     }
@@ -148,18 +146,18 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
         const characters = await getCharactersJson();
 
         const playableCharacters = Object.entries(characters)
-            .filter((entry): entry is [HeroKey, HeroType] => {
+            .filter((entry) => {
                 const [key, value] = entry;
-                return key !== 'generic_data_type' && key !== 'hero_base' && typeof value === 'object' && value !== null && value.m_bDisabled === false && value.m_bInDevelopment === false;
+                return typeof value === 'object' && value !== null && value.m_bPlayerSelectable === true && value.m_bDisabled === false && value.m_bInDevelopment === false;
             })
             .map(([key, character]) => ({
                 data: {
                     ...character,
-                    m_strIconHeroCard: 'm_strIconHeroCard' in character && typeof character.m_strIconHeroCard === 'string'
+                    m_strIconHeroCard: ('m_strIconHeroCard' in character && typeof character.m_strIconHeroCard === 'string')
                         ? convertImagePath(character.m_strIconHeroCard)
-                        : undefined
+                        : "",
                 },
-                key
+                name: key
             }));
 
         cachedCharacters = playableCharacters;
@@ -170,13 +168,13 @@ export async function getCharacters(): Promise<HeroWithKey[]> {
     }
 }
 
-export async function getCharacter(name: string): Promise<HeroWithKey | undefined> {
+export async function getCharacter(name: string): Promise<heroesWithName | undefined> {
     const characters = await getCharacters();
-    const heroKey = `hero_${name.toLowerCase()}` as HeroKey;
-    return characters.find(character => character.key === heroKey);
+    const heroKey = `hero_${name.toLowerCase()}`;
+    return characters.find(character => character.name === heroKey);
 }
 
-export async function getItems(): Promise<Upgrade_with_name[]> {
+export async function getItems(): Promise<upgradesWithName[]> {
     if (cachedItems) {
         return cachedItems;
     }
@@ -185,23 +183,18 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
         const items = await getItemsJson();
 
         const itemslist = Object.entries(items)
-            .filter((entry): entry is [itemkeys, Upgradebase] => {
-                const [itemkey, value] = entry;
-                return value !== null && (value.m_bDisabled === false ||
-                    value.m_bDisabled === undefined ||
-                    value.m_bDisabled === "false") &&
-                    Array.isArray(value._multibase) &&
-                    value._multibase[0].includes("_base") !== true &&
-                    value._multibase[0] !== "common_properties";
-            }).map(([itemkey, item]) => ({
-                upgrade: {
+            .filter((entry) => {
+                const [itemname, value] = entry;
+                return value !== null;
+            }).map(([itemname, item]) => ({
+                desc: {
                     ...item,
                     m_strAbilityImage: 'm_strAbilityImage' in item && typeof item.m_strAbilityImage === 'string'
                         ? convertImagePath(item.m_strAbilityImage)
                         : undefined,
                     isActive: false,
                 },
-                itemkey: nameMap[itemkey],
+                name: nameMap[itemname],
             }));
 
         itemslist
@@ -209,28 +202,28 @@ export async function getItems(): Promise<Upgrade_with_name[]> {
                 let a_Active: boolean = false;
                 let b_Active: boolean = false;
 
-                for (let i = 0; i < a.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                    if (a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                for (let i = 0; i < a.desc.m_vecTooltipSectionInfo.length; i++) {
+                    if (a.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && a.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
                         a_Active = true;
                         break;
                     }
                 }
 
-                for (let i = 0; i < b.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                    if (b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                for (let i = 0; i < b.desc.m_vecTooltipSectionInfo.length; i++) {
+                    if (b.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && b.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
                         b_Active = true;
                         break;
                     }
                 }
                 return a_Active
-                    ? (b_Active ? (a.itemkey).localeCompare((b.itemkey)) : 1)
-                    : (b_Active ? -1 : (a.itemkey).localeCompare((b.itemkey)))
+                    ? (b_Active ? (a.name).localeCompare((b.name)) : 1)
+                    : (b_Active ? -1 : (a.name).localeCompare((b.name)))
 
             }).map((element) => {
-                for (let i = 0; i < element.upgrade.m_vecTooltipSectionInfo.length; i++) {
-                    if (element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
+                for (let i = 0; i < element.desc.m_vecTooltipSectionInfo.length; i++) {
+                    if (element.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType !== undefined && element.desc.m_vecTooltipSectionInfo[i].m_eAbilitySectionType === "EArea_Active") {
                         //console.log(element.upgrade.m_vecTooltipSectionInfo[i].m_eAbilitySectionType)
-                        element.upgrade.isActive = true;
+                        element.desc.isActive = true;
                         return {
                             element
                         }
@@ -274,10 +267,55 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         throw error;
     }
 }
+// let heroSkills = [] as SkillsData[];
+// let skillProps = [{},{},{},{}] as skillProperties[];
+// let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
+// let skillIcons : Array<string> =[];
+// getAbilitiesbyHero().then(adata => {
+//     for (let i = 0; i < adata.length; i++) {
+//         if (adata[i].heroname === 'hero_inferno') {
+//             heroSkills = [JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_1)), 
+//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_2)),
+//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_3)),
+//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_4)) ];
+//             break;
+//         }
+
+//     }
+//     heroSkills.forEach((element, index) => {
+//         for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
+//             if ('m_strValue' in value && value.m_strValue !== 0) {
+//                 skillProps[index][skey] = parseFloat(value.m_strValue);
+//             }
+//         }
+//         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+//     })
+
+//     for (let i = 0; i < skillProps.length; i++) {
+//         const sProp = skillProps[i];
+//         let skey: keyof typeof sProp;
+//         for (skey in sProp) {
+//             let slabel: string;
+//             if (skey.includes("Ability")) {
+//                 slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
+//             } else {
+//                 slabel = skey.replace(/([A-Z])/g, ' $1').trim();
+//             }
+//             skillDG[i].push({
+//                 name: slabel,
+//                 key: skey,
+//             })
+//         }
+//     }
+// })
+
+// getCharacter('haze').then(ch =>
+//     console.log(ch.key)
+// )
 
 // Stats Variables
-const SSD = 'm_ShopStatDisplay'
-const eWSD = 'm_eWeaponStatsDisplay';
+const SSD = "m_ShopStatDisplay"
+const eWSD = "m_eWeaponStatsDisplay";
 const eVSD = 'm_eVitalityStatsDisplay';
 const eSSD = 'm_eSpiritStatsDisplay';
 const vDS = 'm_vecDisplayStats';
@@ -287,15 +325,16 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
     try {
         const GameHeroes = await getCharactersJson();
         const HeroAbilities = cachedAbilities;
-        const hero_id = `hero_${name.toLowerCase()}` as HeroKey;
-        const allStatNames: Array<string> = Object.values([
-            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vDS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eWSD][vODS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vDS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eVSD][vODS]),
-            ...Object.values(GameHeroes[hero_id][SSD][eSSD][vDS])
-        ]);
-        const startStats = GameHeroes[hero_id]['m_mapStartingStats'];
+        const hero_id = `hero_${name.toLowerCase()}`;
+        const heroSSD = GameHeroes[hero_id][SSD]
+        const allStatNames: Array<string> = [
+            ...heroSSD[eWSD as keyof typeof heroSSD][vDS],
+            ...heroSSD[eWSD as keyof typeof heroSSD][vODS],
+            ...heroSSD[eVSD as keyof typeof heroSSD][vDS],
+            ...heroSSD[eVSD as keyof typeof heroSSD][vODS],
+            ...heroSSD[eSSD as keyof typeof heroSSD][vDS]
+        ];
+        const startStats = GameHeroes[hero_id]['m_mapStartingStats'] as {[key:string]: number};
         const weaponStats = HeroAbilities?.find((element) => element.heroname === hero_id)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
 
         var StatsZero = {} as allStats;
@@ -360,8 +399,8 @@ export function clearCache(): void {
 
 // getItems().then(ilist => {
 //     for (let i = 0; i in ilist; i++) {
-//         console.log(ilist[i].itemkey)
-//         console.log(extractItemModifiers(ilist[i]))
+//         console.log(ilist[i].name)
+//         console.log(ilist[i].desc.m_mapAbilityProperties === undefined ? "undefined" : "defined")
 //     }}
 // )
 
