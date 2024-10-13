@@ -7,10 +7,10 @@ import { skip } from 'node:test';
 import build from 'next/dist/build';
 
 interface ItemsDisplayProps {
+    equipediItemsByCategory?: (upgradesWithName[] | null)[][];
     items: upgradesWithName[];
     onItemSelect: (item: upgradesWithName) => void;
     equippedItems: upgradesWithName[];
-    equipediItemsByCategory?: (Upgrade_with_name | null)[][];
 }
 
 interface BuilderBoxProps {
