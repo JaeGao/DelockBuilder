@@ -7,7 +7,7 @@ import { skip } from 'node:test';
 import build from 'next/dist/build';
 
 interface ItemsDisplayProps {
-    equipediItemsByCategory?: (upgradesWithName[]| null)[][];
+    equipediItemsByCategory?: (upgradesWithName | null)[][];
     items: upgradesWithName[];
     onItemSelect: (item: upgradesWithName) => void;
     equippedItems: upgradesWithName[];
@@ -92,7 +92,7 @@ const findTier = (tier: string): number => {
 const tierCost = ["500", "1,250", "3,000", "6,200"];
 
 const ItemCard: React.FC<upgradesWithName & { onSelect: () => void; isEquipped: boolean }> = ({ name, desc, onSelect, isEquipped }) => {
-    const category = getCategory(desc.m_eItemSlotType as string|| '');
+    const category = getCategory(desc.m_eItemSlotType as string || '');
     const categoryColor = getCategoryColor(category);
     const actColor = getCategoryActiveColor(category);
 
@@ -170,10 +170,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                 box => ({
                     title: box.title,
                     description: box.description,
-                    items: box.items.map(item => item.itemkey)
+                    items: box.items.map(item => item.name)
                 })
             ),
-            inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.itemkey))
+            inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.name))
         };
         pageinfo = build;
         return build
@@ -183,7 +183,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
             let build = JSON.parse(importjson.value);
             if (build.buildBoxes) {
                 build.buildBoxes.forEach((box: any) => {
-                    addNewBox(box.title, box.description, box.items.map((itemkey: string) => items.find(item => item.itemkey === itemkey)));
+                    addNewBox(box.title, box.description, box.items.map((itemkey: string) => items.find(item => item.name === itemkey)));
                 })
             }
         }
