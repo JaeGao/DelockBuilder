@@ -199,6 +199,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
     };
 
+    const getEquippedItemsbyCategroy = () => { return [weaponItems, vitalityItems, spiritItems, utilityItems] };
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -274,6 +275,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 items={filteredItems}
                                 onItemSelect={handleItemToggle}
                                 equippedItems={allEquippedItems}
+                                equipediItemsByCategory={getEquippedItemsbyCategroy()}
                             />
                         </div>
                     </div>

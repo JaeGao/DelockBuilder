@@ -1,10 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { upgradesWithName } from '../lib/itemInterfaces';
 import Image from 'next/image';
 import BuilderTab from './builderTab';
+import { skip } from 'node:test';
+import build from 'next/dist/build';
 
 interface ItemsDisplayProps {
+    equipediItemsByCategory?: (upgradesWithName[]| null)[][];
     items: upgradesWithName[];
     onItemSelect: (item: upgradesWithName) => void;
     equippedItems: upgradesWithName[];
@@ -26,6 +29,7 @@ const getCategoryColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#c374fa]';
         case 'Utility':
+            return '';
         case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
@@ -42,6 +46,8 @@ const getCategoryActiveColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#dbb2f7]';
         case 'Utility':
+        case 'Save':
+            return 'bg-[#b1f571]';
         case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
@@ -125,10 +131,14 @@ const ItemCard: React.FC<upgradesWithName & { onSelect: () => void; isEquipped: 
 export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     items,
     onItemSelect,
-    equippedItems,
+    equippedItems, equipediItemsByCategory
 }) => {
+    const buildname = useRef<HTMLInputElement>(null);
+    const buildAuthor = useRef<HTMLInputElement>(null);
+    const SaveImportTEMP = useRef<HTMLTextAreaElement>(null);
+    let pageinfo = {};
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder'];
+    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder', 'Save'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
     const [builderItems, setBuilderItems] = useState<upgradesWithName[]>([]);
     const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
@@ -151,6 +161,33 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         return builderItems.some(builderItem => builderItem.name === item.name) ||
             builderBoxes.some(box => box.items.some(boxItem => boxItem.name === item.name));
     };
+
+    const handleSave = () => {
+        let build = {
+            buildname: buildname.current?.value,
+            buildAuthor: buildAuthor.current?.value,
+            buildBoxes: builderBoxes.map(
+                box => ({
+                    title: box.title,
+                    description: box.description,
+                    items: box.items.map(item => item.itemkey)
+                })
+            ),
+            inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.itemkey))
+        };
+        pageinfo = build;
+        return build
+    }
+    const handleImport = (importjson: any) => {
+        if (importjson.value !== '') {
+            let build = JSON.parse(importjson.value);
+            if (build.buildBoxes) {
+                build.buildBoxes.forEach((box: any) => {
+                    addNewBox(box.title, box.description, box.items.map((itemkey: string) => items.find(item => item.itemkey === itemkey)));
+                })
+            }
+        }
+    }
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -185,14 +222,14 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         })));
     };
 
-    const addNewBox = (title: string, description: string) => {
+    const addNewBox = (title: string, description: string, itemsinbox?: []) => {
         setBuilderBoxes(prevBoxes => [
             ...prevBoxes,
             {
                 id: `box-${prevBoxes.length + 1}`,
                 title,
                 description,
-                items: [],
+                items: itemsinbox ? itemsinbox : [],
             },
         ]);
     };
@@ -248,20 +285,78 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         <div className="relative">
             <div className="flex">
                 {categories.map(category => (
-                    <button
-                        key={category}
-                        className={`px-2 md:px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
-                            ? `${getCategoryColor(category)} text-white`
-                            : 'bg-gray-200 text-gray-700'
-                            }`}
-                        onClick={() => setActiveCategory(category)}
-                    >
-                        {category}
-                    </button>
+                    category === 'Save' ? <div key={'null'}></div> :
+                        (<button
+                            key={category}
+                            className={`px-2 md:px-5 py-2 text-sm font-medium rounded-t-lg ${activeCategory === category
+                                ? `${getCategoryColor(category)} text-white`
+                                : 'bg-gray-200 text-gray-700'
+                                }`}
+                            onClick={() => setActiveCategory(category)}
+                        >
+                            {category}
+                        </button>)
                 ))}
+                <div className="flex justify-end md:flex-grow">
+                    <button
+                        key={'Save'}
+                        className={`px-2 md:px-2 py-2 text-sm font-medium rounded ${activeCategory === 'Save' ? `${getCategoryActiveColor('Save')} text-black` : 'bg-blue-500 text-white'} `}
+                        onClick={() => setActiveCategory('Save')}
+                    >
+                        Save/Find Build
+                    </button>
+                </div>
+
             </div>
             <div className="flex flex-col w-full">
-                {activeCategory === 'Builder' ? (
+                {activeCategory === 'Save' ? (
+
+
+                    <div className='p-4 bg-gray-900 rounded-lg'>
+                        <input
+                            key={'buildname'}
+                            type="text"
+                            ref={buildname}
+                            placeholder='Enter Build Name'
+                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                        >
+                        </input>
+                        <input
+                            key={'author'}
+                            type='text'
+                            ref={buildAuthor}
+                            placeholder='Enter Author Name'
+                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                        >
+                        </input>
+                        <button
+                            className="hover:bg-blue-400 active:bg-[#b1f571] bg-blue-500 text-white px-4 py-2 rounded"
+                            onClick={() => {
+                                console.log(handleSave())
+                            }}
+                        >
+                            Submit
+                        </button>
+
+                        <textarea
+                            key={'SaveImportTEMP'}
+                            ref={SaveImportTEMP}
+                            placeholder='Paste Build Here'
+                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                        >
+                        </textarea>
+                        <button
+                            key={'SaveImportButton'}
+                            className="hover:bg-blue-400 active:bg-[#b1f571] transition-all bg-blue-500 text-white px-4 py-2 rounded"
+                            onClick={() => { handleImport(SaveImportTEMP.current) }}
+                        >
+                            Import
+                        </button>
+                    </div>
+
+
+
+                ) : activeCategory === 'Builder' ? (
                     <BuilderTab
                         items={builderItems}
                         boxes={builderBoxes}
