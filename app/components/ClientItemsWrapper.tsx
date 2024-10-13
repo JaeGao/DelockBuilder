@@ -2,21 +2,21 @@
 
 import React, { useState } from 'react';
 import ItemsDisplay from './ItemsDisplay';
-import { Upgrade_with_name } from '../lib/itemInterface';
+import { upgradesWithName } from '../lib/itemInterfaces';
 
 interface ClientItemsWrapperProps {
-    initialItems: Upgrade_with_name[];
+    initialItems: upgradesWithName[];
 }
 
 const ClientItemsWrapper: React.FC<ClientItemsWrapperProps> = ({ initialItems }) => {
-    const [equippedItems, setEquippedItems] = useState<Upgrade_with_name[]>([]);
+    const [equippedItems, setEquippedItems] = useState<upgradesWithName[]>([]);
 
-    const handleItemSelect = (item: Upgrade_with_name) => {
-        console.log('Item selected:', item.itemkey);
+    const handleItemSelect = (item: upgradesWithName) => {
+        console.log('Item selected:', item.name);
         setEquippedItems(prev => {
-            const isEquipped = prev.some(equippedItem => equippedItem.itemkey === item.itemkey);
+            const isEquipped = prev.some(equippedItem => equippedItem.name === item.name);
             if (isEquipped) {
-                return prev.filter(equippedItem => equippedItem.itemkey !== item.itemkey);
+                return prev.filter(equippedItem => equippedItem.name !== item.name);
             } else {
                 return [...prev, item];
             }

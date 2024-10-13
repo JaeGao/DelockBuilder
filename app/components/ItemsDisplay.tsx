@@ -1,23 +1,23 @@
 'use client';
 import React, { useState, useRef } from 'react';
-import { Upgrade_with_name } from '../lib/itemInterface';
+import { upgradesWithName } from '../lib/itemInterfaces';
 import Image from 'next/image';
 import BuilderTab from './builderTab';
 import { skip } from 'node:test';
 import build from 'next/dist/build';
 
 interface ItemsDisplayProps {
-    items: Upgrade_with_name[];
-    onItemSelect: (item: Upgrade_with_name) => void;
-    equippedItems: Upgrade_with_name[];
-    equipediItemsByCategory?: (Upgrade_with_name | null)[][];
+    equipediItemsByCategory?: (upgradesWithName[]| null)[][];
+    items: upgradesWithName[];
+    onItemSelect: (item: upgradesWithName) => void;
+    equippedItems: upgradesWithName[];
 }
 
 interface BuilderBoxProps {
     id: string;
     title: string;
     description: string;
-    items: Upgrade_with_name[];
+    items: upgradesWithName[];
 }
 
 const getCategoryColor = (category: string): string => {
@@ -91,8 +91,8 @@ const findTier = (tier: string): number => {
 
 const tierCost = ["500", "1,250", "3,000", "6,200"];
 
-const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped: boolean }> = ({ itemkey, upgrade, onSelect, isEquipped }) => {
-    const category = getCategory(upgrade.m_eItemSlotType || '');
+const ItemCard: React.FC<upgradesWithName & { onSelect: () => void; isEquipped: boolean }> = ({ name, desc, onSelect, isEquipped }) => {
+    const category = getCategory(desc.m_eItemSlotType as string|| '');
     const categoryColor = getCategoryColor(category);
     const actColor = getCategoryActiveColor(category);
 
@@ -102,15 +102,15 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
             onClick={onSelect}
             draggable
             onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', JSON.stringify({ itemkey, upgrade }));
+                e.dataTransfer.setData('text/plain', JSON.stringify({ name, desc }));
             }}
         >
             <div className="w-full h-full flex flex-col relative justify-center">
-                <div className={`${upgrade.isActive === true ? actColor : categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
-                    {upgrade.m_strAbilityImage && (
+                <div className={`${desc.isActive === true ? actColor : categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
+                    {desc.m_strAbilityImage && (
                         <Image
-                            src={upgrade.m_strAbilityImage}
-                            alt={itemkey}
+                            src={desc.m_strAbilityImage as string}
+                            alt={name}
                             width={40}
                             height={40}
                             className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
@@ -118,9 +118,9 @@ const ItemCard: React.FC<Upgrade_with_name & { onSelect: () => void; isEquipped:
                     )}
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
-                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{itemkey}</p>
+                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{name}</p>
                 </div>
-                <div className={`absolute left-1/2 -translate-x-1/2 ${upgrade.isActive !== undefined && upgrade.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
+                <div className={`absolute left-1/2 -translate-x-1/2 ${desc.isActive !== undefined && desc.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
                     <p className="text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
                 </div>
             </div>
@@ -140,26 +140,26 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     const [activeCategory, setActiveCategory] = useState('Weapon');
     const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder', 'Save'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
-    const [builderItems, setBuilderItems] = useState<Upgrade_with_name[]>([]);
+    const [builderItems, setBuilderItems] = useState<upgradesWithName[]>([]);
     const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
 
     const categorizedItems = items.reduce((acc, item) => {
-        const category = getCategory(item.upgrade.m_eItemSlotType || '');
+        const category = getCategory(item.desc.m_eItemSlotType as string || '');
         if (!acc[category]) {
             acc[category] = { 1: [], 2: [], 3: [], 4: [] };
         }
-        const tier = findTier(item.upgrade.m_iItemTier) || 1;
+        const tier = findTier(item.desc.m_iItemTier as string) || 1;
         acc[category][tier].push(item);
         return acc;
-    }, {} as Record<string, Record<number, Upgrade_with_name[]>>);
+    }, {} as Record<string, Record<number, upgradesWithName[]>>);
 
-    const isItemEquipped = (item: Upgrade_with_name) => {
-        return equippedItems.some(equippedItem => equippedItem.itemkey === item.itemkey);
+    const isItemEquipped = (item: upgradesWithName) => {
+        return equippedItems.some(equippedItem => equippedItem.name === item.name);
     };
 
-    const isItemInBuilder = (item: Upgrade_with_name) => {
-        return builderItems.some(builderItem => builderItem.itemkey === item.itemkey) ||
-            builderBoxes.some(box => box.items.some(boxItem => boxItem.itemkey === item.itemkey));
+    const isItemInBuilder = (item: upgradesWithName) => {
+        return builderItems.some(builderItem => builderItem.name === item.name) ||
+            builderBoxes.some(box => box.items.some(boxItem => boxItem.name === item.name));
     };
 
     const handleSave = () => {
@@ -203,22 +203,22 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         setIsDraggingToBuilder(false);
         const itemData = e.dataTransfer.getData('text/plain');
         if (itemData) {
-            const item = JSON.parse(itemData) as Upgrade_with_name;
+            const item = JSON.parse(itemData) as upgradesWithName;
             addItemToBuilder(item);
         }
     };
 
-    const addItemToBuilder = (item: Upgrade_with_name) => {
+    const addItemToBuilder = (item: upgradesWithName) => {
         if (!isItemInBuilder(item)) {
             setBuilderItems(prev => [...prev, item]);
         }
     };
 
-    const removeItemFromBuilder = (item: Upgrade_with_name) => {
-        setBuilderItems(prev => prev.filter(i => i.itemkey !== item.itemkey));
+    const removeItemFromBuilder = (item: upgradesWithName) => {
+        setBuilderItems(prev => prev.filter(i => i.name !== item.name));
         setBuilderBoxes(prev => prev.map(box => ({
             ...box,
-            items: box.items.filter(i => i.itemkey !== item.itemkey)
+            items: box.items.filter(i => i.name !== item.name)
         })));
     };
 
@@ -248,15 +248,15 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     const moveItemBetweenBoxes = (itemId: string, sourceBoxId: string, destinationBoxId: string) => {
         setBuilderBoxes(prevBoxes => {
             const newBoxes = [...prevBoxes];
-            let movedItem: Upgrade_with_name | undefined;
+            let movedItem: upgradesWithName | undefined;
 
             if (sourceBoxId === 'unassigned') {
-                movedItem = builderItems.find(item => item.itemkey === itemId);
-                setBuilderItems(prev => prev.filter(item => item.itemkey !== itemId));
+                movedItem = builderItems.find(item => item.name === itemId);
+                setBuilderItems(prev => prev.filter(item => item.name !== itemId));
             } else {
                 const sourceBox = newBoxes.find(box => box.id === sourceBoxId);
                 if (sourceBox) {
-                    const itemIndex = sourceBox.items.findIndex(item => item.itemkey === itemId);
+                    const itemIndex = sourceBox.items.findIndex(item => item.name === itemId);
                     if (itemIndex !== -1) {
                         movedItem = sourceBox.items[itemIndex];
                         sourceBox.items.splice(itemIndex, 1);
@@ -266,12 +266,12 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
 
             if (movedItem) {
                 if (destinationBoxId === 'unassigned') {
-                    if (!builderItems.some(item => item.itemkey === movedItem!.itemkey)) {
+                    if (!builderItems.some(item => item.name === movedItem!.name)) {
                         setBuilderItems(prev => [...prev, movedItem!]);
                     }
                 } else {
                     const destBox = newBoxes.find(box => box.id === destinationBoxId);
-                    if (destBox && !destBox.items.some(item => item.itemkey === movedItem!.itemkey)) {
+                    if (destBox && !destBox.items.some(item => item.name === movedItem!.name)) {
                         destBox.items.push(movedItem);
                     }
                 }
@@ -379,7 +379,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                     <div className="flex flex-wrap">
                                         {(categorizedItems[activeCategory]?.[tier] || []).map(item => (
                                             <ItemCard
-                                                key={item.itemkey}
+                                                key={item.name}
                                                 {...item}
                                                 onSelect={() => onItemSelect(item)}
                                                 isEquipped={isItemEquipped(item) || isItemInBuilder(item)}

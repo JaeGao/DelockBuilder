@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { allStats } from '../lib/dataUtils';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { skillDisplayGroups, skillProperties } from '../lib/abilityInterface';
 
 interface StatsSidebarProps {
     characterStats: allStats;
     characterName: string;
     characterClass: string;
+    characterSkillsData: skillProperties[];
+    skillLabels: skillDisplayGroups[][];
+    skillImages: Array<string>;
+    skillStats: { [key: string]: number };
 }
 
-const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass }) => {
+const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages, skillStats }) => {
     const [activeTab, setActiveTab] = useState<'all' | 'custom'>('all');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [changedStats, setChangedStats] = useState<string[]>([]);
@@ -112,6 +117,30 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                 { name: "Charge Cooldown", key: "ETechCooldownBetweenChargeUses" },
             ]
         },
+        {
+            title: "Skill 1",
+            color: "text-rose-400",
+            bgColor: "bg-rose-500",
+            stats: skillLabels[0],
+        },
+        {
+            title: "Skill 2",
+            color: "text-rose-400",
+            bgColor: "bg-rose-500",
+            stats: skillLabels[1],
+        },
+        {
+            title: "Skill 3",
+            color: "text-rose-400",
+            bgColor: "bg-rose-500",
+            stats: skillLabels[2],
+        },
+        {
+            title: "Skill 4",
+            color: "text-rose-400",
+            bgColor: "bg-rose-500",
+            stats: skillLabels[3],
+        }
     ];
 
     const percentageStats = [
@@ -137,27 +166,28 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         const isPercentageStat = percentageStats.includes(statName);
         const isChanged = changedStats.includes(statKey);
         const isEnhanced = baseValue !== undefined && currentValue !== baseValue;
-
+        
         if (currentValue === undefined) return 'N/A';
 
         return (
             <div className="flex items-center justify-end text-xs font-medium">
-                {/* {isChanged && previousValue !== undefined ? (
-                    <>
-                        <span className="text-gray-400">
-                            {formatStat(previousValue)}{isPercentageStat ? "%" : ""}
-                        </span>
-                        <ArrowRightIcon className="w-3 h-3 mx-1 text-gray-500" />
-                    </>
-                ) : null} */}
                 <span className={isEnhanced ? 'text-yellow-500' : 'text-white'}>
                     {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
                 </span>
-                {/* {isChanged && previousValue !== undefined ? (
-                    <span className={`ml-1 text-xs ${currentValue > previousValue ? 'text-green-500' : 'text-red-500'}`}>
-                        ({calculatePercentChange(currentValue, previousValue)})
-                    </span>
-                ) : null} */}
+            </div>
+        );
+    };
+
+    const renderSkillStats = (statKey: string, statName: string, skillNum: string) => {
+        const sNum = parseFloat(skillNum) - 1;
+        const currentValue = characterSkillsData[sNum][statKey as keyof skillProperties];
+        const isPercentageStat = percentageStats.includes(statName);
+        if (currentValue === undefined) return 'N/A';
+        return (
+            <div className="flex items-center justify-between text-xs font-medium">
+                <span className={'text-white'}>
+                    {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
+                </span>
             </div>
         );
     };
@@ -201,19 +231,68 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                     if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
                         return null;
                     }
-                    return (
+                    if (group.title === "Skill 1") {
+                        return (
                         <div key={groupIndex} className="mb-4">
-                            <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
+                            <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>Skill Stats</h4>
+                            <div className="float-left">
+                                <img
+                                    src={skillImages[parseFloat(group.title.replace("Skill", ""))-1]}
+                                    width="60"
+                                    height="60"
+                                    className="rounded-full mb-2 mr-2 object-contain"
+                                />
+                            </div>
                             <div className="space-y-1">
+                                
                                 {group.stats.map((stat) => (
                                     <div key={stat.key} className="flex justify-between items-center">
                                         <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                        {renderStatValue(stat.key, stat.name)}
+                                        {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    );
+                        )
+                    } else if (group.title.includes("Skill") && group.title !== "Skill 1") {
+                        return (
+                        <div key={groupIndex} className="mb-4">
+                            <div className="float-left">
+                                <img
+                                    src={skillImages[parseFloat(group.title.replace("Skill", ""))-1]}
+                                    width="60"
+                                    height="60"
+                                    className="rounded-full mb-2 mr-2 object-contain"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                
+                                {group.stats.map((stat) => (
+                                    <div key={stat.key} className="flex justify-between items-center">
+                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                        {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        )
+                    } else {
+                        return (
+                            <div key={groupIndex} className="mb-4">
+                                <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
+                                <div className="space-y-1">
+                                    
+                                    {group.stats.map((stat) => (
+                                        <div key={stat.key} className="flex justify-between items-center">
+                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                            {renderStatValue(stat.key, stat.name)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
                 })}
             </div>
         </div>

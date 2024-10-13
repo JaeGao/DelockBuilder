@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Upgrade_with_name } from '../lib/itemInterface';
+import { upgradesWithName } from '../lib/itemInterfaces';
 import Image from 'next/image';
 
 interface BuilderBoxProps {
     id: string;
     title: string;
     description: string;
-    items: Upgrade_with_name[];
+    items: upgradesWithName[];
 }
 
 interface BuilderTabProps {
-    items: Upgrade_with_name[];
+    items: upgradesWithName[];
     boxes: BuilderBoxProps[];
-    onAddItem: (item: Upgrade_with_name) => void;
-    onRemoveItem: (item: Upgrade_with_name) => void;
+    onAddItem: (item: upgradesWithName) => void;
+    onRemoveItem: (item: upgradesWithName) => void;
     onAddBox: (title: string, description: string) => void;
     onRemoveBox: (boxId: string) => void;
     onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void;
@@ -31,7 +31,7 @@ const getCategoryColor = (itemCat: string | undefined): string => {
 };
 
 const BuilderBox: React.FC<BuilderBoxProps & {
-    onRemoveItem: (item: Upgrade_with_name) => void;
+    onRemoveItem: (item: upgradesWithName) => void;
     onMoveItem: (itemId: string, sourceBoxId: string, destinationBoxId: string) => void;
     onRemoveBox: (boxId: string) => void;
 }> = ({ id, title, description, items, onRemoveItem, onMoveItem, onRemoveBox }) => {
@@ -69,15 +69,15 @@ const BuilderBox: React.FC<BuilderBoxProps & {
             </button>
             <div className={`flex flex-wrap ${isExpanded ? '' : 'max-h-40 overflow-y-auto'}`}>
                 {items.map((item) => (
-                    <div key={item.itemkey} className="w-20 h-24 m-2 relative" draggable onDragStart={(e) => {
-                        e.dataTransfer.setData('text/plain', JSON.stringify({ itemId: item.itemkey, sourceBoxId: id }));
+                    <div key={item.name} className="w-20 h-24 m-2 relative" draggable onDragStart={(e) => {
+                        e.dataTransfer.setData('text/plain', JSON.stringify({ itemId: item.name, sourceBoxId: id }));
                     }}>
                         <div className="w-full h-full flex flex-col relative justify-center">
-                            <div className={`${getCategoryColor(item.upgrade.m_eItemSlotType)} flex-grow flex items-center justify-center rounded-t-md`}>
-                                {item.upgrade.m_strAbilityImage && (
+                            <div className={`${getCategoryColor(item.desc.m_eItemSlotType as string)} flex-grow flex items-center justify-center rounded-t-md`}>
+                                {item.desc.m_strAbilityImage && (
                                     <Image
-                                        src={item.upgrade.m_strAbilityImage}
-                                        alt={item.itemkey}
+                                        src={item.desc.m_strAbilityImage as string}
+                                        alt={item.name}
                                         width={40}
                                         height={40}
                                         className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
@@ -85,7 +85,7 @@ const BuilderBox: React.FC<BuilderBoxProps & {
                                 )}
                             </div>
                             <div className="flex h-12 bg-gray-600 items-center text-center p-1 rounded-b-md">
-                                <p className="text-white text-xs leading-tight text-center w-full break-words hyphens-auto">{item.itemkey}</p>
+                                <p className="text-white text-xs leading-tight text-center w-full break-words hyphens-auto">{item.name}</p>
                             </div>
                         </div>
                         <button
@@ -174,15 +174,15 @@ const BuilderTab: React.FC<BuilderTabProps> = ({
                     }
                 }}>
                     {items.map((item) => (
-                        <div key={item.itemkey} className="w-20 h-24 m-2 relative" draggable onDragStart={(e) => {
-                            e.dataTransfer.setData('text/plain', JSON.stringify({ itemId: item.itemkey, sourceBoxId: 'unassigned' }));
+                        <div key={item.name} className="w-20 h-24 m-2 relative" draggable onDragStart={(e) => {
+                            e.dataTransfer.setData('text/plain', JSON.stringify({ itemId: item.name, sourceBoxId: 'unassigned' }));
                         }}>
                             <div className="w-full h-full flex flex-col relative justify-center">
-                                <div className={`${getCategoryColor(item.upgrade.m_eItemSlotType)} flex-grow flex items-center justify-center rounded-t-md`}>
-                                    {item.upgrade.m_strAbilityImage && (
+                                <div className={`${getCategoryColor(item.desc.m_eItemSlotType as string)} flex-grow flex items-center justify-center rounded-t-md`}>
+                                    {item.desc.m_strAbilityImage && (
                                         <Image
-                                            src={item.upgrade.m_strAbilityImage}
-                                            alt={item.itemkey}
+                                            src={item.desc.m_strAbilityImage as string}
+                                            alt={item.name}
                                             width={40}
                                             height={40}
                                             className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
@@ -190,7 +190,7 @@ const BuilderTab: React.FC<BuilderTabProps> = ({
                                     )}
                                 </div>
                                 <div className="flex h-12 bg-gray-600 items-center text-center p-1 rounded-b-md">
-                                    <p className="text-white text-xs leading-tight text-center w-full break-words hyphens-auto">{item.itemkey}</p>
+                                    <p className="text-white text-xs leading-tight text-center w-full break-words hyphens-auto">{item.name}</p>
                                 </div>
                             </div>
                             <button
