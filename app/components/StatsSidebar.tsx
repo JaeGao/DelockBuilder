@@ -10,7 +10,7 @@ interface StatsSidebarProps {
     characterSkillsData: skillProperties[];
     skillLabels: skillDisplayGroups[][];
     skillImages: Array<string>;
-    skillUpgrades: skillUpgrades[];
+    skillUpgrades: skillUpgrades[][];
 }
 
 const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages }) => {

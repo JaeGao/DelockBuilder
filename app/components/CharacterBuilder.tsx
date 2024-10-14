@@ -41,7 +41,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
     let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Stores the property name and key to use for StatsSidebar
     let skillIcons: Array<string> = [] //Stores skill icon paths in array
-    let skillUpgradeInfo = [{}, {}, {}, {}] as skillUpgrades[]; // Stores upgrade tiers for each skill
+    let skillUpgradeInfo = [[], [], [], []] as skillUpgrades[][]; // Stores upgrade tiers for each skill
     let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data for each skill
 
     // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
@@ -67,12 +67,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 }
             }
         }
-        for (let i = 0; i < element.m_vecAbilityUpgrades.length; i++) {
-            skillUpgradeInfo[i] = element.m_vecAbilityUpgrades[i];
-        }
+
+        skillUpgradeInfo[index] = element.m_vecAbilityUpgrades;
+        
         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
 
     })
+
+    console.log(skillUpgradeInfo[2][0])
 
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
@@ -266,7 +268,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full mr-[4%] mt-2">
+                    <div className="w-full max-w-5xl mr-[4%] mt-2">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}
