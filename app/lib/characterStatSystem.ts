@@ -241,6 +241,8 @@ export async function calculateCharacterStats(
 
                 } else if (scaleData[spkey]._class === "scale_function_tech_damage") {
                     skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                } else if (scaleData[spkey]._class === "scale_function_kinetic_carbine_damage") {
+                    skillCalcProps[index][spkey] *= newStats[scaleData[spkey].m_eSpecificStatScaleType];
                 }
             }
         }
