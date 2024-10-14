@@ -204,10 +204,6 @@ export async function calculateCharacterStats(
         }
     });
 
-    // Cooldown: Upgrade before ETechCooldown Scaling
-    // Duration: Upgrade before ETechDuration Scaling
-    // Multi TechPower & TechDuration: TechPower first, Duration multiplier second
-
     const skillCalcProps = [{},{},{},{}] as skillProperties[];
 
     skillProps.forEach((element, index) => {
@@ -225,7 +221,7 @@ export async function calculateCharacterStats(
                     if (scaleData[spkey].m_vecScalingStats) {
                         if (scaleData[spkey].m_vecScalingStats[0] in newStats 
                             && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower" 
-                            && scaleData[spkey].m_vecScalingStatss[0] !== "EChannelTime") {
+                            && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime") {
                                 skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]]/100);
     
                         } else if (scaleData[spkey].m_vecScalingStats[0] in newStats 

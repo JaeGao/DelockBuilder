@@ -12,3 +12,16 @@ Forge 2: Add Spirit Scaling --> multiply Duration
 Forge 2: Add Spirit Scaling --> multiply Range
 Gigawatt 2: Multiply Range --> Add Spirit Scaling
 Wraith 3: TechPower & TechDuration: TechPower first, Duration multiplier second
+
+
+
+    skillScaling.forEach((element) => {
+        let skey : keyof typeof element;
+        for (skey in element) {
+            if (element[skey]._class === "scale_function_multi_stats") {
+                console.log(element[skey].m_vecScalingStats[0])
+                console.log(element[skey].m_vecScalingStats[1])
+            }
+        }
+
+    })
