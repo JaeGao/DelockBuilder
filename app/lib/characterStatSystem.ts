@@ -212,6 +212,14 @@ export async function calculateCharacterStats(
         for (spkey in element) {
             skillCalcProps[index][spkey] = skillProps[index][spkey];
             if (scaleData[spkey]) {
+                // Insert upgrade applying code here
+
+
+
+
+
+
+                // Scaling skill stats with scale functions
                 if (scaleData[spkey]._class === "scale_function_single_stat") {
                     if (scaleData[spkey].m_eSpecificStatScaleType in newStats 
                         && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration") {
