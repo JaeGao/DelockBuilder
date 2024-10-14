@@ -3,7 +3,7 @@
 import { heroesWithName } from './herointerfaces';
 import { upgradesWithName } from './itemInterfaces';
 import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
-import { SkillsData } from './abilityInterface';
+import { skillProperties, skillScaleData, SkillsData, skillUpgrades } from './abilityInterface';
 
 
 export async function calculateCharacterStats(
@@ -11,7 +11,10 @@ export async function calculateCharacterStats(
     equippedItems: upgradesWithName[],
     allItems: upgradesWithName[],
     heroSkills: SkillsData,
-): Promise<{ characterStats: allStats, skillStats: { [key: string]: number } }> {
+    skillProps: skillProperties[],
+    skillUpgrades: skillUpgrades[],
+    skillScaleData: skillScaleData[],
+): Promise<{ characterStats: allStats, skillStats: skillProperties[] }> {
     // Get base stats
     const stats = await getHeroStartingStats(character.name.replace('hero_', ''));
     let newStats: allStats = Object.assign({}, stats);
@@ -201,8 +204,59 @@ export async function calculateCharacterStats(
         }
     });
 
+    // Cooldown: Upgrade before ETechCooldown Scaling
+    // Duration: Upgrade before ETechDuration Scaling
+    // Multi TechPower & TechDuration: TechPower first, Duration multiplier second
+
+    const skillCalcProps = [{},{},{},{}] as skillProperties[];
+
+    skillProps.forEach((element, index) => {
+        let spkey : keyof typeof element;
+        var scaleData : skillScaleData = skillScaleData[index];
+        for (spkey in element) {
+            skillCalcProps[index][spkey] = skillProps[index][spkey];
+            if (scaleData[spkey]) {
+                if (scaleData[spkey]._class === "scale_function_single_stat") {
+                    if (scaleData[spkey].m_eSpecificStatScaleType in newStats 
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration") {
+                            skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_eSpecificStatScaleType]/100);
+                    }
+                } else if (scaleData[spkey]._class === "scale_function_multi_stats") {
+                    if (scaleData[spkey].m_vecScalingStats) {
+                        if (scaleData[spkey].m_vecScalingStats[0] in newStats 
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower" 
+                            && scaleData[spkey].m_vecScalingStatss[0] !== "EChannelTime") {
+                                skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]]/100);
+    
+                        } else if (scaleData[spkey].m_vecScalingStats[0] in newStats 
+                            && scaleData[spkey].m_vecScalingStats[0] === "ETechPower") {
+                                skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                        }
+                        if (scaleData[spkey].m_vecScalingStats[1] in newStats 
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechPower" 
+                            && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime") {
+                                skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]]/100);
+    
+                        } else if (scaleData[spkey].m_vecScalingStats[1] in newStats 
+                            && scaleData[spkey].m_vecScalingStats[1] === "ETechPower") {
+                                skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                        }
+                    }
+
+                } else if (scaleData[spkey]._class === "scale_function_tech_damage") {
+                    skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                }
+            }
+        }
+
+    });
+
+
+
+
+
     // Logs
     // console.log('Skill Stats:', skillStats, "this is from characterStatsSystem");
     //console.log(stats, 'this is the CharacterStats log')
-    return { characterStats: newStats, skillStats };
+    return { characterStats: newStats, skillStats: skillCalcProps };
 }

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
+import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
 import { heroesWithName } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
@@ -20,7 +20,6 @@ interface CharacterBuilderProps {
     character: heroesWithName;
     items: upgradesWithName[];
     initialStats: allStats;
-
     abilities: AWithKey[];
 }
 
@@ -34,15 +33,16 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [utilityItems, setUtilityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
 
     // Getting Skills Data
     let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
     let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
-    let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Gets the property name and key to use for StatsSidebar
-    let skillIcons: Array<string> = [] //Gets skill icon paths in array
+    let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Stores the property name and key to use for StatsSidebar
+    let skillIcons: Array<string> = [] //Stores skill icon paths in array
+    let skillUpgradeInfo = [{}, {}, {}, {}] as skillUpgrades[]; // Stores upgrade tiers for each skill
+    let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data for each skill
 
     // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
 
@@ -60,14 +60,20 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     // Retrieves non-zero skill properties & skill image path
     heroSkills.forEach((element, index) => {
         for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
-            if (parseFloat(value.m_strValue) !== 0 && value.m_bFunctionDisabled !== true) {
+            if (parseFloat(value.m_strValue) !== 0) {
                 skillProps[index][skey] = parseFloat(value.m_strValue);
+                if (value.m_subclassScaleFunction && value.m_subclassScaleFunction.subclass.m_bFunctionDisabled !== true) {
+                    skillScaling[index][skey] = value.m_subclassScaleFunction.subclass;
+                }
             }
+        }
+        for (let i = 0; i < element.m_vecAbilityUpgrades.length; i++) {
+            skillUpgradeInfo[i] = element.m_vecAbilityUpgrades[i];
         }
         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
 
     })
-    // 
+
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
         let skey: keyof typeof sProp;
@@ -83,8 +89,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 name: slabel,
             })
         }
-    };
+    }
 
+    const [skillStats, setSkillStats] = useState<skillProperties[]>(skillProps);
 
 
     useEffect(() => {
@@ -105,6 +112,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
                 heroSkills: heroSkills,
+                skillProperties: skillProps,
+                skillUpgrades: skillUpgradeInfo,
+                skillScaleData: skillScaling,
             }),
         })
             .then(response => {
@@ -284,10 +294,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     characterStats={currentStats || initialStats}
                     characterName={heroName}
                     characterClass={character.data._class as string}
-                    characterSkillsData={skillProps}
+                    characterSkillsData={skillStats}
                     skillLabels={skillDG}
                     skillImages={skillIcons}
-                    skillStats={skillStats}
+                    skillUpgrades = {skillUpgradeInfo}
                 />
             </div>
         </div>

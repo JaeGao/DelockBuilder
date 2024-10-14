@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { allStats } from '../lib/dataUtils';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { skillDisplayGroups, skillProperties } from '../lib/abilityInterface';
+import { skillDisplayGroups, skillProperties, skillUpgrades } from '../lib/abilityInterface';
 
 interface StatsSidebarProps {
     characterStats: allStats;
@@ -10,10 +10,10 @@ interface StatsSidebarProps {
     characterSkillsData: skillProperties[];
     skillLabels: skillDisplayGroups[][];
     skillImages: Array<string>;
-    skillStats: { [key: string]: number };
+    skillUpgrades: skillUpgrades[];
 }
 
-const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages, skillStats }) => {
+const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages }) => {
     const [activeTab, setActiveTab] = useState<'all' | 'custom'>('all');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [changedStats, setChangedStats] = useState<string[]>([]);

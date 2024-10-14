@@ -1,0 +1,14 @@
+Cooldown: Upgrade before ETechCooldown Scaling
+Duration: Upgrade before ETechDuration Scaling
+scale_function_multi_stats:
+EChannelTime: ignore
+
+
+Apply the scaling stat that comes first in m_vecScalingStats
+
+
+Dynamo 1: Add Spirit Scaling then multiply ETechRange
+Forge 2: Add Spirit Scaling --> multiply Duration
+Forge 2: Add Spirit Scaling --> multiply Range
+Gigawatt 2: Multiply Range --> Add Spirit Scaling
+Wraith 3: TechPower & TechDuration: TechPower first, Duration multiplier second
