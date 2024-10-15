@@ -111,7 +111,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
-                characterStatInput: currentStats,
+                characterStatInput: initialStats,
                 heroSkills: heroSkills,
                 skillProperties: skillProps,
                 skillUpgrades: skillUpgrades,
@@ -207,6 +207,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             }
         }
     };
+
     const handleSkillUpgrade = (skillIndex: number) => {
         setskillUpgrades(prevUpgrades => {
             const newUpgrades = [...prevUpgrades];
@@ -221,6 +222,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             return newUpgrades;
         });
     };
+
     const getEquippedItemsbyCategory = () => { return [weaponItems, vitalityItems, spiritItems, utilityItems] };
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())

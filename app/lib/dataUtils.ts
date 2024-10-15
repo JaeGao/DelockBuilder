@@ -386,6 +386,7 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                     allStatNames[i] === "ETechRange") {
                     StatsZero[allStatNames[i]] = 0;
                 }
+                StatsZero["ETechPower"] = 0;
             }
         }
 

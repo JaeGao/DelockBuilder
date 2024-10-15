@@ -19,8 +19,6 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     const [changedStats, setChangedStats] = useState<string[]>([]);
     const previousStatsRef = useRef<allStats | null>(null);
     const baseStatsRef = useRef<allStats | null>(null);
-    console.log("SS")
-    console.log(characterStats)
 
     useEffect(() => {
         if (!baseStatsRef.current) {

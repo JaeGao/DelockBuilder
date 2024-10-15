@@ -12,7 +12,7 @@ export async function calculateCharacterStats(
     characterStatInput: allStats,
     heroSkills: SkillsData,
     skillProps: skillProperties[],
-    skillUpgrades: skillUpgrades[],
+    skillUpgrades: skillUpgrades[][],
     skillScaleData: skillScaleData[],
 ): Promise<{ characterStats: allStats, skillStats: skillProperties[] }> {
     //console.log('Character:', character.name);
@@ -23,7 +23,7 @@ export async function calculateCharacterStats(
     //console.log('Skill Scale Data:', skillScaleData);
     // Get base stats
     let newStats: allStats = Object.assign({}, characterStatInput);
-    console.log(characterStatInput)
+
     const ogstats = await getAbilitiesbyHero();
     const weaponStats = ogstats?.find((element) => element.heroname === character.name)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
     // Extract and apply item modifiers
@@ -210,32 +210,57 @@ export async function calculateCharacterStats(
         }
     });
 
-    const skillCalcProps = [{}, {}, {}, {}] as skillProperties[];
+    var skillCalcProps = [{}, {}, {}, {}] as skillProperties[];
 
     skillProps.forEach((element, index) => {
         let spkey: keyof typeof element;
         var scaleData: skillScaleData = skillScaleData[index];
+
+        skillCalcProps = Object.assign([], skillProps);
+
+        skillUpgrades[index].forEach((element) => {
+            if (element.m_vecPropertyUpgrades) {
+                element.m_vecPropertyUpgrades.forEach((bonus) => {
+                    if (bonus.m_eUpgradeType === "EAddToScale") {
+                        (scaleData[bonus.m_strPropertyName].m_flStatScale as number) += parseFloat(bonus.m_strBonus);
+                    } else if (bonus.m_eUpgradeType === "EAddToBae=se") {
+                        skillCalcProps[index][bonus.m_strPropertyName] += parseFloat(bonus.m_strBonus);
+                    } else {
+                        skillCalcProps[index][bonus.m_strPropertyName] += parseFloat(bonus.m_strBonus);
+                    }
+                })
+            }
+        })
+
         for (spkey in element) {
-            skillCalcProps[index][spkey] = skillProps[index][spkey];
             if (scaleData[spkey]) {
-                // Insert upgrade applying code here
-
-
-
-
-
-
                 // Scaling skill stats with scale functions
                 if (scaleData[spkey]._class === "scale_function_single_stat") {
                     if (scaleData[spkey].m_eSpecificStatScaleType in newStats
-                        && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration") {
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration"
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "ETechRange"
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "ETechDuration") {
+                        skillCalcProps[index][spkey] *= (1 - newStats[scaleData[spkey].m_eSpecificStatScaleType] / 100);
+                    } else if (scaleData[spkey].m_eSpecificStatScaleType in newStats
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration"
+                        && (scaleData[spkey].m_eSpecificStatScaleType === "ETechRange"
+                        || scaleData[spkey].m_eSpecificStatScaleType === "ETechDuration")) {
                         skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_eSpecificStatScaleType] / 100);
                     }
                 } else if (scaleData[spkey]._class === "scale_function_multi_stats") {
                     if (scaleData[spkey].m_vecScalingStats) {
                         if (scaleData[spkey].m_vecScalingStats[0] in newStats
                             && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower"
-                            && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime") {
+                            && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechRange"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechDuration") {
+                            skillCalcProps[index][spkey] *= (1 - newStats[scaleData[spkey].m_vecScalingStats[0]] / 100);
+
+                        } else if (scaleData[spkey].m_vecScalingStats[0] in newStats
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime"
+                            && (scaleData[spkey].m_vecScalingStats[0] === "ETechRange"
+                            || scaleData[spkey].m_vecScalingStats[0] === "ETechDuration")) {
                             skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]] / 100);
 
                         } else if (scaleData[spkey].m_vecScalingStats[0] in newStats
@@ -244,8 +269,17 @@ export async function calculateCharacterStats(
                         }
                         if (scaleData[spkey].m_vecScalingStats[1] in newStats
                             && scaleData[spkey].m_vecScalingStats[1] !== "ETechPower"
-                            && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime") {
-                            skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]] / 100);
+                            && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechRange"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechDuration") {
+                            skillCalcProps[index][spkey] *= (1 - newStats[scaleData[spkey].m_vecScalingStats[1]] / 100);
+
+                        } else if (scaleData[spkey].m_vecScalingStats[1] in newStats
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechPower"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime"
+                            && (scaleData[spkey].m_vecScalingStats[1] === "ETechRange"
+                            || scaleData[spkey].m_vecScalingStats[1] === "ETechDuration")) {
+                            skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[1]] / 100);
 
                         } else if (scaleData[spkey].m_vecScalingStats[1] in newStats
                             && scaleData[spkey].m_vecScalingStats[1] === "ETechPower") {
