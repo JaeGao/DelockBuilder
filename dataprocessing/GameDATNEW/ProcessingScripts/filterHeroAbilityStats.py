@@ -1,10 +1,10 @@
 import json
 import os
 
-os.chdir(r'C:\Users\rhta2\OneDrive\Documents\GitHub\DelockBuilder\dataprocessing\GameDATNEW')
+os.chdir(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'VdataFiles'))
 
 a = open('abilities.json')
-h = open('heros.json')
+h = open('heroes.json')
 
 raw_abilities = json.load(a)
 raw_heroes = json.load(h)
