@@ -51,10 +51,9 @@ const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
             : [];
 
         return (
-            <div key={section.m_eAbilitySectionType} className="mb-2">
-                <h4 className="font-bold">{section.m_eAbilitySectionType}</h4>
+            <div key={section.m_eAbilitySectionType} className="mb-2 font-Deadlock-tooltip">
                 {elevatedProps.map((prop) => (
-                    <p key={prop} className="text-yellow-400">
+                    <p key={prop}>
                         {prop}: {getPropertyValue(item.desc.m_mapAbilityProperties, prop)}
                     </p>
                 ))}

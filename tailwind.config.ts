@@ -12,6 +12,7 @@ const config: Config = {
       fontFamily: {
         'Deadlock-black': ['var(--font-Deadlock-black)'],
         'Deadlock-shop' : ['var(--font-Deadlock-Retail)'],
+        'Deadlock-tooltip': ['var(--font-Deadlock-Retail-reg)'],
       },
       colors: {
         'custom-beige': '#f0debf',

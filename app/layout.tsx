@@ -11,6 +11,11 @@ const Deadlock = localFont({
 const Retail = localFont({
   src: './fonts/RetailTextDemo-Black.otf',
   variable: '--font-Deadlock-Retail'
+});
+
+const RetailReg = localFont({
+  src: './fonts/RetailTextDemo-Regular.otf',
+  variable: '--font-Deadlock-Retail-reg'
 })
 
 export const metadata: Metadata = {
@@ -31,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${Deadlock.variable} ${Retail.variable}`}>
+    <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
       <body className="text-custom-beige">
         <div className="flex">
           <main className="flex-1 p-2">
