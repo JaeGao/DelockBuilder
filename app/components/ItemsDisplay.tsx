@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { upgradesWithName } from '../lib/itemInterfaces';
 import Image from 'next/image';
 import BuilderTab from './builderTab';
@@ -20,6 +20,7 @@ interface BuilderBoxProps {
     description: string;
     items: upgradesWithName[];
 }
+
 const getCategoryColor = (category: string): string => {
     switch (category) {
         case 'Weapon':
@@ -109,10 +110,11 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     const [hoveredItem, setHoveredItem] = useState<upgradesWithName | null>(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-    const handleMouseMove = (e: React.MouseEvent) => {
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
         setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    const calculateTierBonus = (item: upgradesWithName) => {
+    }, []);
+
+    const calculateTierBonus = useCallback((item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
         const tier = findTier(item.desc.m_iItemTier as string);
         let bonus = 0;
@@ -130,9 +132,9 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
             default:
                 return {};
         }
-    };
+    }, []);
 
-    const ItemCard: React.FC<upgradesWithName & { onSelect: () => void; isEquipped: boolean }> = ({ name, desc, onSelect, isEquipped }) => {
+    const ItemCard = useCallback(({ name, desc, onSelect, isEquipped }: upgradesWithName & { onSelect: () => void; isEquipped: boolean }) => {
         const category = getCategory(desc.m_eItemSlotType as string || '');
         const categoryColor = getCategoryColor(category);
         const actColor = getCategoryActiveColor(category);
@@ -170,27 +172,28 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                 </div>
             </div>
         );
-    };
+    }, [handleMouseMove]);
 
-    const categorizedItems = items.reduce((acc, item) => {
-        const category = getCategory(item.desc.m_eItemSlotType as string || '');
-        if (!acc[category]) {
-            acc[category] = { 1: [], 2: [], 3: [], 4: [] };
-        }
-        const tier = findTier(item.desc.m_iItemTier as string) || 1;
-        acc[category][tier].push(item);
-        return acc;
-    }, {} as Record<string, Record<number, upgradesWithName[]>>);
+    const categorizedItems = useMemo(() => {
+        return items.reduce((acc, item) => {
+            const category = getCategory(item.desc.m_eItemSlotType as string || '');
+            if (!acc[category]) {
+                acc[category] = { 1: [], 2: [], 3: [], 4: [] };
+            }
+            const tier = findTier(item.desc.m_iItemTier as string) || 1;
+            acc[category][tier].push(item);
+            return acc;
+        }, {} as Record<string, Record<number, upgradesWithName[]>>);
+    }, [items]);
 
-    const isItemEquipped = (item: upgradesWithName) => {
+    const isItemEquipped = useCallback((item: upgradesWithName) => {
         return equippedItems.some(equippedItem => equippedItem.name === item.name);
-    };
+    }, [equippedItems]);
 
-    const isItemInBuilder = (item: upgradesWithName) => {
+    const isItemInBuilder = useCallback((item: upgradesWithName) => {
         return builderItems.some(builderItem => builderItem.name === item.name) ||
             builderBoxes.some(box => box.items.some(boxItem => boxItem.name === item.name));
-    };
-
+    }, [builderItems, builderBoxes]);
 
     const handleSave = () => {
         let build = {
@@ -208,6 +211,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         pageinfo = build;
         return build
     }
+
     const handleImport = (importjson: any) => {
         if (importjson.value !== '') {
             let build = JSON.parse(importjson.value);
@@ -268,7 +272,6 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         setBuilderBoxes(prevBoxes => {
             const boxToRemove = prevBoxes.find(box => box.id === boxId);
             if (boxToRemove) {
-                // Move items from the removed box back to unassigned items
                 setBuilderItems(prev => [...prev, ...boxToRemove.items]);
             }
             return prevBoxes.filter(box => box.id !== boxId);
@@ -312,7 +315,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     };
 
     return (
-        <div className="relative">
+        <div className="relative" onMouseMove={handleMouseMove}>
             <div className="flex">
                 {categories.map(category => (
                     category === 'Save' ? <div key={'null'}></div> :
@@ -338,10 +341,47 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                 </div> : <div key={'null'}></div>}
             </div>
             <div className="flex flex-col w-full">
-                {activeCategory === 'Save' ? (
-                    <div className='p-4 bg-gray-900 rounded-lg'>
-                        {/* ... (unchanged Save content) */}
-                    </div>
+                {activeCategory === 'Save' ? (<div className='p-4 bg-gray-900 rounded-lg'>
+                    <input
+                        key={'buildname'}
+                        type="text"
+                        ref={buildname}
+                        placeholder='Enter Build Name'
+                        className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                    >
+                    </input>
+                    <input
+                        key={'author'}
+                        type='text'
+                        ref={buildAuthor}
+                        placeholder='Enter Author Name'
+                        className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                    >
+                    </input>
+                    <button
+                        className="hover:bg-blue-400 active:bg-[#b1f571] bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={() => {
+                            console.log(handleSave())
+                        }}
+                    >
+                        Submit
+                    </button>
+
+                    <textarea
+                        key={'SaveImportTEMP'}
+                        ref={SaveImportTEMP}
+                        placeholder='Paste Build Here'
+                        className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                    >
+                    </textarea>
+                    <button
+                        key={'SaveImportButton'}
+                        className="hover:bg-blue-400 active:bg-[#b1f571] transition-all bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={() => { handleImport(SaveImportTEMP.current) }}
+                    >
+                        Import
+                    </button>
+                </div>
                 ) : activeCategory === 'Builder' ? (
                     <BuilderTab
                         items={builderItems}
@@ -404,4 +444,4 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     );
 };
 
-export default ItemsDisplay;
+export default React.memo(ItemsDisplay);
