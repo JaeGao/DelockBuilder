@@ -241,8 +241,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 w-full
                 pr-[clamp(212px,calc(25vw+12px),312px)]
                 `}>
-                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-20 border-2 ">
-                        <div className="mb-2 mr-8 flex flex-col items-center float-left border-2">
+                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-6 px-5 ">
+                        <div className="mb-2 px-4 flex flex-col items-center float-left ">
                             <div className="">
                                 <h2 className="text-3xl font-bold">{heroName}</h2>
                             </div>
