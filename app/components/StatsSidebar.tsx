@@ -17,12 +17,18 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     const [activeTab, setActiveTab] = useState<'all' | 'custom'>('all');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [changedStats, setChangedStats] = useState<string[]>([]);
+    const [changedSkills, setChangedSkills] = useState<string[]>([]);
     const previousStatsRef = useRef<allStats | null>(null);
+    const previousSkillsRef = useRef<skillProperties[] | null>(null);
     const baseStatsRef = useRef<allStats | null>(null);
+    const baseSkillsRef = useRef<skillProperties[] | null>(null);
 
     useEffect(() => {
         if (!baseStatsRef.current) {
             baseStatsRef.current = { ...characterStats };
+        }
+        if (!baseSkillsRef.current) {
+            baseSkillsRef.current = characterSkillsData.map(skill => ({ ...skill }));
         }
 
         if (previousStatsRef.current) {
@@ -32,11 +38,20 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             setChangedStats(newChangedStats);
         }
 
+        if (previousSkillsRef.current) {
+            const newChangedSkills = characterSkillsData.flatMap((skill, index) =>
+                Object.keys(skill).filter(key =>
+                    skill[key as keyof skillProperties] !== previousSkillsRef.current![index][key as keyof skillProperties]
+                ).map(key => `${index}-${key}`)
+            );
+            setChangedSkills(newChangedSkills);
+        }
+
         return () => {
             previousStatsRef.current = characterStats;
+            previousSkillsRef.current = characterSkillsData.map(skill => ({ ...skill }));
         };
-    }, [characterStats]);
-
+    }, [characterStats, characterSkillsData]);
     const formatStat = (value: number): string => {
         if (value === undefined || value === null) return 'N/A';
         return Number.isInteger(value) ? value.toString() : Number(value).toFixed(3);
@@ -166,7 +181,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         const isPercentageStat = percentageStats.includes(statName);
         const isChanged = changedStats.includes(statKey);
         const isEnhanced = baseValue !== undefined && currentValue !== baseValue;
-        
+
         if (currentValue === undefined) return 'N/A';
 
         return (
@@ -182,12 +197,18 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         const sNum = parseFloat(skillNum) - 1;
         const currentValue = characterSkillsData[sNum][statKey as keyof skillProperties];
         const isPercentageStat = percentageStats.includes(statName);
+        const isChanged = changedSkills.includes(`${sNum}-${statKey}`);
+        const baseValue = baseSkillsRef.current?.[sNum][statKey as keyof skillProperties];
+        const isEnhanced = baseValue !== undefined && currentValue !== baseValue;
+
         if (currentValue === undefined) return 'N/A';
+
         return (
-            <div className="flex items-center justify-between text-xs font-medium">
-                <span className={'text-white'}>
+            <div className="flex items-center justify-end text-xs font-medium">
+                <span className={`${isEnhanced ? 'text-yellow-500' : 'text-white'} ${isChanged ? 'font-bold' : ''}`}>
                     {formatStat(currentValue)}{isPercentageStat ? "%" : ""}
                 </span>
+                {isChanged && <ArrowRightIcon className="h-3 w-3 text-green-500 ml-1" />}
             </div>
         );
     };
@@ -233,55 +254,55 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                     }
                     if (group.title === "Skill 1") {
                         return (
-                        <div key={groupIndex} className="mb-4">
-                            <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>Skill Stats</h4>
-                            <div className="float-left">
-                                <img
-                                    src={skillImages[parseFloat(group.title.replace("Skill", ""))-1]}
-                                    width="60"
-                                    height="60"
-                                    className="rounded-full mb-2 mr-2 object-contain"
-                                />
+                            <div key={groupIndex} className="mb-4">
+                                <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>Skill Stats</h4>
+                                <div className="float-left">
+                                    <img
+                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
+                                        width="60"
+                                        height="60"
+                                        className="rounded-full mb-2 mr-2 object-contain"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+
+                                    {group.stats.map((stat) => (
+                                        <div key={stat.key} className="flex justify-between items-center">
+                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                            {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="space-y-1">
-                                
-                                {group.stats.map((stat) => (
-                                    <div key={stat.key} className="flex justify-between items-center">
-                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                        {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                         )
                     } else if (group.title.includes("Skill") && group.title !== "Skill 1") {
                         return (
-                        <div key={groupIndex} className="mb-4">
-                            <div className="float-left">
-                                <img
-                                    src={skillImages[parseFloat(group.title.replace("Skill", ""))-1]}
-                                    width="60"
-                                    height="60"
-                                    className="rounded-full mb-2 mr-2 object-contain"
-                                />
+                            <div key={groupIndex} className="mb-4">
+                                <div className="float-left">
+                                    <img
+                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
+                                        width="60"
+                                        height="60"
+                                        className="rounded-full mb-2 mr-2 object-contain"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+
+                                    {group.stats.map((stat) => (
+                                        <div key={stat.key} className="flex justify-between items-center">
+                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
+                                            {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="space-y-1">
-                                
-                                {group.stats.map((stat) => (
-                                    <div key={stat.key} className="flex justify-between items-center">
-                                        <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                        {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                         )
                     } else {
                         return (
                             <div key={groupIndex} className="mb-4">
                                 <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
                                 <div className="space-y-1">
-                                    
+
                                     {group.stats.map((stat) => (
                                         <div key={stat.key} className="flex justify-between items-center">
                                             <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
