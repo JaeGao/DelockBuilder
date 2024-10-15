@@ -19,6 +19,8 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     const [changedStats, setChangedStats] = useState<string[]>([]);
     const previousStatsRef = useRef<allStats | null>(null);
     const baseStatsRef = useRef<allStats | null>(null);
+    console.log("SS")
+    console.log(characterStats)
 
     useEffect(() => {
         if (!baseStatsRef.current) {
@@ -37,7 +39,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
         };
     }, [characterStats]);
 
-    const formatStat = (value: number | undefined | null): string => {
+    const formatStat = (value: number): string => {
         if (value === undefined || value === null) return 'N/A';
         return Number.isInteger(value) ? value.toString() : Number(value).toFixed(3);
     };

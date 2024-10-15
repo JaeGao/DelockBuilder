@@ -7,7 +7,7 @@ import { skillProperties, SkillsData, skillUpgrades } from '../../lib/abilityInt
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { characterName, equippedItems, heroSkills, skillProperties, skillUpgrades, skillScaleData } = body;
+        const { characterName, equippedItems, characterStatInput, heroSkills, skillProperties, skillUpgrades, skillScaleData } = body;
 
         const character = await getCharacter(characterName);
 
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
         const { characterStats, skillStats } = await calculateCharacterStats(
             character,
             equippedItems as upgradesWithName[],
-            allItems,
+            characterStatInput,
             heroSkills as SkillsData,
             skillProperties,
             skillUpgrades,

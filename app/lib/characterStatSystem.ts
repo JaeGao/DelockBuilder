@@ -9,15 +9,15 @@ import { skillProperties, skillScaleData, SkillsData, skillUpgrades } from './ab
 export async function calculateCharacterStats(
     character: heroesWithName,
     equippedItems: upgradesWithName[],
-    allItems: upgradesWithName[],
+    characterStatInput: allStats,
     heroSkills: SkillsData,
     skillProps: skillProperties[],
     skillUpgrades: skillUpgrades[],
     skillScaleData: skillScaleData[],
 ): Promise<{ characterStats: allStats, skillStats: skillProperties[] }> {
     // Get base stats
-    const stats = await getHeroStartingStats(character.name.replace('hero_', ''));
-    let newStats: allStats = Object.assign({}, stats);
+    let newStats: allStats = Object.assign({}, characterStatInput);
+    console.log(characterStatInput)
     const ogstats = await getAbilitiesbyHero();
     const weaponStats = ogstats?.find((element) => element.heroname === character.name)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
     // Extract and apply item modifiers
@@ -76,8 +76,8 @@ export async function calculateCharacterStats(
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
 
             newStats['EBulletDamage'] *= (1 + modifierValues[mkey[i]] / 100);
-            newStats['ELightMeleeDamage'] += (stats['ELightMeleeDamage'] * modifierValues[mkey[i]] / 200);
-            newStats['EHeavyMeleeDamage'] += (stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]] / 200);
+            newStats['ELightMeleeDamage'] += (characterStatInput['ELightMeleeDamage'] * modifierValues[mkey[i]] / 200);
+            newStats['EHeavyMeleeDamage'] += (characterStatInput['EHeavyMeleeDamage'] * modifierValues[mkey[i]] / 200);
 
         } else if (mkey[i] === "EFireRate" && (character.name.replace('hero_', '') === "lash" || character.name.replace('hero_', '') === "chrono" || character.name.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
@@ -110,7 +110,7 @@ export async function calculateCharacterStats(
                 newStats[mkey[i] as keyof allStats] = (1 - modifierValues[mkey[i]]) * 100;
             }
         } else if (mkey[i] === "EStaminaRegenIncrease") {
-            newStats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]] / 100));
+            newStats['EStaminaCooldown'] = 1 / (characterStatInput['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]] / 100));
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
         } else if (mkey[i] === "ELightMeleeDamage") {
 
