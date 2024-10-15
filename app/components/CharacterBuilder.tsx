@@ -259,7 +259,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             <div className="flex mt-4 ">
                 <div className={`p-4 flex flex-col 2xl:flex-row w-full pr-[clamp(212px,calc(25vw+12px),312px)]`}>
                     <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3 ">
-                        <div className="mb-2 px-2 flex flex-col items-center float-left select-none ">
+                        <div className="mb-2 px-6 flex flex-col items-center float-left select-none ">
                             <div className="">
                                 <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
                             </div>
@@ -288,7 +288,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 />
                             </div>
                             {/* Budget Input */}
-                            <div className="w-full mb-4">
+                            <div className="w-full mb-4 ">
                                 <label htmlFor="budget-input" className="block text-sm font-medium  text-amber-500">
                                     Budget:
                                 </label>
@@ -302,7 +302,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 />
                             </div>
                             {/* Skill Icons */}
-                            <div className="flex space-x-2">
+                            <div className="flex space-x-2 ">
                                 {skillIcons.map((skillIcon, index) => (
                                     <div key={index} className="relative">
                                         <Image
