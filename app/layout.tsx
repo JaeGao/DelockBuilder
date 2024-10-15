@@ -8,6 +8,11 @@ const Deadlock = localFont({
   variable: '--font-Deadlock-black'
 });
 
+// const Retail = localFont({
+//   src: './fonts/RetailTextDemo-Black.otf',
+//   variable: '--font-Deadlock-Retail'
+// })
+
 export const metadata: Metadata = {
   title: "Deadlock Stats Calculator",
   description: "Calculate stats for Deadlock characters",

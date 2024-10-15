@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         'Deadlock-black': ['var(--font-Deadlock-black)'],
+        'Deadlock-shop' : ['var(--font-Deadlock-Retail'],
       },
       colors: {
         'custom-beige': '#f0debf',
