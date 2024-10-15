@@ -141,7 +141,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
 
         return (
             <div
-                className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''} ${isInBuilder ? 'border-2 border-double rounded-md border-cyan-500 ' : ''}`}
+                className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''} ${isInBuilder ? 'border-4 border-double rounded-md border-cyan-500 ' : ''}`}
                 onClick={onSelect}
                 draggable
                 onDragStart={(e) => {
