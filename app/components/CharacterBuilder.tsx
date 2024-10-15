@@ -67,8 +67,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     })
 
-    console.log(skillUpgradeInfo[2][0])
-
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
         let skey: keyof typeof sProp;
@@ -99,10 +97,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
 
     useEffect(() => {
-        setCurrentStats(initialStats);
-    }, [initialStats]);
-
-    useEffect(() => {
         const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
             (item): item is upgradesWithName => item !== null
         );
@@ -117,6 +111,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
+                characterStatInput: currentStats,
                 heroSkills: heroSkills,
                 skillProperties: skillProps,
                 skillUpgrades: skillUpgrades,
@@ -325,7 +320,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     </div>
                 </div>
                 <StatsSidebar
-                    characterStats={currentStats || initialStats}
+                    characterStats={currentStats}
                     characterName={heroName}
                     characterClass={character.data._class as string}
                     characterSkillsData={skillStats}
