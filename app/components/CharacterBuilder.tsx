@@ -241,10 +241,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 w-full
                 pr-[clamp(212px,calc(25vw+12px),312px)]
                 `}>
-                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-6 px-5 ">
-                        <div className="mb-2 px-4 flex flex-col items-center float-left ">
+                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3 ">
+                        <div className="mb-2 px-2 flex flex-col items-center float-left ">
                             <div className="">
-                                <h2 className="text-3xl font-bold">{heroName}</h2>
+                                <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
                             </div>
                             {character.data.m_strIconHeroCard && (
                                 <Image
@@ -261,8 +261,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                         <Image
                                             src={skillIcon}
                                             alt={`Skill ${index + 1}`}
-                                            width={60}
-                                            height={60}
+                                            width={50}
+                                            height={50}
                                             className="rounded-full cursor-pointer"
                                             onClick={() => handleSkillUpgrade(index)}
                                         />
