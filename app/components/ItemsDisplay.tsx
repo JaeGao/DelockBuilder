@@ -133,7 +133,6 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     onItemSelect,
     equippedItems, equipediItemsByCategory
 }) => {
-    console.log(process.env.NEXT_PUBLIC_SAVE_TOGGLE)
     const buildname = useRef<HTMLInputElement>(null);
     const buildAuthor = useRef<HTMLInputElement>(null);
     const SaveImportTEMP = useRef<HTMLTextAreaElement>(null);
@@ -298,7 +297,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                             {category}
                         </button>)
                 ))}
-                {console.log(process.env.NEXT_PUBLIC_SAVE_TOGGLE) === null ? <div className="flex justify-end md:flex-grow">
+                {(process.env.NEXT_PUBLIC_SAVE_TOGGLE === "true") ? <div className="flex justify-end md:flex-grow">
                     <button
                         key={'Save'}
                         className={`px-2 md:px-2 py-2 text-sm font-medium rounded ${activeCategory === 'Save' ? `${getCategoryActiveColor('Save')} text-black` : 'bg-blue-500 text-white'} `}
