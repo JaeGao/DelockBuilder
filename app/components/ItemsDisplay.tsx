@@ -298,7 +298,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                             {category}
                         </button>)
                 ))}
-                {process.env.NEXT_PUBLIC_SAVE_TOGGLE ? <div className="flex justify-end md:flex-grow">
+                {console.log(process.env.NEXT_PUBLIC_SAVE_TOGGLE) === null ? <div className="flex justify-end md:flex-grow">
                     <button
                         key={'Save'}
                         className={`px-2 md:px-2 py-2 text-sm font-medium rounded ${activeCategory === 'Save' ? `${getCategoryActiveColor('Save')} text-black` : 'bg-blue-500 text-white'} `}
