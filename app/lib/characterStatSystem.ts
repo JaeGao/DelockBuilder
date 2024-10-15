@@ -3,7 +3,7 @@
 import { heroesWithName } from './herointerfaces';
 import { upgradesWithName } from './itemInterfaces';
 import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
-import { skillProperties, skillScaleData, SkillsData, skillUpgrades } from './abilityInterface';
+import { skillProperties, skillScaleData, SkillsData, skillUpgrades, skillnamemap } from './abilityInterface';
 
 
 export async function calculateCharacterStats(
@@ -244,7 +244,7 @@ export async function calculateCharacterStats(
                     } else if (scaleData[spkey].m_eSpecificStatScaleType in newStats
                         && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration"
                         && (scaleData[spkey].m_eSpecificStatScaleType === "ETechRange"
-                        || scaleData[spkey].m_eSpecificStatScaleType === "ETechDuration")) {
+                            || scaleData[spkey].m_eSpecificStatScaleType === "ETechDuration")) {
                         skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_eSpecificStatScaleType] / 100);
                     }
                 } else if (scaleData[spkey]._class === "scale_function_multi_stats") {
@@ -260,7 +260,7 @@ export async function calculateCharacterStats(
                             && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower"
                             && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime"
                             && (scaleData[spkey].m_vecScalingStats[0] === "ETechRange"
-                            || scaleData[spkey].m_vecScalingStats[0] === "ETechDuration")) {
+                                || scaleData[spkey].m_vecScalingStats[0] === "ETechDuration")) {
                             skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]] / 100);
 
                         } else if (scaleData[spkey].m_vecScalingStats[0] in newStats
@@ -278,7 +278,7 @@ export async function calculateCharacterStats(
                             && scaleData[spkey].m_vecScalingStats[1] !== "ETechPower"
                             && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime"
                             && (scaleData[spkey].m_vecScalingStats[1] === "ETechRange"
-                            || scaleData[spkey].m_vecScalingStats[1] === "ETechDuration")) {
+                                || scaleData[spkey].m_vecScalingStats[1] === "ETechDuration")) {
                             skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[1]] / 100);
 
                         } else if (scaleData[spkey].m_vecScalingStats[1] in newStats
