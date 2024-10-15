@@ -7,7 +7,7 @@ import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import { heroesWithName } from '../lib/herointerfaces';
+import { heroesWithName, m_MLI } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 
@@ -99,9 +99,9 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
 
     useEffect(() => {
-        const levelInfo = character.data.m_mapLevelInfo[characterLevel];
+        const levelInfo : m_MLI = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo];
         if (levelInfo) {
-            setBudget(levelInfo.m_unRequiredGold);
+            setBudget(levelInfo['m_unRequiredGold'] as number);
         }
     }, [characterLevel, character.data.m_mapLevelInfo]);
 
@@ -112,7 +112,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
 
     const handleBudgetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newBudget = parseInt(event.target.value, 10);
-        setBudget(Math.max(newBudget, character.data.m_mapLevelInfo[characterLevel].m_unRequiredGold));
+        setBudget(Math.max(newBudget, character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']));
     };
 
 
@@ -297,7 +297,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     id="budget-input"
                                     value={budget}
                                     onChange={handleBudgetChange}
-                                    min={character.data.m_mapLevelInfo[characterLevel].m_unRequiredGold}
+                                    min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-yellow-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 />
                             </div>

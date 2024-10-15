@@ -185,6 +185,7 @@ export async function getCharacter(name: string): Promise<heroesWithName | undef
     return characters.find(character => character.name === heroKey);
 }
 
+
 export async function getItems(): Promise<upgradesWithName[]> {
     if (cachedItems) {
         return cachedItems;

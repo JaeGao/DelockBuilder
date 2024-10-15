@@ -47,7 +47,7 @@ interface heroDatamLI {
     interface m_mapLevelInfo {
         [key:string]: m_MLI;
     }
-        interface m_MLI {
+        export interface m_MLI {
             [key:string]: number | boolean | {
                 [key:string]: number;
             }
