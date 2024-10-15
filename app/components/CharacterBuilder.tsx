@@ -256,10 +256,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     return (
         <div>
             <Navbar />
-            <div className="flex mt-4">
+            <div className="flex mt-4 ">
                 <div className={`p-4 flex flex-col 2xl:flex-row w-full pr-[clamp(212px,calc(25vw+12px),312px)]`}>
-                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3">
-                        <div className="mb-2 px-2 flex flex-col items-center float-left">
+                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3 ">
+                        <div className="mb-2 px-2 flex flex-col items-center float-left select-none ">
                             <div className="">
                                 <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
                             </div>
@@ -269,7 +269,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     alt={heroName}
                                     width={120}
                                     height={120}
-                                    className="rounded-full mb-2 object-none"
+                                    className="rounded-full mb-2 object-none select-none pointer-events-none"
                                 />
                             )}
                             {/* Level Slider */}
@@ -320,7 +320,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 ))}
                             </div>
                         </div>
-                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4">
+                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">
                             <ItemGrid
                                 title="Weapon"
                                 items={weaponItems}
@@ -344,7 +344,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full max-w-6xl mt-2">
+                    <div className="w-full max-w-6xl mt-2 select-none">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}

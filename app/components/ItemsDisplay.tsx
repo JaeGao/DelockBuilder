@@ -141,7 +141,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
 
         return (
             <div
-                className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''} ${isInBuilder ? 'border-4 border-double rounded-md border-cyan-500 ' : ''}`}
+                className={`w-20 h-24 select-none  m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''} ${isInBuilder ? 'border-2 border-double rounded-md border-blue-600' : ''}`}
                 onClick={onSelect}
                 draggable
                 onDragStart={(e) => {
@@ -159,7 +159,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                 alt={name}
                                 width={40}
                                 height={40}
-                                className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
+                                className="inline-block pointer-events-none filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
                             />
                         )}
                     </div>
