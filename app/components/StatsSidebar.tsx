@@ -124,6 +124,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             color: "text-purple-400",
             bgColor: "bg-purple-500",
             stats: [
+                { name: "Spirit Power", key: "ETechPower" },
                 { name: "Ability Cooldown", key: "ETechCooldown" },
                 { name: "Ability Duration", key: "ETechDuration" },
                 { name: "Ability Range", key: "ETechRange" },
