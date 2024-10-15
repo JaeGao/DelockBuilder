@@ -361,7 +361,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                     <button
                         className="hover:bg-blue-400 active:bg-[#b1f571] bg-blue-500 text-white px-4 py-2 rounded"
                         onClick={() => {
-                            console.log(handleSave())
+                            //console.log(handleSave())
                         }}
                     >
                         Submit
