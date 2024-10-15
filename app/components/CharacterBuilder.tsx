@@ -99,7 +99,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
 
     useEffect(() => {
-        const levelInfo : m_MLI = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo];
+        const levelInfo: m_MLI = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo];
         if (levelInfo) {
             setBudget(levelInfo['m_unRequiredGold'] as number);
         }
@@ -274,7 +274,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                             )}
                             {/* Level Slider */}
                             <div className="w-full mb-4">
-                                <label htmlFor="level-slider" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="level-slider" className="block text-sm font-medium  text-amber-500">
                                     Character Level: {characterLevel}
                                 </label>
                                 <input
@@ -289,7 +289,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                             </div>
                             {/* Budget Input */}
                             <div className="w-full mb-4">
-                                <label htmlFor="budget-input" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="budget-input" className="block text-sm font-medium  text-amber-500">
                                     Budget:
                                 </label>
                                 <input
@@ -298,7 +298,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     value={budget}
                                     onChange={handleBudgetChange}
                                     min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-yellow-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-amber-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 />
                             </div>
                             {/* Skill Icons */}
