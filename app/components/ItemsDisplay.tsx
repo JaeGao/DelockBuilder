@@ -118,7 +118,7 @@ const ItemCard: React.FC<upgradesWithName & { onSelect: () => void; isEquipped: 
                     )}
                 </div>
                 <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
-                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{name}</p>
+                    <p className="text-[#151912] text-xs font-Deadlock-shop leading-tight text-center w-full break-words hyphens-auto">{name}</p>
                 </div>
                 <div className={`absolute left-1/2 -translate-x-1/2 ${desc.isActive !== undefined && desc.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
                     <p className="text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
