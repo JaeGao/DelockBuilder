@@ -3,18 +3,27 @@
 import { heroesWithName } from './herointerfaces';
 import { upgradesWithName } from './itemInterfaces';
 import { allStats, getHeroStartingStats, getAbilitiesbyHero, extractItemModifiers, ItemModifiers, ModifierValues } from './dataUtils';
-import { SkillsData } from './abilityInterface';
+import { skillProperties, skillScaleData, SkillsData, skillUpgrades } from './abilityInterface';
 
 
 export async function calculateCharacterStats(
     character: heroesWithName,
     equippedItems: upgradesWithName[],
-    allItems: upgradesWithName[],
+    characterStatInput: allStats,
     heroSkills: SkillsData,
-): Promise<{ characterStats: allStats, skillStats: { [key: string]: number } }> {
+    skillProps: skillProperties[],
+    skillUpgrades: skillUpgrades[][],
+    skillScaleData: skillScaleData[],
+): Promise<{ characterStats: allStats, skillStats: skillProperties[] }> {
+    //console.log('Character:', character.name);
+    //console.log('Equipped Items:', equippedItems.map(item => item.name));
+    //console.log('Hero Skills:', heroSkills);
+    //console.log('Skill Properties:', skillProps);
+    //console.log('Skill Upgrades:', skillUpgrades);
+    //console.log('Skill Scale Data:', skillScaleData);
     // Get base stats
-    const stats = await getHeroStartingStats(character.name.replace('hero_', ''));
-    let newStats: allStats = Object.assign({}, stats);
+    let newStats: allStats = Object.assign({}, characterStatInput);
+
     const ogstats = await getAbilitiesbyHero();
     const weaponStats = ogstats?.find((element) => element.heroname === character.name)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
     // Extract and apply item modifiers
@@ -60,7 +69,7 @@ export async function calculateCharacterStats(
                     modifierValues[stat] += value;
                 }
             }
-    })
+        })
     });
     let mkey = Object.keys(modifierValues);
     mkey.sort((a, b) => {
@@ -73,8 +82,8 @@ export async function calculateCharacterStats(
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
 
             newStats['EBulletDamage'] *= (1 + modifierValues[mkey[i]] / 100);
-            newStats['ELightMeleeDamage'] += (stats['ELightMeleeDamage'] * modifierValues[mkey[i]] / 200);
-            newStats['EHeavyMeleeDamage'] += (stats['EHeavyMeleeDamage'] * modifierValues[mkey[i]] / 200);
+            newStats['ELightMeleeDamage'] += (characterStatInput['ELightMeleeDamage'] * modifierValues[mkey[i]] / 200);
+            newStats['EHeavyMeleeDamage'] += (characterStatInput['EHeavyMeleeDamage'] * modifierValues[mkey[i]] / 200);
 
         } else if (mkey[i] === "EFireRate" && (character.name.replace('hero_', '') === "lash" || character.name.replace('hero_', '') === "chrono" || character.name.replace('hero_', '') === "gigawatt") && weaponStats !== undefined) {
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
@@ -107,7 +116,7 @@ export async function calculateCharacterStats(
                 newStats[mkey[i] as keyof allStats] = (1 - modifierValues[mkey[i]]) * 100;
             }
         } else if (mkey[i] === "EStaminaRegenIncrease") {
-            newStats['EStaminaCooldown'] = 1 / (stats['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]] / 100));
+            newStats['EStaminaCooldown'] = 1 / (characterStatInput['EStaminaRegenPerSecond'] * (1 + modifierValues[mkey[i]] / 100));
             newStats[mkey[i] as keyof allStats] += modifierValues[mkey[i]];
         } else if (mkey[i] === "ELightMeleeDamage") {
 
@@ -201,8 +210,99 @@ export async function calculateCharacterStats(
         }
     });
 
+    var skillCalcProps = [{}, {}, {}, {}] as skillProperties[];
+
+    skillProps.forEach((element, index) => {
+        let spkey: keyof typeof element;
+        var scaleData: skillScaleData = skillScaleData[index];
+
+        skillCalcProps = Object.assign([], skillProps);
+
+        skillUpgrades[index].forEach((element) => {
+            if (element.m_vecPropertyUpgrades) {
+                element.m_vecPropertyUpgrades.forEach((bonus) => {
+                    if (bonus.m_eUpgradeType === "EAddToScale") {
+                        (scaleData[bonus.m_strPropertyName].m_flStatScale as number) += parseFloat(bonus.m_strBonus);
+                    } else if (bonus.m_eUpgradeType === "EAddToBae=se") {
+                        skillCalcProps[index][bonus.m_strPropertyName] += parseFloat(bonus.m_strBonus);
+                    } else {
+                        skillCalcProps[index][bonus.m_strPropertyName] += parseFloat(bonus.m_strBonus);
+                    }
+                })
+            }
+        })
+
+        for (spkey in element) {
+            if (scaleData[spkey]) {
+                // Scaling skill stats with scale functions
+                if (scaleData[spkey]._class === "scale_function_single_stat") {
+                    if (scaleData[spkey].m_eSpecificStatScaleType in newStats
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration"
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "ETechRange"
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "ETechDuration") {
+                        skillCalcProps[index][spkey] *= (1 - newStats[scaleData[spkey].m_eSpecificStatScaleType] / 100);
+                    } else if (scaleData[spkey].m_eSpecificStatScaleType in newStats
+                        && scaleData[spkey].m_eSpecificStatScaleType !== "EChannelDuration"
+                        && (scaleData[spkey].m_eSpecificStatScaleType === "ETechRange"
+                        || scaleData[spkey].m_eSpecificStatScaleType === "ETechDuration")) {
+                        skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_eSpecificStatScaleType] / 100);
+                    }
+                } else if (scaleData[spkey]._class === "scale_function_multi_stats") {
+                    if (scaleData[spkey].m_vecScalingStats) {
+                        if (scaleData[spkey].m_vecScalingStats[0] in newStats
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechRange"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechDuration") {
+                            skillCalcProps[index][spkey] *= (1 - newStats[scaleData[spkey].m_vecScalingStats[0]] / 100);
+
+                        } else if (scaleData[spkey].m_vecScalingStats[0] in newStats
+                            && scaleData[spkey].m_vecScalingStats[0] !== "ETechPower"
+                            && scaleData[spkey].m_vecScalingStats[0] !== "EChannelTime"
+                            && (scaleData[spkey].m_vecScalingStats[0] === "ETechRange"
+                            || scaleData[spkey].m_vecScalingStats[0] === "ETechDuration")) {
+                            skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[0]] / 100);
+
+                        } else if (scaleData[spkey].m_vecScalingStats[0] in newStats
+                            && scaleData[spkey].m_vecScalingStats[0] === "ETechPower") {
+                            skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                        }
+                        if (scaleData[spkey].m_vecScalingStats[1] in newStats
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechPower"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechRange"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechDuration") {
+                            skillCalcProps[index][spkey] *= (1 - newStats[scaleData[spkey].m_vecScalingStats[1]] / 100);
+
+                        } else if (scaleData[spkey].m_vecScalingStats[1] in newStats
+                            && scaleData[spkey].m_vecScalingStats[1] !== "ETechPower"
+                            && scaleData[spkey].m_vecScalingStats[1] !== "EChannelTime"
+                            && (scaleData[spkey].m_vecScalingStats[1] === "ETechRange"
+                            || scaleData[spkey].m_vecScalingStats[1] === "ETechDuration")) {
+                            skillCalcProps[index][spkey] *= (1 + newStats[scaleData[spkey].m_vecScalingStats[1]] / 100);
+
+                        } else if (scaleData[spkey].m_vecScalingStats[1] in newStats
+                            && scaleData[spkey].m_vecScalingStats[1] === "ETechPower") {
+                            skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                        }
+                    }
+
+                } else if (scaleData[spkey]._class === "scale_function_tech_damage") {
+                    skillCalcProps[index][spkey] += (scaleData[spkey].m_flStatScale as number) * newStats["ETechPower"];
+                } else if (scaleData[spkey]._class === "scale_function_kinetic_carbine_damage") {
+                    skillCalcProps[index][spkey] *= newStats[scaleData[spkey].m_eSpecificStatScaleType];
+                }
+            }
+        }
+
+    });
+
+
+
+
+
     // Logs
     // console.log('Skill Stats:', skillStats, "this is from characterStatsSystem");
     //console.log(stats, 'this is the CharacterStats log')
-    return { characterStats: newStats, skillStats };
+    return { characterStats: newStats, skillStats: skillCalcProps };
 }

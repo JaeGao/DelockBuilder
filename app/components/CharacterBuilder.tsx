@@ -5,7 +5,7 @@ import Image from 'next/image';
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-import { AWithKey, SkillsData, skillProperties, skillDisplayGroups } from '../lib/abilityInterface';
+import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
 import { heroesWithName } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
@@ -20,29 +20,22 @@ interface CharacterBuilderProps {
     character: heroesWithName;
     items: upgradesWithName[];
     initialStats: allStats;
-
     abilities: AWithKey[];
 }
 
 
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, abilities }) => {
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [weaponItems, setWeaponItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
-    const [vitalityItems, setVitalityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
-    const [spiritItems, setSpiritItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
-    const [utilityItems, setUtilityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
-    const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [skillStats, setSkillStats] = useState<{ [key: string]: number }>({});
     const heroName = character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 
 
     // Getting Skills Data
     let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
     let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
-    let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Gets the property name and key to use for StatsSidebar
-    let skillIcons: Array<string> = [] //Gets skill icon paths in array
+    let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Stores the property name and key to use for StatsSidebar
+    let skillIcons: Array<string> = [] //Stores skill icon paths in array
+    let skillUpgradeInfo = [[], [], [], []] as skillUpgrades[][]; // Stores upgrade tiers for each skill
+    let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data for each skill
 
     // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
 
@@ -60,14 +53,20 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     // Retrieves non-zero skill properties & skill image path
     heroSkills.forEach((element, index) => {
         for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
-            if (parseFloat(value.m_strValue) !== 0 && value.m_bFunctionDisabled !== true) {
+            if (parseFloat(value.m_strValue) !== 0) {
                 skillProps[index][skey] = parseFloat(value.m_strValue);
+                if (value.m_subclassScaleFunction && value.m_subclassScaleFunction.subclass.m_bFunctionDisabled !== true) {
+                    skillScaling[index][skey] = value.m_subclassScaleFunction.subclass;
+                }
             }
         }
+
+        skillUpgradeInfo[index] = element.m_vecAbilityUpgrades;
+
         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
 
     })
-    // 
+
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
         let skey: keyof typeof sProp;
@@ -83,18 +82,26 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 name: slabel,
             })
         }
-    };
+    }
+    const [searchTerm, setSearchTerm] = useState('');
+    const [weaponItems, setWeaponItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [vitalityItems, setVitalityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [spiritItems, setSpiritItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [utilityItems, setUtilityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
+    const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [skillUpgrades, setskillUpgrades] = useState<skillUpgrades[][]>(
+        skillUpgradeInfo.map(() => [])
+    );
+    const [skillStats, setSkillStats] = useState<skillProperties[]>(skillProps);
 
-
-
-    useEffect(() => {
-        setCurrentStats(initialStats);
-    }, [initialStats]);
 
     useEffect(() => {
         const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
             (item): item is upgradesWithName => item !== null
         );
+
+        console.log('Current skillUpgrades state:', skillUpgrades);
 
         fetch('/api/calculateStats', {
             method: 'POST',
@@ -104,7 +111,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
+                characterStatInput: initialStats,
                 heroSkills: heroSkills,
+                skillProperties: skillProps,
+                skillUpgrades: skillUpgrades,
+                skillScaleData: skillScaling,
             }),
         })
             .then(response => {
@@ -114,17 +125,15 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 return response.json();
             })
             .then(newStats => {
-
                 setCurrentStats(newStats.characterStats);
-                // Add this line to update skill stats
                 setSkillStats(newStats.skillStats);
-
+                console.log('New stats calculated:', newStats);
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
                 setErrorMessage(error.message || 'Error calculating stats');
             });
-    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems]);
+    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades]);
 
     const handleItemToggle = (item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
@@ -199,7 +208,22 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
     };
 
-    const getEquippedItemsbyCategroy = () => { return [weaponItems, vitalityItems, spiritItems, utilityItems] };
+    const handleSkillUpgrade = (skillIndex: number) => {
+        setskillUpgrades(prevUpgrades => {
+            const newUpgrades = [...prevUpgrades];
+            const currentUpgradeLevel = newUpgrades[skillIndex].length;
+
+            if (currentUpgradeLevel < skillUpgradeInfo[skillIndex].length) {
+                newUpgrades[skillIndex] = skillUpgradeInfo[skillIndex].slice(0, currentUpgradeLevel + 1);
+            } else {
+                newUpgrades[skillIndex] = [];
+            }
+            console.log(`Skill ${skillIndex + 1} upgraded. New state:`, newUpgrades);
+            return newUpgrades;
+        });
+    };
+
+    const getEquippedItemsbyCategory = () => { return [weaponItems, vitalityItems, spiritItems, utilityItems] };
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -217,8 +241,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                 w-full
                 pr-[clamp(212px,calc(25vw+12px),312px)]
                 `}>
-                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60">
-                        <div className="mb-2 mr-8 flex flex-col items-center float-left">
+                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-20 border-2 ">
+                        <div className="mb-2 mr-8 flex flex-col items-center float-left border-2">
                             <div className="">
                                 <h2 className="text-3xl font-bold">{heroName}</h2>
                             </div>
@@ -230,9 +254,26 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     height={120}
                                     className="rounded-full mb-2 object-none"
                                 />
-                            )}
+                            )
+                            }<div className="flex space-x-2">
+                                {skillIcons.map((skillIcon, index) => (
+                                    <div key={index} className="relative">
+                                        <Image
+                                            src={skillIcon}
+                                            alt={`Skill ${index + 1}`}
+                                            width={60}
+                                            height={60}
+                                            className="rounded-full cursor-pointer"
+                                            onClick={() => handleSkillUpgrade(index)}
+                                        />
+                                        <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
+                                            {skillUpgrades[index].length}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-1 gap-x-8 gap-y-1 2xl:gap-1 mb-4">
+                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4">
                             <ItemGrid
                                 title="Weapon"
                                 items={weaponItems}
@@ -256,7 +297,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full mr-[4%] mt-2">
+                    <div className="w-full max-w-6xl mt-2">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}
@@ -275,19 +316,19 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 items={filteredItems}
                                 onItemSelect={handleItemToggle}
                                 equippedItems={allEquippedItems}
-                                equipediItemsByCategory={getEquippedItemsbyCategroy()}
+                                equipediItemsByCategory={getEquippedItemsbyCategory()}
                             />
                         </div>
                     </div>
                 </div>
                 <StatsSidebar
-                    characterStats={currentStats || initialStats}
+                    characterStats={currentStats}
                     characterName={heroName}
                     characterClass={character.data._class as string}
-                    characterSkillsData={skillProps}
+                    characterSkillsData={skillStats}
                     skillLabels={skillDG}
                     skillImages={skillIcons}
-                    skillStats={skillStats}
+                    skillUpgrades={skillUpgradeInfo}
                 />
             </div>
         </div>

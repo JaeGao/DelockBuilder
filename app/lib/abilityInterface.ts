@@ -34,9 +34,9 @@ export interface AWithKey {
 
 
 interface SkillsDataP {
-    [key: string]: {
+    [key: string]: [{
         [key: string]: any;
-    }
+    }]
 }
 
 interface SkillsDataI {
@@ -52,6 +52,26 @@ export interface skillProperties {
 export interface skillDisplayGroups {
     key: string;
     name: string;
+}
+
+export interface skillUpgrades {
+    [key:string]: [{
+        [key:string]: string;
+    }]
+}
+
+export type skillScaleData = skillScaleDataA & skillScaleDataB;
+
+export interface skillScaleDataA {
+    [key:string]: { 
+        [key:string]: string | number;
+    }
+}
+
+export interface skillScaleDataB {
+    [key:string]: { 
+        [key:string]: string[];
+    }
 }
 
 export interface Weapon_base {

@@ -5,6 +5,7 @@ import { RootObject, AWithKey } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
 import { upgrades, upgradesWithName} from './itemInterfaces';
+import { SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from './abilityInterface';
 
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heroes.json');
@@ -267,47 +268,55 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         throw error;
     }
 }
-// let heroSkills = [] as SkillsData[];
-// let skillProps = [{},{},{},{}] as skillProperties[];
-// let skillDG = [[],[],[],[]] as skillDisplayGroups[][];
-// let skillIcons : Array<string> =[];
-// getAbilitiesbyHero().then(adata => {
-//     for (let i = 0; i < adata.length; i++) {
-//         if (adata[i].heroname === 'hero_inferno') {
-//             heroSkills = [JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_1)), 
-//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_2)),
-//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_3)),
-//                          JSON.parse(JSON.stringify(adata[i].adata.ESlot_Signature_4)) ];
-//             break;
-//         }
 
-//     }
-//     heroSkills.forEach((element, index) => {
-//         for (const [skey, value] of  Object.entries(element.m_mapAbilityProperties)) {
-//             if ('m_strValue' in value && value.m_strValue !== 0) {
-//                 skillProps[index][skey] = parseFloat(value.m_strValue);
+// Getting Skills Data
+let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
+let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
+let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Stores the property name and key to use for StatsSidebar
+let skillIcons: Array<string> = [] //Stores skill icon paths in array
+let skillUpgradeInfo = [{}, {}, {}, {}] as skillUpgrades[]; // Stores upgrade tiers for each skill
+let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data for each skill
+
+// Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
+// getAbilitiesbyHero().then(abilities => {
+//     const characters = ['hero_atlas', 'hero_bebop', 'hero_chrono', 'hero_dynamo', 'hero_forge', 'hero_ghost', 'hero_gigawatt', 'hero_haze', 'hero_hornet', 'hero_inferno', 'hero_kelvin', 'hero_krill', 'hero_lash', 'hero_mirage', 'hero_orion', 'hero_shiv', 'hero_synth', 'hero_tengu', 'hero_viscous', 'hero_warden', 'hero_wraith', 'hero_yamato']
+//     for (let j = 0; j < characters.length; j++) {
+//         for (let i = 0; i < abilities.length; i++) {
+//             if (abilities[i].heroname === characters[j]) {
+//                 heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
+//                 JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
+//                 JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
+//                 JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))];
+//                 break;
 //             }
 //         }
-//         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+//         heroSkills.forEach((element, index) => {
+//             for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
+//                 if (parseFloat(value.m_strValue) !== 0) {
+//                     skillProps[index][skey] = parseFloat(value.m_strValue);
+//                     if (value.m_subclassScaleFunction && value.m_subclassScaleFunction.subclass.m_bFunctionDisabled !== true) {
+//                         skillScaling[index][skey] = value.m_subclassScaleFunction.subclass;
+//                     }
+//                     if (value.m_subclassScaleFunction && value.m_subclassScaleFunction.subclass._class === "scale_function_multi_stats") {
+//                         console.log(characters[j])
+//                         console.log(skey)
+//                         console.log(index)
+//                     }
+//                 }
+//             }
+//             for (let i = 0; i < element.m_vecAbilityUpgrades.length; i++) {
+//                 skillUpgradeInfo[i] = element.m_vecAbilityUpgrades[i];
+//             }
+//             skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+//         })
+//         }
+
+//     // Retrieves non-zero skill properties & skill image path
+
+    
 //     })
 
-//     for (let i = 0; i < skillProps.length; i++) {
-//         const sProp = skillProps[i];
-//         let skey: keyof typeof sProp;
-//         for (skey in sProp) {
-//             let slabel: string;
-//             if (skey.includes("Ability")) {
-//                 slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
-//             } else {
-//                 slabel = skey.replace(/([A-Z])/g, ' $1').trim();
-//             }
-//             skillDG[i].push({
-//                 name: slabel,
-//                 key: skey,
-//             })
-//         }
-//     }
-// })
+
 
 // getCharacter('haze').then(ch =>
 //     console.log(ch.key)
@@ -377,6 +386,7 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
                     allStatNames[i] === "ETechRange") {
                     StatsZero[allStatNames[i]] = 0;
                 }
+                StatsZero["ETechPower"] = 0;
             }
         }
 

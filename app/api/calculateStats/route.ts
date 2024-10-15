@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 import { calculateCharacterStats } from '../../lib/characterStatSystem';
 import { getCharacter, getItems } from '../../lib/dataUtils';
 import { upgradesWithName } from '@/app/lib/itemInterfaces';
-import { SkillsData } from '../../lib/abilityInterface';
+import { skillProperties, SkillsData, skillUpgrades } from '../../lib/abilityInterface';
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { characterName, equippedItems, heroSkills } = body;
+        const { characterName, equippedItems, characterStatInput, heroSkills, skillProperties, skillUpgrades, skillScaleData } = body;
 
         const character = await getCharacter(characterName);
 
@@ -20,8 +20,11 @@ export async function POST(request: Request) {
         const { characterStats, skillStats } = await calculateCharacterStats(
             character,
             equippedItems as upgradesWithName[],
-            allItems,
-            heroSkills as SkillsData
+            characterStatInput,
+            heroSkills as SkillsData,
+            skillProperties,
+            skillUpgrades,
+            skillScaleData
         );
 
         return NextResponse.json({ characterStats, skillStats });
