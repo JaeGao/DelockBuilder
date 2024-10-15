@@ -261,7 +261,6 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
         const alist: AWithKey[] = Object.entries(abilities)
             .map(([heron, adat]) => {
                 let key: keyof typeof adat;
-                console.log(abilitynamemap[heron].ESlot_Signature_1)
                 for (key in adat) {
                     if (adat[key].m_strAbilityImage !== undefined) {
                         adat[key].m_strAbilityImage = convertImagePath(adat[key].m_strAbilityImage);
@@ -281,7 +280,6 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
                             break;
                     }
                 }
-                console.log(adat)
                 return {
                     heroname: heron,
                     adata: adat
