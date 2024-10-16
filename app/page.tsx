@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { getCharacters } from '@/app/lib/dataUtils';
 import { heroesWithName } from './lib/herointerfaces';
 import Navbar from './ui/Navbar';

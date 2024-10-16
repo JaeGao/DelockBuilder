@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import BuilderTab from './builderTab';
 import { skip } from 'node:test';
 import build from 'next/dist/build';

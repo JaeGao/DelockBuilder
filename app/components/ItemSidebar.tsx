@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Item, isTechItem, isArmorItem, isWeaponItem, isAbilityItem, isUpgradeItem } from '../lib/gameInterfaces';
 
 interface ItemSidebarProps {
