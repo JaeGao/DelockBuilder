@@ -152,7 +152,7 @@ export async function calculateCharacterStats(
                 if (key === "ERoundsPerSecond") {
                     // Handle RoundsPerSecond scaling if needed
                 } else {
-                    newStats[key] += newStats[value.eScalingStat] * value.flScale;
+                    newStats[key] += newStats[value.eScalingStat] * (value.flScale as number);
                 }
             })
         }
