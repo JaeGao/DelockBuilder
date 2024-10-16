@@ -350,7 +350,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full max-w-6xl mt-2 select-none">
+                    <div className="w-full  mt-2 select-none">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}
