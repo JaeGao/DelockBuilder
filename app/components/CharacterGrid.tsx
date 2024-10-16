@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from "next/legacy/image";
+import Image from "next/image";
 
 interface Character {
     name: string;
@@ -25,7 +25,10 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({ characters }) => {
                         width={50}
                         height={50}
                         className="object-scale-down object-contain rounded-full"
-                    />
+                        style={{
+                            maxWidth: "100%",
+                            height: "auto"
+                        }} />
                     <p className="mt-1 text-center text-xs">{character.name}</p>
                 </div>
             ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { upgradesWithName } from '../lib/itemInterfaces';
 
 interface ItemGridProps {
@@ -45,10 +45,12 @@ const ItemGrid: React.FC<ItemGridProps> = ({ title, items, onItemToggle }) => {
                                             <Image
                                                 src={item.desc.m_strAbilityImage as string}
                                                 alt={item.name}
-                                                layout="fill"
-                                                objectFit="contain"
                                                 className="filter brightness-0 saturate-100"
-                                            />
+                                                fill
+                                                sizes="100vw"
+                                                style={{
+                                                    objectFit: "contain"
+                                                }} />
                                         </div>
                                     )}
                                 </div>

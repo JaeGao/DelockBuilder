@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import Image from "next/legacy/image";
+import Image from "next/image";
 
 interface BuilderBoxProps {
     id: string;
@@ -81,7 +81,10 @@ const BuilderBox: React.FC<BuilderBoxProps & {
                                         width={40}
                                         height={40}
                                         className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
-                                    />
+                                        style={{
+                                            maxWidth: "100%",
+                                            height: "auto"
+                                        }} />
                                 )}
                             </div>
                             <div className="flex h-12 bg-gray-600 items-center text-center p-1 rounded-b-md">
@@ -186,7 +189,10 @@ const BuilderTab: React.FC<BuilderTabProps> = ({
                                             width={40}
                                             height={40}
                                             className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
-                                        />
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto"
+                                            }} />
                                     )}
                                 </div>
                                 <div className="flex h-12 bg-gray-600 items-center text-center p-1 rounded-b-md">

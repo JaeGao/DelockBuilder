@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import Image from "next/legacy/image";
+import Image from "next/image";
 import BuilderTab from './builderTab';
 import { skip } from 'node:test';
 import build from 'next/dist/build';
@@ -160,7 +160,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                 width={40}
                                 height={40}
                                 className="inline-block pointer-events-none filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
-                            />
+                                style={{
+                                    maxWidth: "100%",
+                                    height: "auto"
+                                }} />
                         )}
                     </div>
                     <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
@@ -399,7 +402,16 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                 <div key={tier}
                                     className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} ${tier === 1 ? 'rounded-tr-lg' : ''} ${tier === 4 ? 'rounded-b-lg' : ''} p-1`}>
                                     <span className="text-[#70F8C1] text-shadow">
-                                        <Image src="/images/icon_soul.svg" alt="Souls" width={13} height={23} className="inline mr-1" />
+                                        <Image
+                                            src="/images/icon_soul.svg"
+                                            alt="Souls"
+                                            width={13}
+                                            height={23}
+                                            className="inline mr-1"
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto"
+                                            }} />
                                         <b>{tierCost[tier - 1]}</b>
                                     </span>
                                     <div className="flex flex-wrap">
