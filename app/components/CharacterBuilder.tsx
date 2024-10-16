@@ -97,14 +97,55 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const [characterLevel, setCharacterLevel] = useState(1);
     const [budget, setBudget] = useState(0);
     const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
+    const [leveledStats, setLeveledStats] = useState<allStats>(initialStats);
+    const [abilityPoints, setAbilityPoints] = useState<number>(0);
 
     useEffect(() => {
-        const levelInfo: m_MLI = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo];
-        if (levelInfo) {
-            setBudget(levelInfo['m_unRequiredGold'] as number);
-        }
-    }, [characterLevel, character.data.m_mapLevelInfo]);
+        let newLeveledStats = { ...initialStats };
+        let newAbilityPoints = 0;
+        let totalStandardUpgrades = 0;
 
+        for (let level = 1; level <= characterLevel; level++) {
+            const levelInfo = character.data.m_mapLevelInfo[level.toString() as keyof typeof character.data.m_mapLevelInfo];
+
+            if (levelInfo) {
+                if (level === characterLevel) {
+                    setBudget(levelInfo.m_unRequiredGold);
+                }
+
+                if (levelInfo.m_mapBonusCurrencies && levelInfo.m_mapBonusCurrencies.EAbilityPoints) {
+                    newAbilityPoints += levelInfo.m_mapBonusCurrencies.EAbilityPoints;
+                }
+
+                if (levelInfo.m_bUseStandardUpgrade) {
+                    totalStandardUpgrades++;
+                }
+            }
+        }
+
+        if (totalStandardUpgrades > 0) {
+            const levelUpgrades = character.data.m_mapStandardLevelUpUpgrades;
+
+            // Calculate the base melee damage increase
+            const meleeDamageIncrease = levelUpgrades.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL * totalStandardUpgrades;
+
+            newLeveledStats.EBulletDamage += levelUpgrades.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL * totalStandardUpgrades;
+            newLeveledStats.ELightMeleeDamage += meleeDamageIncrease;
+
+            // Calculate the heavy melee damage increase
+            // First, get the ratio of base heavy melee to base light melee
+            const heavyToLightRatio = initialStats.EHeavyMeleeDamage / initialStats.ELightMeleeDamage;
+
+            // Then, apply this ratio to the melee damage increase
+            newLeveledStats.EHeavyMeleeDamage += meleeDamageIncrease * heavyToLightRatio;
+
+            newLeveledStats.EMaxHealth += levelUpgrades.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL * totalStandardUpgrades;
+        }
+
+        setLeveledStats(newLeveledStats);
+        setAbilityPoints(newAbilityPoints);
+
+    }, [characterLevel, character.data.m_mapLevelInfo, character.data.m_mapStandardLevelUpUpgrades, initialStats]);
     const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newLevel = parseInt(event.target.value, 10);
         setCharacterLevel(newLevel);
@@ -122,8 +163,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             (item): item is upgradesWithName => item !== null
         );
 
-        //console.log('Current skillUpgrades state:', skillUpgrades);
-
         fetch('/api/calculateStats', {
             method: 'POST',
             headers: {
@@ -132,7 +171,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
-                characterStatInput: initialStats,
+                characterStatInput: leveledStats, // Use leveledStats instead of currentStats
                 heroSkills: heroSkills,
                 skillProperties: skillProps,
                 skillUpgrades: skillUpgrades,
@@ -148,13 +187,12 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             .then(newStats => {
                 setCurrentStats(newStats.characterStats);
                 setSkillStats(newStats.skillStats);
-                //console.log('New stats calculated:', newStats);
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
                 setErrorMessage(error.message || 'Error calculating stats');
             });
-    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades]);
+    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades, leveledStats]);
 
     const handleItemToggle = (item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
