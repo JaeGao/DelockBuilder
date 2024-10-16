@@ -215,7 +215,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     };
 
     return (
-        <div className="fixed top-0 right-0 w-1/5 min-w-[190px] h-screen bg-gray-900 overflow-y-auto transition-all duration-300 ease-in-out">
+        <div className="fixed top-0 right-0 w-1/5 min-w-[200px] h-screen bg-gray-900 overflow-y-auto transition-all duration-300 ease-in-out">
             <div className="sticky top-0 p-3 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
                 <div className="flex mb-2">
                     <button
@@ -250,7 +250,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             </div>
             <div className="p-3">
                 {/* Regular stats section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4  lg:grid-cols-2">
                     {statGroups.filter(group => !group.title.includes("Skill")).map((group, groupIndex, filteredGroups) => {
                         if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
                             return null;
