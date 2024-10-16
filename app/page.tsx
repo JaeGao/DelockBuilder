@@ -40,12 +40,11 @@ export default async function Home() {
                   <p className="text-center">{heroName}</p>
                 </div>
               </Link>
-            )
+            );
           }
           )}
         </div>
       </div>
     </div>
-
   );
 }
