@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add any global styles here */
+
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 /* Track */
@@ -16,7 +16,7 @@
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #888;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 /* Handle on hover */
@@ -27,6 +27,7 @@
 html,
 body {
   height: 100%;
+  font-size: 16px;
 }
 
 body>div {
@@ -35,5 +36,18 @@ body>div {
 
 body {
   @apply font-Deadlock-black text-custom-beige bg-custom-bg;
+}
 
+@layer utilities {
+  .scale-90 {
+    transform: scale(0.9);
+  }
+
+  .scale-80 {
+    transform: scale(0.8);
+  }
+
+  .origin-top-left {
+    transform-origin: top left;
+  }
 }

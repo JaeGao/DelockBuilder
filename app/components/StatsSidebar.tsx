@@ -215,7 +215,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     };
 
     return (
-        <div className="fixed top-0 right-0 w-1/4 min-w-[190px] max-w-[300px] h-screen bg-gray-900 overflow-y-auto">
+        <div className="fixed top-0 right-0 w-1/5 min-w-[190px] h-screen bg-gray-900 overflow-y-auto transition-all duration-300 ease-in-out">
             <div className="sticky top-0 p-3 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
                 <div className="flex mb-2">
                     <button
@@ -249,61 +249,17 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                 )}
             </div>
             <div className="p-3">
-                {statGroups.map((group, groupIndex) => {
-                    if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
-                        return null;
-                    }
-                    if (group.title === "Skill 1") {
-                        return (
-                            <div key={groupIndex} className="mb-4">
-                                <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>Skill Stats</h4>
-                                <div className="float-left">
-                                    <img
-                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
-                                        width="60"
-                                        height="60"
-                                        className="rounded-full mb-2 mr-2 object-contain"
-                                    />
-                                </div>
-                                <div className="space-y-1">
+                {/* Regular stats section */}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+                    {statGroups.filter(group => !group.title.includes("Skill")).map((group, groupIndex, filteredGroups) => {
+                        if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
+                            return null;
+                        }
 
-                                    {group.stats.map((stat) => (
-                                        <div key={stat.key} className="flex justify-between items-center">
-                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                            {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )
-                    } else if (group.title.includes("Skill") && group.title !== "Skill 1") {
                         return (
-                            <div key={groupIndex} className="mb-4">
-                                <div className="float-left">
-                                    <img
-                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
-                                        width="60"
-                                        height="60"
-                                        className="rounded-full mb-2 mr-2 object-contain"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-
-                                    {group.stats.map((stat) => (
-                                        <div key={stat.key} className="flex justify-between items-center">
-                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
-                                            {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )
-                    } else {
-                        return (
-                            <div key={groupIndex} className="mb-4">
+                            <div key={groupIndex} className="relative">
                                 <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
                                 <div className="space-y-1">
-
                                     {group.stats.map((stat) => (
                                         <div key={stat.key} className="flex justify-between items-center">
                                             <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
@@ -311,14 +267,60 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                         </div>
                                     ))}
                                 </div>
+                                {groupIndex % 2 === 0 && groupIndex < filteredGroups.length - 1 && (
+                                    <div className="absolute top-0 -right-2 h-full w-px bg-gray-700"></div>
+                                )}
+                                {groupIndex < filteredGroups.length - 2 && (
+                                    <div className="absolute -bottom-3 left-0 w-full h-px bg-gray-700"></div>
+                                )}
                             </div>
                         );
-                    }
+                    })}
+                </div>
 
-                })}
+                {/* Separation line between stats and skills */}
+                <div className="w-full border-b border-gray-700 my-6"></div>
+
+                {/* Skills section */}
+                <h4 className="text-sm font-semibold text-rose-400 uppercase tracking-wider mb-4 text-center">Skill Stats</h4>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+                    {statGroups.filter(group => group.title.includes("Skill")).map((group, groupIndex, filteredGroups) => {
+                        if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
+                            return null;
+                        }
+
+                        return (
+                            <div key={groupIndex} className="relative">
+                                <div className="flex items-start mb-2">
+                                    <img
+                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
+                                        width="30"
+                                        height="30"
+                                        className="rounded-full mr-2 object-contain"
+                                        alt={`Skill ${group.title.replace("Skill", "")}`}
+                                    />
+                                    <h5 className="text-xs font-semibold text-white">{group.title}</h5>
+                                </div>
+                                <div className="space-y-1">
+                                    {group.stats.map((stat) => (
+                                        <div key={stat.key} className="flex justify-between items-center">
+                                            <span className="text-gray-400 capitalize text-[10px]">{stat.name}:</span>
+                                            {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
+                                        </div>
+                                    ))}
+                                </div>
+                                {groupIndex % 2 === 0 && groupIndex < filteredGroups.length - 1 && (
+                                    <div className="absolute top-0 -right-2 h-full w-px bg-gray-700"></div>
+                                )}
+                                {groupIndex < filteredGroups.length - 2 && (
+                                    <div className="absolute -bottom-3 left-0 w-full h-px bg-gray-700"></div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
-};
-
+}
 export default StatsSidebar;
