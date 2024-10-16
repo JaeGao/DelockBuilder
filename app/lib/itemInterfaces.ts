@@ -87,9 +87,9 @@ interface upgradesD {
     [key:string]: string;
   }  
   interface MvTSIB {
-    [key:string]: MvSA;
+    [key:string]: MvSA[];
   }
-    type MvSA = MvSAvAP | MvSAB | MvSAC;
+    export type MvSA = MvSAvAP | MvSAB | MvSAC;
     interface MvSAvAP {
       [key:string]: string[];
     }
@@ -99,7 +99,7 @@ interface upgradesD {
     interface MvSAC {
       [key:string]: MvIP[];
     }
-      interface MvIP {
+      export interface MvIP {
         [key:string]: string;
       }
 

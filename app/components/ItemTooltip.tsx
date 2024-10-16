@@ -1,5 +1,5 @@
 import React from 'react';
-import { upgradesWithName, MvTSI } from '../lib/itemInterfaces';
+import { upgradesWithName, MvTSI, MvSA, MvIP } from '../lib/itemInterfaces';
 
 interface ItemTooltipProps {
     item: upgradesWithName;
@@ -26,8 +26,11 @@ type MAPType = Record<string, AbilityProperty>;
 
 const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
     const tooltipSections = Array.isArray(item.desc.m_vecTooltipSectionInfo)
-        ? item.desc.m_vecTooltipSectionInfo
+        ? item.desc.m_vecTooltipSectionInfo as MvTSI[]
         : [];
+
+    const category = item.desc.m_eItemSlotType as string;
+    const catBackground = category.includes("_Weapon") ? 'bg-[#C87903]' : (category.includes("_Armor") ? 'bg-[#649717]' : 'bg-[#8A55B3]');
 
     const isTooltipSection = (section: any): section is TooltipSection => {
         return (
@@ -89,7 +92,7 @@ const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
             const bonusIcon = bonusNamepre === "BaseWeaponDamageIncrease" 
                             ? "/images/icon_courage.svg" 
                             : (bonusNamepre === "BaseHealth" ? "/images/icon_fortitude.svg" : "/images/icon_spirit.svg");
-                            
+
         return (
             <div className="flex flex-col w-20 float-right">
                 <div className="bg-[#00000060] pt-0.5 pb-0.5">
@@ -110,14 +113,12 @@ const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
     };
 
     const renderHeader = () => {
-        const category = item.desc.m_eItemSlotType as string;
-        const catBackground = category.includes("_Weapon") ? 'bg-[#C87903]' : (category.includes("_Armor") ? 'bg-[#649717]' : 'bg-[#8A55B3]');
         const tierRaw = item.desc.m_iItemTier as string;
         const tier = tierRaw === "EModTier_1" ? 1 : (tierRaw === "EModTier_2" ? 2 : (tierRaw === "EModTier_3" ? 3 : 4));
         const tierCost = tier === 1 ? '500' : (tier === 2 ? '1,250' : (tier === 3 ? '3,000' : '6,200'));
 
         return (
-            <div className= {`${catBackground} p-4 rounded-t-md`}>
+            <div className= {`p-4`}>
                 <div className="float-left">
                     <h3 className="text-xl font-bold mb-2">{item.name}</h3>
                     <span className="text-[#70F8C1] text-shadow">
@@ -130,17 +131,46 @@ const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
         )
     };
 
+    const renderAppliedStats = (section: MvTSI[]) => {
+
+        const mvSA = section[0].m_vecSectionAttributes[0] as MvSA;
+
+
+        const elevatedProps = Array.isArray(mvSA.m_vecElevatedAbilityProperties)
+            ? mvSA.m_vecElevatedAbilityProperties as string[]
+            : [];
+        const abilityProps = Array.isArray(mvSA.m_vecAbilityProperties)
+            ? mvSA.m_vecAbilityProperties as string[]
+            : [];
+        const impProps = Array.isArray(mvSA.m_vecImportantAbilityProperties)
+            ? (mvSA.m_vecImportantAbilityProperties as MvIP[]).map(({key,value}) => value)
+            : [];
+        var appStatNames : Array<string> = [
+            ...elevatedProps,
+            ...abilityProps,
+            ...impProps
+        ];  
+
+        return (
+            <div className="bg-[#00000066] p-3 rounded-b-md">
+                {appStatNames.map((prop) => (
+                    <p key={prop}>
+                        {prop.replace(/([A-Z])/g, ' $1')}: {getPropertyValue(item.desc.m_mapAbilityProperties, prop)}
+                    </p>
+                ))} 
+            </div>
+        )
+    }
+
     return (
         // Header: Name, Cost, Tier Bonus
         // StatsApplied
         // Active or Passive +  if Active: Cooldown
         // Passive / Active Properties 
-        <div className="flex flex-col w-96">
+        <div className={`flex flex-col w-96 rounded-md ${catBackground}`}>
             {renderHeader()}
-            <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-                <h3 className="text-xl font-bold mb-2">{item.name}</h3>
-                {tooltipSections.map((section, index) => renderTooltipSection(section))}
-            </div>
+            {renderAppliedStats(tooltipSections)}
+
         </div>
 
 
