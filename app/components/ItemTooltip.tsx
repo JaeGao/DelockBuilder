@@ -1,5 +1,5 @@
 import React from 'react';
-import { upgradesWithName } from '../lib/itemInterfaces';
+import { upgradesWithName, MvTSI } from '../lib/itemInterfaces';
 
 interface ItemTooltipProps {
     item: upgradesWithName;
@@ -78,25 +78,72 @@ const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
     };
 
     const renderTierBonus = () => {
-        const category = typeof item.desc.m_eItemSlotType === 'string' && item.desc.m_eItemSlotType.includes('_Weapon') ? 'Weapon' :
-            typeof item.desc.m_eItemSlotType === 'string' && item.desc.m_eItemSlotType.includes('_Armor') ? 'Vitality' : 'Spirit';
-        const bonusValue = category === 'Weapon' ? tierBonus.EBaseWeaponDamageIncrease :
-            category === 'Vitality' ? tierBonus.EBaseHealth_percent : tierBonus.ETechPower;
-
+            const bonusValue = tierBonus.EBaseWeaponDamageIncrease 
+                            ? tierBonus.EBaseWeaponDamageIncrease 
+                            : (tierBonus.EBaseHealth_percent ? tierBonus.EBaseHealth_percent : tierBonus.ETechPower); 
+            const bonusNamepre = Object.keys(tierBonus).toString().replace("E", "").replace("_percent", "")
+            const bonusName = bonusNamepre === "BaseWeaponDamageIncrease" 
+                            ? bonusNamepre.replace("Base", "").replace("Increase", "").replace(/([A-Z])/g, ' $1')
+                            : (bonusNamepre === "BaseHealth" ? bonusNamepre.replace(/([A-Z])/g, ' $1') : bonusNamepre.replace("Tech", "Spirit").replace(/([A-Z])/g, ' $1'));
+            const isPerc = Object.keys(tierBonus).toString() === "ETechPower" ? false : true; 
+            const bonusIcon = bonusNamepre === "BaseWeaponDamageIncrease" 
+                            ? "/images/icon_courage.svg" 
+                            : (bonusNamepre === "BaseHealth" ? "/images/icon_fortitude.svg" : "/images/icon_spirit.svg");
+                            
         return (
-            <div className="mt-2">
-                <h4 className="font-bold">Tier Bonus</h4>
-                <p>{category} Bonus: {bonusValue !== undefined ? `${bonusValue}%` : 'N/A'}</p>
+            <div className="flex flex-col w-20 float-right">
+                <div className="bg-[#00000060] pt-0.5 pb-0.5">
+                    <div className="justify-center">
+                        <b className="text-white text-sm font-Deadlock-tooltip align-middle">
+                            +{bonusValue !== undefined ? (isPerc ? `${bonusValue}%` : `${bonusValue}`) : 'N/A'}
+                        </b>
+                        <img src={`${bonusIcon}`} width={20} height={20} className="inline ml-1"/>
+                    </div>
+                </div>
+                <div className="bg-[#00000055] pb-2 pt-2">
+                    <p className="text-white text-xs font-Deadlock-tooltip align-middle text-center">
+                        {bonusName}
+                    </p>
+                </div>
             </div>
         );
     };
 
+    const renderHeader = () => {
+        const category = item.desc.m_eItemSlotType as string;
+        const catBackground = category.includes("_Weapon") ? 'bg-[#C87903]' : (category.includes("_Armor") ? 'bg-[#649717]' : 'bg-[#8A55B3]');
+        const tierRaw = item.desc.m_iItemTier as string;
+        const tier = tierRaw === "EModTier_1" ? 1 : (tierRaw === "EModTier_2" ? 2 : (tierRaw === "EModTier_3" ? 3 : 4));
+        const tierCost = tier === 1 ? '500' : (tier === 2 ? '1,250' : (tier === 3 ? '3,000' : '6,200'));
+
+        return (
+            <div className= {`${catBackground} p-4 rounded-t-md`}>
+                <div className="float-left">
+                    <h3 className="text-xl font-bold mb-2">{item.name}</h3>
+                    <span className="text-[#70F8C1] text-shadow">
+                        <img src="/images/icon_soul.svg" alt="Souls" width={13} height={23} className="inline mr-1" />
+                        <b>{tierCost}</b>
+                    </span>
+                </div>
+                {renderTierBonus()}
+            </div>
+        )
+    };
+
     return (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-            <h3 className="text-xl font-bold mb-2">{item.name}</h3>
-            {tooltipSections.map((section, index) => renderTooltipSection(section))}
-            {renderTierBonus()}
+        // Header: Name, Cost, Tier Bonus
+        // StatsApplied
+        // Active or Passive +  if Active: Cooldown
+        // Passive / Active Properties 
+        <div className="flex flex-col w-96">
+            {renderHeader()}
+            <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold mb-2">{item.name}</h3>
+                {tooltipSections.map((section, index) => renderTooltipSection(section))}
+            </div>
         </div>
+
+
     );
 };
 

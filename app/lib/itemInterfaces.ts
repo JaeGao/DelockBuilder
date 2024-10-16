@@ -82,15 +82,15 @@ interface upgradesC {
 interface upgradesD {
   [key:string]: MvTSI[];
 }
-  type MvTSI = MvTSIA | MvTSIB;
+  export type MvTSI = MvTSIA | MvTSIB;
   interface MvTSIA {
     [key:string]: string;
   }  
   interface MvTSIB {
     [key:string]: MvSA;
   }
-    type MvSA = MvSAA | MvSAB | MvSAC;
-    interface MvSAA {
+    type MvSA = MvSAvAP | MvSAB | MvSAC;
+    interface MvSAvAP {
       [key:string]: string[];
     }
     interface MvSAB {

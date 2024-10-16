@@ -398,8 +398,8 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                             {[1, 2, 3, 4].map(tier => (
                                 <div key={tier}
                                     className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} ${tier === 1 ? 'rounded-tr-lg' : ''} ${tier === 4 ? 'rounded-b-lg' : ''} p-1`}>
-                                    <span className="text-[#98ffde] text-shadow">
-                                        <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                                    <span className="text-[#70F8C1] text-shadow">
+                                        <Image src="/images/icon_soul.svg" alt="Souls" width={13} height={23} className="inline mr-1" />
                                         <b>{tierCost[tier - 1]}</b>
                                     </span>
                                     <div className="flex flex-wrap">
