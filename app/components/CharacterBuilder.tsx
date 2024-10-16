@@ -99,7 +99,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
 
     useEffect(() => {
-        const levelInfo : m_MLI = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo];
+        const levelInfo: m_MLI = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo];
         if (levelInfo) {
             setBudget(levelInfo['m_unRequiredGold'] as number);
         }
@@ -256,10 +256,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     return (
         <div>
             <Navbar />
-            <div className="flex mt-4">
+            <div className="flex mt-4 ">
                 <div className={`p-4 flex flex-col 2xl:flex-row w-full pr-[clamp(212px,calc(25vw+12px),312px)]`}>
-                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3">
-                        <div className="mb-2 px-2 flex flex-col items-center float-left">
+                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3 ">
+                        <div className="mb-2 px-6 flex flex-col items-center float-left select-none ">
                             <div className="">
                                 <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
                             </div>
@@ -269,12 +269,12 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     alt={heroName}
                                     width={120}
                                     height={120}
-                                    className="rounded-full mb-2 object-none"
+                                    className="rounded-full mb-2 object-none select-none pointer-events-none"
                                 />
                             )}
                             {/* Level Slider */}
                             <div className="w-full mb-4">
-                                <label htmlFor="level-slider" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="level-slider" className="block text-sm font-medium  text-amber-500">
                                     Character Level: {characterLevel}
                                 </label>
                                 <input
@@ -288,8 +288,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 />
                             </div>
                             {/* Budget Input */}
-                            <div className="w-full mb-4">
-                                <label htmlFor="budget-input" className="block text-sm font-medium text-gray-700">
+                            <div className="w-full mb-4 ">
+                                <label htmlFor="budget-input" className="block text-sm font-medium  text-amber-500">
                                     Budget:
                                 </label>
                                 <input
@@ -298,11 +298,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     value={budget}
                                     onChange={handleBudgetChange}
                                     min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-yellow-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-amber-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 />
                             </div>
                             {/* Skill Icons */}
-                            <div className="flex space-x-2">
+                            <div className="flex space-x-2 ">
                                 {skillIcons.map((skillIcon, index) => (
                                     <div key={index} className="relative">
                                         <Image
@@ -320,7 +320,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 ))}
                             </div>
                         </div>
-                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4">
+                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">
                             <ItemGrid
                                 title="Weapon"
                                 items={weaponItems}
@@ -344,7 +344,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full max-w-6xl mt-2">
+                    <div className="w-full max-w-6xl mt-2 select-none">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}

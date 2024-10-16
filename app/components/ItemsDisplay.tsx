@@ -134,14 +134,14 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         }
     }, []);
 
-    const ItemCard = useCallback(({ name, desc, onSelect, isEquipped }: upgradesWithName & { onSelect: () => void; isEquipped: boolean }) => {
+    const ItemCard = useCallback(({ name, desc, onSelect, isEquipped, isInBuilder }: upgradesWithName & { onSelect: () => void; isEquipped: boolean; isInBuilder: boolean }) => {
         const category = getCategory(desc.m_eItemSlotType as string || '');
         const categoryColor = getCategoryColor(category);
         const actColor = getCategoryActiveColor(category);
 
         return (
             <div
-                className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''}`}
+                className={`w-20 h-24 select-none  m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''} ${isInBuilder ? 'border-2 border-double rounded-md border-blue-600' : ''}`}
                 onClick={onSelect}
                 draggable
                 onDragStart={(e) => {
@@ -159,7 +159,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                 alt={name}
                                 width={40}
                                 height={40}
-                                className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
+                                className="inline-block pointer-events-none filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
                             />
                         )}
                     </div>
@@ -408,7 +408,8 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                                 key={item.name}
                                                 {...item}
                                                 onSelect={() => onItemSelect(item)}
-                                                isEquipped={isItemEquipped(item) || isItemInBuilder(item)}
+                                                isEquipped={isItemEquipped(item)}// || isItemInBuilder(item)
+                                                isInBuilder={isItemInBuilder(item)}
                                             />
                                         ))}
                                     </div>
