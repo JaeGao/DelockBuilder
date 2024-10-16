@@ -162,6 +162,8 @@ const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, tierBonus }) => {
         )
     }
 
+    
+
     return (
         // Header: Name, Cost, Tier Bonus
         // StatsApplied
