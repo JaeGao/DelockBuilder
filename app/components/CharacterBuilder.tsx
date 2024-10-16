@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image from "next/image";
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
@@ -270,7 +270,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     width={120}
                                     height={120}
                                     className="rounded-full mb-2 object-none select-none pointer-events-none"
-                                />
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto"
+                                    }} />
                             )}
                             {/* Level Slider */}
                             <div className="w-full mb-4">
@@ -312,7 +315,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                             height={50}
                                             className="rounded-full cursor-pointer"
                                             onClick={() => handleSkillUpgrade(index)}
-                                        />
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto"
+                                            }} />
                                         <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
                                             {skillUpgrades[index].length}
                                         </div>
@@ -344,7 +350,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full max-w-6xl mt-2 select-none">
+                    <div className="w-full  mt-2 select-none">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}
