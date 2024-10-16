@@ -250,7 +250,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             </div>
             <div className="p-3">
                 {/* Regular stats section */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-6">
                     {statGroups.filter(group => !group.title.includes("Skill")).map((group, groupIndex, filteredGroups) => {
                         if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
                             return null;
@@ -268,11 +268,9 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                     ))}
                                 </div>
                                 {groupIndex % 2 === 0 && groupIndex < filteredGroups.length - 1 && (
-                                    <div className="absolute top-0 -right-2 h-full w-px bg-gray-700"></div>
+                                    <div className="absolute top-0 -right-2 h-full w-px bg-gray-700 hidden md:block"></div>
                                 )}
-                                {groupIndex < filteredGroups.length - 2 && (
-                                    <div className="absolute -bottom-3 left-0 w-full h-px bg-gray-700"></div>
-                                )}
+                                <div className="absolute -bottom-2 left-0 w-full h-px bg-gray-700 md:hidden"></div>
                             </div>
                         );
                     })}
@@ -283,7 +281,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
                 {/* Skills section */}
                 <h4 className="text-sm font-semibold text-rose-400 uppercase tracking-wider mb-4 text-center">Skill Stats</h4>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-6">
                     {statGroups.filter(group => group.title.includes("Skill")).map((group, groupIndex, filteredGroups) => {
                         if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
                             return null;
@@ -310,11 +308,9 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                     ))}
                                 </div>
                                 {groupIndex % 2 === 0 && groupIndex < filteredGroups.length - 1 && (
-                                    <div className="absolute top-0 -right-2 h-full w-px bg-gray-700"></div>
+                                    <div className="absolute top-0 -right-2 h-full w-px bg-gray-700 hidden md:block"></div>
                                 )}
-                                {groupIndex < filteredGroups.length - 2 && (
-                                    <div className="absolute -bottom-3 left-0 w-full h-px bg-gray-700"></div>
-                                )}
+                                <div className="absolute -bottom-2 left-0 w-full h-px bg-gray-700 md:hidden"></div>
                             </div>
                         );
                     })}
