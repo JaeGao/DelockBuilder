@@ -258,7 +258,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             <Navbar />
             <div className="flex mt-4 ">
                 <div className={`p-4 flex flex-col 2xl:flex-row w-full pr-[clamp(212px,calc(25vw+12px),312px)]`}>
-                    <div className="flex flex-row w-1/4 min-w-fit 2xl:flex-col flex-wrap  mr-8 px-3 border-2">
+                    <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap  mr-8 px-3 ">
                         <div className="mb-2 px-6 flex flex-col items-center float-left select-none ">
                             <div className="">
                                 <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
