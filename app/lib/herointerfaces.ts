@@ -7,14 +7,14 @@ export interface allHeroes {
     [key: string]: heroData;
 }
 
-export type heroData = heroDatabase & heroDatamSS & heroDatamBA & heroDatamISI & heroDatamPB & heroDatamLI & heroDatavAGDVO & heroDatavAPS & heroDatahSUI & heroDatamScaleStats & heroDatahSD & heroDatamSLUU & heroDatamSSS;
+export type heroData = heroDatabase | heroDatamSS | heroDatamBA | heroDatamISI | heroDatamPB | heroDatamLI | heroDatavAGDVO | heroDatavAPS | heroDatahSUI | heroDatamScaleStats | heroDatahSD | heroDatamSLUU | heroDatamSSS;
 
 interface heroDatabase {
     [key: string]: string | string[] | boolean | number | number[];
 }
 
 export interface heroDatamSS {
-    m_mapStartingStats: {
+    [key: string]: {
         [key: string]: number;
     }
 }
@@ -42,23 +42,20 @@ interface heroDatamPB {
 }
 
 interface heroDatamLI {
-    m_mapLevelInfo: {
-        [key: string]: m_MLI;
-    }
+    [key: string]: m_mapLevelInfo;
 }
-
+interface m_mapLevelInfo {
+    [key: string]: m_MLI;
+}
 export interface m_MLI {
-    m_unRequiredGold: number;
-    m_mapBonusCurrencies?: {
+    [key: string]: number | boolean | {
         [key: string]: number;
-    };
-    m_bUseStandardUpgrade?: boolean;
+    }
 }
 
 interface heroDatavAGDVO {
     [key: string]: vAGDVO[];
 }
-
 interface vAGDVO {
     [key: string]: string;
 }
@@ -66,7 +63,6 @@ interface vAGDVO {
 interface heroDatavAPS {
     [key: string]: vAPS[];
 }
-
 interface vAPS {
     [key: string]: string | number;
 }
@@ -74,44 +70,39 @@ interface vAPS {
 interface heroDatahSUI {
     [key: string]: hSUI;
 }
-
 interface hSUI {
     [key: string]: string | vDS[];
 }
-
 interface vDS {
     [key: string]: string;
 }
 
 interface heroDatamScaleStats {
-    m_mapScalingStats: {
-        [key: string]: {
-            [key: string]: string | number;
-        }
+    [key: string]: mSS;
+}
+interface mSS {
+    [key: string]: {
+        [key: string]: string | number;
     }
 }
 
 interface heroDatahSD {
     [key: string]: hSD;
 }
-
 interface hSD {
     [key: string]: string[];
 }
 
 interface heroDatamSLUU {
-    m_mapStandardLevelUpUpgrades: {
-        MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL: number;
-        MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL: number;
-        MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL: number;
-        [key: string]: number;
-    }
+    [key: string]: mSLUU;
+}
+interface mSLUU {
+    [key: string]: number
 }
 
 interface heroDatamSSS {
     [key: string]: SSD;
 }
-
 interface SSD {
     [key: string]: {
         [key: string]: string | string[];
