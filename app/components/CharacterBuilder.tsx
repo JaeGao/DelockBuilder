@@ -5,7 +5,7 @@ import Image from "next/image";
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from '../lib/abilityInterface';
+import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData, skillnamemap } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
 import { heroesWithName, m_MLI } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
@@ -73,6 +73,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         let skey: keyof typeof sProp;
         for (skey in sProp) {
             let slabel: string;
+
             if (skey.includes("Ability")) {
                 slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
             } else {
@@ -81,6 +82,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
             skillDG[i].push({
                 key: skey,
                 name: slabel,
+                skillName: heroSkills[i]._class
             })
         }
     }
