@@ -348,8 +348,8 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                             )}
                             {/* Level Slider */}
                             <div className="w-full mb-4">
-                                <label htmlFor="level-slider" className="block text-sm font-medium  text-amber-500">
-                                    Character Level: {characterLevel}
+                                <label htmlFor="level-slider" className="block text-m font-medium  text-amber-500">
+                                    Character Level: <span className='text-[#70F8C1]'>{characterLevel}</span>
                                 </label>
                                 <input
                                     type="range"
@@ -358,7 +358,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                     max={maxLevel}
                                     value={characterLevel}
                                     onChange={handleLevelChange}
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-amber-500 [&::-webkit-slider-thumb]:bg-amber-500"
                                 />
                             </div>
                             {/* Budget Input */}
@@ -372,14 +372,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                     value={budget}
                                     onChange={handleBudgetChange}
                                     min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-amber-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    className="bg-amber-500 border border-amber-500 text-gray-900 text-sm rounded-lg focus:ring-amber-600 focus:border-amber-500 block w-full p-2 dark:bg-custom-bg dark:border-amber-500 dark:placeholder-[#70F8C1] dark:text-[#70F8C1] dark:focus:ring-amber-600 dark:focus:border-amber-500 text-center"
                                 />
                             </div>
                             {/* Skill Icons */}
-                            <p className="text-amber-500">Total Cost: {totalCost} / {budget}</p>
-                            <div className="flex space-x-2 ">
+                            <p className="text-amber-500 mb-3">Total Cost: <span className='text-[#70F8C1]'>{totalCost}</span><span className='text-lg font-bold'> / </span><span className='text-[#70F8C1]'>{budget}</span></p>
+                            <div className="flex space-x-2 p-4">
                                 {skillIcons.map((skillIcon, index) => (
-                                    <div key={index} className="relative">
+                                    <div key={index} className="relative border-2 border-[#dbb2f7] rounded-full p-1">
                                         <Image
                                             src={skillIcon}
                                             alt={`Skill ${index + 1}`}
@@ -391,7 +391,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                                 maxWidth: "100%",
                                                 height: "auto"
                                             }} />
-                                        <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
+                                        <div className="absolute bottom-0 right-0 bg-[#8A55B3] rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
                                             {skillUpgrades[index].length}
                                         </div>
                                     </div>
