@@ -191,6 +191,24 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             });
     }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades, leveledStats]);
 
+    const [totalCost, setTotalCost] = useState(0);
+
+    useEffect(() => {
+        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
+            (item): item is upgradesWithName => item !== null
+        );
+        const newTotalCost = allEquippedItems.reduce((sum, item) => {
+            const tierCost = {
+                "EModTier_1": 500,
+                "EModTier_2": 1250,
+                "EModTier_3": 3000,
+                "EModTier_4": 6200
+            };
+            return sum + (tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0);
+        }, 0);
+        setTotalCost(newTotalCost);
+    }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
+
     const handleItemToggle = (item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
         let primaryGrid: (upgradesWithName | null)[];
@@ -236,6 +254,20 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             });
         } else {
             // Item is not equipped, so try to equip it
+            const tierCost = {
+                "EModTier_1": 500,
+                "EModTier_2": 1250,
+                "EModTier_3": 3000,
+                "EModTier_4": 6200
+            };
+            const itemCost = tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0;
+
+            if (totalCost + itemCost > budget) {
+                setErrorMessage('Not enough budget to equip this item!');
+                setTimeout(() => setErrorMessage(null), 3000);
+                return;
+            }
+
             const emptyIndex = primaryGrid.findIndex(slot => slot === null);
             if (emptyIndex !== -1) {
                 // There's space in the primary grid
@@ -263,6 +295,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             }
         }
     };
+
 
     const handleSkillUpgrade = (skillIndex: number) => {
         setskillUpgrades(prevUpgrades => {
@@ -340,6 +373,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                 />
                             </div>
                             {/* Skill Icons */}
+                            <p className="text-amber-500">Total Cost: {totalCost} / {budget}</p>
                             <div className="flex space-x-2 ">
                                 {skillIcons.map((skillIcon, index) => (
                                     <div key={index} className="relative">
@@ -359,6 +393,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                         </div>
                                     </div>
                                 ))}
+
                             </div>
                         </div>
                         <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">

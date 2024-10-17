@@ -219,13 +219,13 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             <div className="sticky top-0 p-3 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
                 <div className="flex mb-2">
                     <button
-                        className={`px-3 py-1 text-sm font-medium rounded-l-lg ${activeTab === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+                        className={`px-3 py-1 text-xs font-medium rounded-l-lg ${activeTab === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
                         onClick={() => setActiveTab('all')}
                     >
                         All Stats
                     </button>
                     <button
-                        className={`px-3 py-1 text-sm font-medium rounded-r-lg ${activeTab === 'custom' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+                        className={`px-3 py-1 text-xs font-medium rounded-r-lg ${activeTab === 'custom' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
                         onClick={() => setActiveTab('custom')}
                     >
                         Custom
@@ -258,7 +258,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
                         return (
                             <div key={groupIndex} className="relative">
-                                <h4 className={`text-sm font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
+                                <h4 className={`text-xs font-semibold ${group.color} uppercase tracking-wider mb-2`}>{group.title} Stats</h4>
                                 <div className="space-y-1">
                                     {group.stats.map((stat) => (
                                         <div key={stat.key} className="flex justify-between items-center">
@@ -280,7 +280,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                 <div className="w-full border-b border-gray-700 my-6"></div>
 
                 {/* Skills section */}
-                <h4 className="text-sm font-semibold text-rose-400 uppercase tracking-wider mb-4 text-center">Skill Stats</h4>
+                <h4 className="text-xs font-semibold text-rose-400 uppercase tracking-wider mb-4 text-center">Skill Stats</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-6">
                     {statGroups.filter(group => group.title.includes("Skill")).map((group, groupIndex, filteredGroups) => {
                         if (activeTab === 'custom' && !selectedCategories.includes(group.title)) {
@@ -302,7 +302,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                 <div className="space-y-1">
                                     {group.stats.map((stat) => (
                                         <div key={stat.key} className="flex justify-between items-center">
-                                            <span className="text-gray-400 capitalize text-[10px]">{stat.name}:</span>
+                                            <span className="text-gray-400 capitalize text-xs">{stat.name}:</span>
                                             {renderSkillStats(stat.key, stat.name, group.title.replace("Skill ", ""))}
                                         </div>
                                     ))}
