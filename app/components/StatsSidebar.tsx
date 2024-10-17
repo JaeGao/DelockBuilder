@@ -294,14 +294,18 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
                         return (
                             <div key={groupIndex} className="relative">
-                                <div className="flex items-start mb-2">
-                                    <img
-                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
-                                        width="30"
-                                        height="30"
-                                        className="rounded-full mr-2 object-contain"
-                                        alt={`Skill ${group.title.replace("Skill", "")}`}
-                                    />
+                                <div className="flex items-start mb-4">
+                                    <div className='flex relative mr-2'>
+                                        <div className='absolute top-1/2 left-1/2 mt-8 px-2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900 font-semibold text-white text-center rounded-full'> {group.title.replace("Skill ", '')}</div>
+                                        <img
+                                            src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
+                                            width="50"
+                                            height="50"
+                                            className="rounded-full object-contain"
+                                            alt={`Skill ${group.title.replace("Skill", "")}`}
+                                        />
+
+                                    </div>
                                     <h5 className="text-s font-semibold text-white">{group.realskillName}</h5>
                                 </div>
                                 <div className="space-y-1">
