@@ -10,12 +10,6 @@ import { upgradesWithName } from '../lib/itemInterfaces';
 import { heroesWithName, m_MLI } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
-
-interface ItemModifier {
-    itemkey: string;
-    modifiers: { [key: string]: number };
-}
-
 interface CharacterBuilderProps {
     characterNameFromMap: string
     character: heroesWithName;
