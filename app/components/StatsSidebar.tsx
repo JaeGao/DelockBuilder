@@ -14,6 +14,7 @@ interface StatsSidebarProps {
 }
 
 const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterName, characterClass, characterSkillsData, skillLabels, skillImages }) => {
+    console.log(skillLabels)
     const [activeTab, setActiveTab] = useState<'all' | 'custom'>('all');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [changedStats, setChangedStats] = useState<string[]>([]);
@@ -137,24 +138,28 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
             title: "Skill 1",
             color: "text-rose-400",
             bgColor: "bg-rose-500",
+            realskillName: skillLabels[0][0].skillName,
             stats: skillLabels[0],
         },
         {
             title: "Skill 2",
             color: "text-rose-400",
             bgColor: "bg-rose-500",
+            realskillName: skillLabels[1][0].skillName,
             stats: skillLabels[1],
         },
         {
             title: "Skill 3",
             color: "text-rose-400",
             bgColor: "bg-rose-500",
+            realskillName: skillLabels[2][0].skillName,
             stats: skillLabels[2],
         },
         {
             title: "Skill 4",
             color: "text-rose-400",
             bgColor: "bg-rose-500",
+            realskillName: skillLabels[3][0].skillName,
             stats: skillLabels[3],
         }
     ];
@@ -215,7 +220,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
     };
 
     return (
-        <div className="fixed top-0 right-0 w-1/6 min-w-[200px] h-screen bg-gray-900 overflow-y-auto transition-all duration-300 ease-in-out">
+        <div className="fixed top-0 right-0 w-1/6 min-w-[300px] h-screen bg-gray-900 overflow-y-auto transition-all duration-300 ease-in-out">
             <div className="sticky top-0 p-3 bg-gray-900 z-10 pb-2 mb-2 border-b border-gray-700">
                 <div className="flex mb-2">
                     <button
@@ -242,7 +247,7 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
                                     : 'bg-gray-700 text-gray-300'
                                     }`}
                             >
-                                {group.title}
+                                {group.title.includes("Skill") ? group.realskillName : group.title}
                             </button>
                         ))}
                     </div>
@@ -289,15 +294,19 @@ const StatsSidebar: React.FC<StatsSidebarProps> = ({ characterStats, characterNa
 
                         return (
                             <div key={groupIndex} className="relative">
-                                <div className="flex items-start mb-2">
-                                    <img
-                                        src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
-                                        width="30"
-                                        height="30"
-                                        className="rounded-full mr-2 object-contain"
-                                        alt={`Skill ${group.title.replace("Skill", "")}`}
-                                    />
-                                    <h5 className="text-sm font-semibold text-white">{group.title}</h5>
+                                <div className="flex items-start mb-4">
+                                    <div className='flex relative mr-2'>
+                                        <div className='absolute top-1/2 left-1/2 mt-8 px-2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900 font-semibold text-white text-center rounded-full'> {group.title.replace("Skill ", '')}</div>
+                                        <img
+                                            src={skillImages[parseFloat(group.title.replace("Skill", "")) - 1]}
+                                            width="50"
+                                            height="50"
+                                            className="rounded-full object-contain"
+                                            alt={`Skill ${group.title.replace("Skill", "")}`}
+                                        />
+
+                                    </div>
+                                    <h5 className="text-s font-semibold text-white">{group.realskillName}</h5>
                                 </div>
                                 <div className="space-y-1">
                                     {group.stats.map((stat) => (
