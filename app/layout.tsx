@@ -8,6 +8,16 @@ const Deadlock = localFont({
   variable: '--font-Deadlock-black'
 });
 
+const Retail = localFont({
+  src: './fonts/RetailTextDemo-Black.otf',
+  variable: '--font-Deadlock-Retail'
+});
+
+const RetailReg = localFont({
+  src: './fonts/RetailTextDemo-Regular.otf',
+  variable: '--font-Deadlock-Retail-reg'
+})
+
 export const metadata: Metadata = {
   title: "Deadlock Stats Calculator",
   description: "Calculate stats for Deadlock characters",
@@ -26,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${Deadlock.variable}`}>
-      <body className="font-forevs-black text-custom-beige">
+    <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
+      <body className="text-custom-beige">
         <div className="flex">
           <main className="flex-1 p-2">
             {children}

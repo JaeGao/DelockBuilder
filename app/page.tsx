@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/image";
 import { getCharacters } from '@/app/lib/dataUtils';
 import { heroesWithName } from './lib/herointerfaces';
 import Navbar from './ui/Navbar';
@@ -35,17 +35,19 @@ export default async function Home() {
                       width={100}
                       height={100}
                       className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
-                    />
+                      style={{
+                        maxWidth: "100%",
+                        height: "auto"
+                      }} />
                   )}
                   <p className="text-center">{heroName}</p>
                 </div>
               </Link>
-            )
+            );
           }
           )}
         </div>
       </div>
     </div>
-
   );
 }

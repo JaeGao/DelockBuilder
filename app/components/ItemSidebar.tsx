@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import Image from "next/image";
 import { Item, isTechItem, isArmorItem, isWeaponItem, isAbilityItem, isUpgradeItem } from '../lib/gameInterfaces';
 
 interface ItemSidebarProps {
@@ -28,7 +28,16 @@ const ItemCard: React.FC<{ item: Item; onSelect: () => void }> = ({ item, onSele
                     <tr>
                         <th className="bg-gray-800 text-xs">
                             <span className="text-[#98ffde] text-shadow">
-                                <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                                <Image
+                                    src="/images/Souls_iconColored.png"
+                                    alt="Souls"
+                                    width={13}
+                                    height={23}
+                                    className="inline mr-1"
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto"
+                                    }} />
                                 <b>{item.cost ?? 'N/A'}</b>
                             </span>
                         </th>
@@ -36,7 +45,16 @@ const ItemCard: React.FC<{ item: Item; onSelect: () => void }> = ({ item, onSele
                     <tr className={`${categoryColor} h-16`}>
                         <td className="text-center">
                             {item.image && (
-                                <Image src={item.image} alt={item.name} width={50} height={50} className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out" />
+                                <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    width={50}
+                                    height={50}
+                                    className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto"
+                                    }} />
                             )}
                         </td>
                     </tr>

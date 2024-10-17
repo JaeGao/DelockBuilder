@@ -1,16 +1,17 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { allHeroes, heroData, heroesWithName, heroDatamSS } from './herointerfaces';
-import { RootObject, AWithKey } from './abilityInterface';
+import { RootObject, AWithKey, ESlotSignature1 } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
-import { upgrades, upgradesWithName} from './itemInterfaces';
-import { SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from './abilityInterface';
+import { upgrades, upgradesWithName } from './itemInterfaces';
+import { SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData, skillnamemap } from './abilityInterface';
 
 
 const charactersPath = path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heroes.json');
 const abilitiesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', "HeroAbilityStats.json");
 const itemsPath = path.join(process.cwd(), 'app', 'data', 'Items', 'FilteredItem.json');
+const skillNamesPath = path.join(process.cwd(), 'app', 'data', 'Abilities', 'heroabilitynamemaps.json');
 
 let specialfire = ["hero_lash", "hero_chrono", "hero_gigawatt"]
 
@@ -37,45 +38,45 @@ export interface ModifierValues {
 export function extractItemModifiers(item: upgrades): ItemModifiers {
     const modifiers: ItemModifiers = {};
     for (const [key, value] of Object.entries(item.m_mapAbilityProperties)) {
-        if (typeof value === 'object' 
-            && 'm_eProvidedPropertyType' in value 
-            && 'm_strValue' in value 
+        if (typeof value === 'object'
+            && 'm_eProvidedPropertyType' in value
+            && 'm_strValue' in value
             && parseFloat(value.m_strValue) !== 0) {
             const propertyType = value.m_eProvidedPropertyType as string;
             if (propertyType in statMap) {
                 const statInfo = statMap[propertyType as keyof typeof statMap];
-                if (statInfo.mod_type !== 'skip' 
+                if (statInfo.mod_type !== 'skip'
                     && statInfo.mod_type !== 'percent'
-                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional"
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
-                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active"))
                     && item.itemkey !== "Divine Barrier" && item.itemkey !== "Crippling Headshot") {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat] = numericValue;
                     }
-                }  else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue)) {
                         modifiers[statInfo.stat + '_percent'] = numericValue;
                     }
-                } else if (statInfo.mod_type !== 'skip' 
-                    && statInfo.mod_type !== 'percent' 
+                } else if (statInfo.mod_type !== 'skip'
+                    && statInfo.mod_type !== 'percent'
                     && item.itemkey === "Divine Barrier"
-                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional"
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
-                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )) {
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active"))) {
 
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue) && key !== "BonusMoveSpeed") {
                         modifiers[statInfo.stat] = numericValue;
                     }
-                } else if (statInfo.mod_type !== 'skip' 
-                    && statInfo.mod_type !== 'percent' 
+                } else if (statInfo.mod_type !== 'skip'
+                    && statInfo.mod_type !== 'percent'
                     && item.itemkey === "Crippling Headshot"
-                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional" 
+                    && value.m_UsageFlags !== "APUsageFlag_ModifierConditional"
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
-                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active") )) {
+                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active"))) {
 
                     const numericValue = parseFloat(value.m_strValue);
                     if (!isNaN(numericValue) && !(key.includes("ResistReduction"))) {
@@ -95,11 +96,13 @@ const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 let cachedCharacters: heroesWithName[] | null = null;
 let cachedItems: upgradesWithName[] | null = null;
 export let cachedAbilities: AWithKey[] | null = null;
+let cachedSkillNameMap: skillnamemap[] | null = null;
 
 // Caching variables for raw JSON data
 let cachedCharactersJson: allHeroes | null = null;
 let cachedItemsJson: upgradesWithName | null = null;
 let cachedAbilitiesJson: RootObject | null = null;
+let cachedSkillNameMapJson: skillnamemap | null = null;
 
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
@@ -137,6 +140,13 @@ async function getAbilitiesJson(): Promise<RootObject> {
     }
     return cachedAbilitiesJson;
 }
+async function getSkillNamesMap(): Promise<skillnamemap> {
+    if (!cachedSkillNameMapJson) {
+        cachedSkillNameMapJson = await readJsonFile<skillnamemap>(skillNamesPath);
+    }
+    return cachedSkillNameMapJson
+}
+
 // if you want to see all characters regardless of in-game disabled status, use "m_strIconImageSmall" instead "m_strSelectionImage"
 export async function getCharacters(): Promise<heroesWithName[]> {
     if (cachedCharacters) {
@@ -174,6 +184,7 @@ export async function getCharacter(name: string): Promise<heroesWithName | undef
     const heroKey = `hero_${name.toLowerCase()}`;
     return characters.find(character => character.name === heroKey);
 }
+
 
 export async function getItems(): Promise<upgradesWithName[]> {
     if (cachedItems) {
@@ -247,12 +258,27 @@ export async function getAbilitiesbyHero(): Promise<AWithKey[]> {
 
     try {
         const abilities = await getAbilitiesJson();
+        const abilitynamemap = await getSkillNamesMap();
         const alist: AWithKey[] = Object.entries(abilities)
             .map(([heron, adat]) => {
                 let key: keyof typeof adat;
                 for (key in adat) {
                     if (adat[key].m_strAbilityImage !== undefined) {
                         adat[key].m_strAbilityImage = convertImagePath(adat[key].m_strAbilityImage);
+                    }
+                    switch (key) {
+                        case "ESlot_Signature_1":
+                            adat[key]._class = abilitynamemap[heron].ESlot_Signature_1;
+                            break;
+                        case "ESlot_Signature_2":
+                            adat[key]._class = abilitynamemap[heron].ESlot_Signature_2;
+                            break;
+                        case "ESlot_Signature_3":
+                            adat[key]._class = abilitynamemap[heron].ESlot_Signature_3;
+                            break;
+                        case "ESlot_Signature_4":
+                            adat[key]._class = abilitynamemap[heron].ESlot_Signature_4;
+                            break;
                     }
                 }
                 return {
@@ -313,7 +339,7 @@ let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data 
 
 //     // Retrieves non-zero skill properties & skill image path
 
-    
+
 //     })
 
 
@@ -343,7 +369,7 @@ export async function getHeroStartingStats(name: string): Promise<allStats> {
             ...heroSSD[eVSD as keyof typeof heroSSD][vODS],
             ...heroSSD[eSSD as keyof typeof heroSSD][vDS]
         ];
-        const startStats = GameHeroes[hero_id]['m_mapStartingStats'] as {[key:string]: number};
+        const startStats = GameHeroes[hero_id]['m_mapStartingStats'] as { [key: string]: number };
         const weaponStats = HeroAbilities?.find((element) => element.heroname === hero_id)?.adata.ESlot_Weapon_Primary.m_WeaponInfo;
 
         var StatsZero = {} as allStats;

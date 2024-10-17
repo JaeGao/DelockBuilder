@@ -4,107 +4,107 @@ export interface heroesWithName {
 }
 
 export interface allHeroes {
-    [key:string]: heroData;
+    [key: string]: heroData;
 }
 
 export type heroData = heroDatabase | heroDatamSS | heroDatamBA | heroDatamISI | heroDatamPB | heroDatamLI | heroDatavAGDVO | heroDatavAPS | heroDatahSUI | heroDatamScaleStats | heroDatahSD | heroDatamSLUU | heroDatamSSS;
 
 interface heroDatabase {
-    [key:string]: string | string[] | boolean | number | number[];
+    [key: string]: string | string[] | boolean | number | number[];
 }
 
 export interface heroDatamSS {
-    [key:string]: {
-        [key:string]: number;
+    [key: string]: {
+        [key: string]: number;
     }
 }
 
 interface heroDatamBA {
-    [key:string]: {
-        [key:string]: string;
+    [key: string]: {
+        [key: string]: string;
     }
 }
 
 interface heroDatamISI {
-    [key:string]: {
-        [key:string]: {
-            [key:string]: number[];
+    [key: string]: {
+        [key: string]: {
+            [key: string]: number[];
         }
     }
 }
 
 interface heroDatamPB {
-    [key:string]: {
-        [key:string]: {
-            [key:string]: number | string;
+    [key: string]: {
+        [key: string]: {
+            [key: string]: number | string;
         }
     }
 }
 
-interface heroDatamLI { 
-    [key:string]: m_mapLevelInfo;
+interface heroDatamLI {
+    [key: string]: m_mapLevelInfo;
 }
-    interface m_mapLevelInfo {
-        [key:string]: m_MLI;
+interface m_mapLevelInfo {
+    [key: string]: m_MLI;
+}
+export interface m_MLI {
+    [key: string]: number | boolean | {
+        [key: string]: number;
     }
-        interface m_MLI {
-            [key:string]: number | boolean | {
-                [key:string]: number;
-            }
-        }
+}
 
 interface heroDatavAGDVO {
-    [key:string]: vAGDVO[];
+    [key: string]: vAGDVO[];
 }
-    interface vAGDVO {
-        [key:string]: string;
-    }
+interface vAGDVO {
+    [key: string]: string;
+}
 
 interface heroDatavAPS {
-    [key:string]: vAPS[];
+    [key: string]: vAPS[];
 }
-    interface vAPS {
-        [key:string]: string | number;
-    }
+interface vAPS {
+    [key: string]: string | number;
+}
 
 interface heroDatahSUI {
-    [key:string]: hSUI;
+    [key: string]: hSUI;
 }
-    interface hSUI {
-        [key:string]: string | vDS[];
-    }
-        interface vDS {
-            [key:string]: string;
-        }
+interface hSUI {
+    [key: string]: string | vDS[];
+}
+interface vDS {
+    [key: string]: string;
+}
 
 interface heroDatamScaleStats {
-    [key:string]: mSS;
+    [key: string]: mSS;
 }
-    interface mSS {
-        [key:string]: {
-            [key:string]: string | number;
-        }
+interface mSS {
+    [key: string]: {
+        [key: string]: string | number;
     }
+}
 
 interface heroDatahSD {
-    [key:string]: hSD;
+    [key: string]: hSD;
 }
-    interface hSD {
-        [key:string]: string[];
-    }
+interface hSD {
+    [key: string]: string[];
+}
 
 interface heroDatamSLUU {
-    [key:string]: mSLUU;
+    [key: string]: mSLUU;
 }
-    interface mSLUU {
-        [key:string]: number
-    }
+interface mSLUU {
+    [key: string]: number
+}
 
 interface heroDatamSSS {
-    [key:string]: SSD;
+    [key: string]: SSD;
 }
-    interface SSD {
-        [key:string]: {
-            [key:string]: string | string[];
-        };
-    }
+interface SSD {
+    [key: string]: {
+        [key: string]: string | string[];
+    };
+}

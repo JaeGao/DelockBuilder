@@ -1,10 +1,10 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import Image from 'next/image';
+import Image from "next/image";
 import BuilderTab from './builderTab';
 import { skip } from 'node:test';
-import build from 'next/dist/build';
+import ItemTooltip from './ItemTooltip';
 
 interface ItemsDisplayProps {
     equipediItemsByCategory?: (upgradesWithName | null)[][];
@@ -45,9 +45,6 @@ const getCategoryActiveColor = (category: string): string => {
             return 'bg-[#b1f571]';
         case 'Spirit':
             return 'bg-[#dbb2f7]';
-        case 'Utility':
-        case 'Save':
-            return 'bg-[#b1f571]';
         case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
@@ -91,103 +88,111 @@ const findTier = (tier: string): number => {
 
 const tierCost = ["500", "1,250", "3,000", "6,200"];
 
-const ItemCard: React.FC<upgradesWithName & { onSelect: () => void; isEquipped: boolean }> = ({ name, desc, onSelect, isEquipped }) => {
-    const category = getCategory(desc.m_eItemSlotType as string || '');
-    const categoryColor = getCategoryColor(category);
-    const actColor = getCategoryActiveColor(category);
-
-    return (
-        <div
-            className={`w-20 h-24 m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''}`}
-            onClick={onSelect}
-            draggable
-            onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', JSON.stringify({ name, desc }));
-            }}
-        >
-            <div className="w-full h-full flex flex-col relative justify-center">
-                <div className={`${desc.isActive === true ? actColor : categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
-                    {desc.m_strAbilityImage && (
-                        <Image
-                            src={desc.m_strAbilityImage as string}
-                            alt={name}
-                            width={40}
-                            height={40}
-                            className="inline-block filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
-                        />
-                    )}
-                </div>
-                <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
-                    <p className="text-[#151912] text-xs leading-tight text-center w-full break-words hyphens-auto">{name}</p>
-                </div>
-                <div className={`absolute left-1/2 -translate-x-1/2 ${desc.isActive !== undefined && desc.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
-                    <p className="text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     items,
     onItemSelect,
-    equippedItems, equipediItemsByCategory
+    equippedItems,
+    equipediItemsByCategory
 }) => {
     const buildname = useRef<HTMLInputElement>(null);
     const buildAuthor = useRef<HTMLInputElement>(null);
-    const SaveImportTEMP = useRef<HTMLTextAreaElement>(null);
-    let pageinfo = {};
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder', 'Save'];
+    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
     const [builderItems, setBuilderItems] = useState<upgradesWithName[]>([]);
     const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
+    const [hoveredItem, setHoveredItem] = useState<upgradesWithName | null>(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-    const categorizedItems = items.reduce((acc, item) => {
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+    }, []);
+
+    const calculateTierBonus = useCallback((item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
-        if (!acc[category]) {
-            acc[category] = { 1: [], 2: [], 3: [], 4: [] };
+        const tier = findTier(item.desc.m_iItemTier as string);
+        let bonus = 0;
+
+        switch (category) {
+            case 'Weapon':
+                bonus = tier === 1 ? 6 : (tier === 2 ? 10 : (tier === 3 ? 14 : 18));
+                return { EBaseWeaponDamageIncrease: bonus };
+            case 'Vitality':
+                bonus = tier === 1 ? 11 : (tier === 2 ? 14 : (tier === 3 ? 17 : 20));
+                return { EBaseHealth_percent: bonus };
+            case 'Spirit':
+                bonus = tier === 1 ? 4 : (tier === 2 ? 8 : (tier === 3 ? 12 : 16));
+                return { ETechPower: bonus };
+            default:
+                return {};
         }
-        const tier = findTier(item.desc.m_iItemTier as string) || 1;
-        acc[category][tier].push(item);
-        return acc;
-    }, {} as Record<string, Record<number, upgradesWithName[]>>);
+    }, []);
 
-    const isItemEquipped = (item: upgradesWithName) => {
+    const ItemCard = useCallback(({ name, desc, onSelect, isEquipped, isInBuilder }: upgradesWithName & { onSelect: () => void; isEquipped: boolean; isInBuilder: boolean }) => {
+        const category = getCategory(desc.m_eItemSlotType as string || '');
+        const categoryColor = getCategoryColor(category);
+        const actColor = getCategoryActiveColor(category);
+
+        return (
+            <div
+                className={`w-20 h-24 select-none  m-2 cursor-pointer overflow-hidden ${isEquipped ? 'opacity-50' : ''} ${isInBuilder ? 'border-2 border-double rounded-md border-blue-600' : ''}`}
+                onClick={onSelect}
+                draggable
+                onDragStart={(e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({ name, desc }));
+                }}
+                onMouseEnter={() => setHoveredItem({ name, desc } as upgradesWithName)}
+                onMouseLeave={() => setHoveredItem(null)}
+                onMouseMove={handleMouseMove}
+            >
+                <div className="w-full h-full flex flex-col relative justify-center">
+                    <div className={`${desc.isActive === true ? actColor : categoryColor} flex-grow flex items-center justify-center rounded-t-md`}>
+                        {desc.m_strAbilityImage && (
+                            <Image
+                                src={desc.m_strAbilityImage as string}
+                                alt={name}
+                                width={40}
+                                height={40}
+                                className="inline-block pointer-events-none filter brightness-0 saturate-100 hover:scale-110 transition-transform duration-100 ease-in-out"
+                                style={{
+                                    maxWidth: "100%",
+                                    height: "auto"
+                                }} />
+                        )}
+                    </div>
+                    <div className="flex h-12 bg-[#FFF0D7] items-center text-center p-1 rounded-b-md">
+                        <p className="text-[#151912] text-xs font-Deadlock-shop leading-tight text-center w-full break-words hyphens-auto">{name}</p>
+                    </div>
+                    <div className={`absolute left-1/2 -translate-x-1/2 ${desc.isActive !== undefined && desc.isActive === true ? '' : 'hidden'} bg-black rounded-md`}>
+                        <p className="text-[#FFF0D7] text-xs text-center mx-2">ACTIVE</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }, [handleMouseMove]);
+
+    const categorizedItems = useMemo(() => {
+        return items.reduce((acc, item) => {
+            const category = getCategory(item.desc.m_eItemSlotType as string || '');
+            if (!acc[category]) {
+                acc[category] = { 1: [], 2: [], 3: [], 4: [] };
+            }
+            const tier = findTier(item.desc.m_iItemTier as string) || 1;
+            acc[category][tier].push(item);
+            return acc;
+        }, {} as Record<string, Record<number, upgradesWithName[]>>);
+    }, [items]);
+
+    const isItemEquipped = useCallback((item: upgradesWithName) => {
         return equippedItems.some(equippedItem => equippedItem.name === item.name);
-    };
+    }, [equippedItems]);
 
-    const isItemInBuilder = (item: upgradesWithName) => {
+    const isItemInBuilder = useCallback((item: upgradesWithName) => {
         return builderItems.some(builderItem => builderItem.name === item.name) ||
             builderBoxes.some(box => box.items.some(boxItem => boxItem.name === item.name));
-    };
+    }, [builderItems, builderBoxes]);
 
-    const handleSave = () => {
-        let build = {
-            buildname: buildname.current?.value,
-            buildAuthor: buildAuthor.current?.value,
-            buildBoxes: builderBoxes.map(
-                box => ({
-                    title: box.title,
-                    description: box.description,
-                    items: box.items.map(item => item.name)
-                })
-            ),
-            inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.name))
-        };
-        pageinfo = build;
-        return build
-    }
-    const handleImport = (importjson: any) => {
-        if (importjson.value !== '') {
-            let build = JSON.parse(importjson.value);
-            if (build.buildBoxes) {
-                build.buildBoxes.forEach((box: any) => {
-                    addNewBox(box.title, box.description, box.items.map((itemkey: string) => items.find(item => item.name === itemkey)));
-                })
-            }
-        }
-    }
+
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -238,7 +243,6 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
         setBuilderBoxes(prevBoxes => {
             const boxToRemove = prevBoxes.find(box => box.id === boxId);
             if (boxToRemove) {
-                // Move items from the removed box back to unassigned items
                 setBuilderItems(prev => [...prev, ...boxToRemove.items]);
             }
             return prevBoxes.filter(box => box.id !== boxId);
@@ -282,7 +286,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
     };
 
     return (
-        <div className="relative">
+        <div className="relative" onMouseMove={handleMouseMove}>
             <div className="flex">
                 {categories.map(category => (
                     category === 'Save' ? <div key={'null'}></div> :
@@ -297,67 +301,40 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                             {category}
                         </button>)
                 ))}
-                {(process.env.NEXT_PUBLIC_SAVE_TOGGLE === "true") ? <div className="flex justify-end md:flex-grow">
-                    <button
-                        key={'Save'}
-                        className={`px-2 md:px-2 py-2 text-sm font-medium rounded ${activeCategory === 'Save' ? `${getCategoryActiveColor('Save')} text-black` : 'bg-blue-500 text-white'} `}
-                        onClick={() => setActiveCategory('Save')}
-                    >
-                        Save/Find Build
-                    </button>
-                </div> : <div key={'null'}></div>}
 
             </div>
             <div className="flex flex-col w-full">
-                {activeCategory === 'Save' ? (
+                {activeCategory === 'Save' ? (<div className='p-4 bg-gray-900 rounded-lg'>
+                    <input
+                        key={'buildname'}
+                        type="text"
+                        ref={buildname}
+                        placeholder='Enter Build Name'
+                        className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                    >
+                    </input>
+                    <input
+                        key={'author'}
+                        type='text'
+                        ref={buildAuthor}
+                        placeholder='Enter Author Name'
+                        className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
+                    >
+                    </input>
+                    <button
+                        className="hover:bg-blue-400 active:bg-[#b1f571] bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={() => {
+
+                        }}
+                    >
+                        Submit
+                    </button>
 
 
-                    <div className='p-4 bg-gray-900 rounded-lg'>
-                        <input
-                            key={'buildname'}
-                            type="text"
-                            ref={buildname}
-                            placeholder='Enter Build Name'
-                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
-                        >
-                        </input>
-                        <input
-                            key={'author'}
-                            type='text'
-                            ref={buildAuthor}
-                            placeholder='Enter Author Name'
-                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
-                        >
-                        </input>
-                        <button
-                            className="hover:bg-blue-400 active:bg-[#b1f571] bg-blue-500 text-white px-4 py-2 rounded"
-                            onClick={() => {
-                                console.log(handleSave())
-                            }}
-                        >
-                            Submit
-                        </button>
-
-                        <textarea
-                            key={'SaveImportTEMP'}
-                            ref={SaveImportTEMP}
-                            placeholder='Paste Build Here'
-                            className='w-full p-2 mb-2 bg-gray-700 text-white rounded'
-                        >
-                        </textarea>
-                        <button
-                            key={'SaveImportButton'}
-                            className="hover:bg-blue-400 active:bg-[#b1f571] transition-all bg-blue-500 text-white px-4 py-2 rounded"
-                            onClick={() => { handleImport(SaveImportTEMP.current) }}
-                        >
-                            Import
-                        </button>
-                    </div>
-
-
-
+                </div>
                 ) : activeCategory === 'Builder' ? (
                     <BuilderTab
+                        allItems={items}
                         items={builderItems}
                         boxes={builderBoxes}
                         onAddItem={addItemToBuilder}
@@ -365,6 +342,8 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                         onAddBox={addNewBox}
                         onRemoveBox={removeBox}
                         onMoveItem={moveItemBetweenBoxes}
+                        setBuilderItems={setBuilderItems}
+                        setBuilderBoxes={setBuilderBoxes}
                     />
                 ) : (
                     <div className="flex">
@@ -372,8 +351,17 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                             {[1, 2, 3, 4].map(tier => (
                                 <div key={tier}
                                     className={`${tier % 2 === 0 ? getCategoryBackground(activeCategory)[1] : getCategoryBackground(activeCategory)[0]} ${tier === 1 ? 'rounded-tr-lg' : ''} ${tier === 4 ? 'rounded-b-lg' : ''} p-1`}>
-                                    <span className="text-[#98ffde] text-shadow">
-                                        <Image src="/images/Souls_iconColored.png" alt="Souls" width={13} height={23} className="inline mr-1" />
+                                    <span className="text-[#70F8C1] text-shadow">
+                                        <Image
+                                            src="/images/icon_soul.svg"
+                                            alt="Souls"
+                                            width={13}
+                                            height={23}
+                                            className="inline mr-1"
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto"
+                                            }} />
                                         <b>{tierCost[tier - 1]}</b>
                                     </span>
                                     <div className="flex flex-wrap">
@@ -382,7 +370,8 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                                                 key={item.name}
                                                 {...item}
                                                 onSelect={() => onItemSelect(item)}
-                                                isEquipped={isItemEquipped(item) || isItemInBuilder(item)}
+                                                isEquipped={isItemEquipped(item)}// || isItemInBuilder(item)
+                                                isInBuilder={isItemInBuilder(item)}
                                             />
                                         ))}
                                     </div>
@@ -403,8 +392,19 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                     </div>
                 )}
             </div>
+            {hoveredItem && (
+                <div
+                    className="fixed z-50 pointer-events-none"
+                    style={{
+                        left: `${mousePosition.x + 10}px`,
+                        top: `${mousePosition.y + 10}px`
+                    }}
+                >
+                    <ItemTooltip item={hoveredItem} tierBonus={calculateTierBonus(hoveredItem)} />
+                </div>
+            )}
         </div>
     );
 };
 
-export default ItemsDisplay;
+export default React.memo(ItemsDisplay);

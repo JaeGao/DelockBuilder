@@ -55,23 +55,32 @@ export interface skillDisplayGroups {
 }
 
 export interface skillUpgrades {
-    [key:string]: [{
-        [key:string]: string;
+    [key: string]: [{
+        [key: string]: string;
     }]
 }
 
 export type skillScaleData = skillScaleDataA & skillScaleDataB;
 
 export interface skillScaleDataA {
-    [key:string]: { 
-        [key:string]: string | number;
+    [key: string]: {
+        [key: string]: string | number;
     }
 }
 
 export interface skillScaleDataB {
-    [key:string]: { 
-        [key:string]: string[];
+    [key: string]: {
+        [key: string]: string[];
     }
+}
+export interface skillnamemap {
+    [key: string]: skillnamemapObj;
+}
+export interface skillnamemapObj {
+    ESlot_Signature_1: string;
+    ESlot_Signature_2: string;
+    ESlot_Signature_3: string;
+    ESlot_Signature_4: string;
 }
 
 export interface Weapon_base {

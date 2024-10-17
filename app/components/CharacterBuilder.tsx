@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image from "next/image";
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import { heroesWithName } from '../lib/herointerfaces';
+import { heroesWithName, m_MLI } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 
@@ -94,14 +94,71 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         skillUpgradeInfo.map(() => [])
     );
     const [skillStats, setSkillStats] = useState<skillProperties[]>(skillProps);
+    const [characterLevel, setCharacterLevel] = useState(1);
+    const [budget, setBudget] = useState(0);
+    const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
+    const [leveledStats, setLeveledStats] = useState<allStats>(initialStats);
+    const [abilityPoints, setAbilityPoints] = useState<number>(0);
+
+    useEffect(() => {
+        let newLeveledStats = { ...initialStats };
+        let newAbilityPoints = 0;
+        let totalStandardUpgrades = 0;
+
+        for (let level = 1; level <= characterLevel; level++) {
+            const levelInfo = (character.data as any).m_mapLevelInfo[level.toString()];
+
+            if (levelInfo) {
+                if (level === characterLevel) {
+                    setBudget(levelInfo.m_unRequiredGold);
+                }
+
+                if (levelInfo.m_mapBonusCurrencies && 'EAbilityPoints' in levelInfo.m_mapBonusCurrencies) {
+                    newAbilityPoints += levelInfo.m_mapBonusCurrencies.EAbilityPoints;
+                }
+
+                if (levelInfo.m_bUseStandardUpgrade) {
+                    totalStandardUpgrades++;
+                }
+            }
+        }
+
+        if (totalStandardUpgrades > 0) {
+            const levelUpgrades = (character.data as any).m_mapStandardLevelUpUpgrades;
+
+            const meleeDamageIncrease = (levelUpgrades.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
+
+            newLeveledStats.EBulletDamage += (levelUpgrades.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
+            newLeveledStats.ELightMeleeDamage += meleeDamageIncrease;
+
+            const heavyToLightRatio = initialStats.EHeavyMeleeDamage / initialStats.ELightMeleeDamage;
+
+            newLeveledStats.EHeavyMeleeDamage += meleeDamageIncrease * heavyToLightRatio;
+
+            newLeveledStats.EMaxHealth += (levelUpgrades.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL || 0) * totalStandardUpgrades;
+        }
+
+        setLeveledStats(newLeveledStats);
+        setAbilityPoints(newAbilityPoints);
+
+    }, [characterLevel, character.data, initialStats]);
+
+    const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newLevel = parseInt(event.target.value, 10);
+        setCharacterLevel(newLevel);
+    };
+
+    const handleBudgetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newBudget = parseInt(event.target.value, 10);
+        setBudget(Math.max(newBudget, character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']));
+    };
+
 
 
     useEffect(() => {
         const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
             (item): item is upgradesWithName => item !== null
         );
-
-        console.log('Current skillUpgrades state:', skillUpgrades);
 
         fetch('/api/calculateStats', {
             method: 'POST',
@@ -111,7 +168,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             body: JSON.stringify({
                 characterName: character.name.replace(/^hero_/, ''),
                 equippedItems: allEquippedItems,
-                characterStatInput: initialStats,
+                characterStatInput: leveledStats, // Use leveledStats instead of currentStats
                 heroSkills: heroSkills,
                 skillProperties: skillProps,
                 skillUpgrades: skillUpgrades,
@@ -127,13 +184,30 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             .then(newStats => {
                 setCurrentStats(newStats.characterStats);
                 setSkillStats(newStats.skillStats);
-                console.log('New stats calculated:', newStats);
             })
             .catch(error => {
                 console.error('Error calculating stats:', error);
                 setErrorMessage(error.message || 'Error calculating stats');
             });
-    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades]);
+    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades, leveledStats]);
+
+    const [totalCost, setTotalCost] = useState(0);
+
+    useEffect(() => {
+        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
+            (item): item is upgradesWithName => item !== null
+        );
+        const newTotalCost = allEquippedItems.reduce((sum, item) => {
+            const tierCost = {
+                "EModTier_1": 500,
+                "EModTier_2": 1250,
+                "EModTier_3": 3000,
+                "EModTier_4": 6200
+            };
+            return sum + (tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0);
+        }, 0);
+        setTotalCost(newTotalCost);
+    }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
 
     const handleItemToggle = (item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
@@ -180,6 +254,20 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             });
         } else {
             // Item is not equipped, so try to equip it
+            const tierCost = {
+                "EModTier_1": 500,
+                "EModTier_2": 1250,
+                "EModTier_3": 3000,
+                "EModTier_4": 6200
+            };
+            const itemCost = tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0;
+
+            if (totalCost + itemCost > budget) {
+                setErrorMessage('Not enough budget to equip this item!');
+                setTimeout(() => setErrorMessage(null), 3000);
+                return;
+            }
+
             const emptyIndex = primaryGrid.findIndex(slot => slot === null);
             if (emptyIndex !== -1) {
                 // There's space in the primary grid
@@ -208,6 +296,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
     };
 
+
     const handleSkillUpgrade = (skillIndex: number) => {
         setskillUpgrades(prevUpgrades => {
             const newUpgrades = [...prevUpgrades];
@@ -218,7 +307,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
             } else {
                 newUpgrades[skillIndex] = [];
             }
-            console.log(`Skill ${skillIndex + 1} upgraded. New state:`, newUpgrades);
+            //console.log(`Skill ${skillIndex + 1} upgraded. New state:`, newUpgrades);
             return newUpgrades;
         });
     };
@@ -235,14 +324,10 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
     return (
         <div>
             <Navbar />
-            <div className="flex mt-4">
-                <div className={`p-4
-                flex flex-col 2xl:flex-row
-                w-full
-                pr-[clamp(212px,calc(25vw+12px),312px)]
-                `}>
-                    <div className="flex flex-row 2xl:flex-col flex-wrap min-w-60 mr-8 px-3 ">
-                        <div className="mb-2 px-2 flex flex-col items-center float-left ">
+            <div className="flex mt-4 ">
+                <div className={`p-4 flex flex-col 2xl:flex-row w-full pr-[max(17%,200px)] mr-10`}>
+                    <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap  mr-8 px-3 ">
+                        <div className="mb-2 px-6 flex flex-col items-center float-left select-none ">
                             <div className="">
                                 <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
                             </div>
@@ -252,10 +337,44 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                     alt={heroName}
                                     width={120}
                                     height={120}
-                                    className="rounded-full mb-2 object-none"
+                                    className="rounded-full mb-2 object-none select-none pointer-events-none"
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto"
+                                    }} />
+                            )}
+                            {/* Level Slider */}
+                            <div className="w-full mb-4">
+                                <label htmlFor="level-slider" className="block text-sm font-medium  text-amber-500">
+                                    Character Level: {characterLevel}
+                                </label>
+                                <input
+                                    type="range"
+                                    id="level-slider"
+                                    min="1"
+                                    max={maxLevel}
+                                    value={characterLevel}
+                                    onChange={handleLevelChange}
+                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                                 />
-                            )
-                            }<div className="flex space-x-2">
+                            </div>
+                            {/* Budget Input */}
+                            <div className="w-full mb-4 ">
+                                <label htmlFor="budget-input" className="block text-sm font-medium  text-amber-500">
+                                    Budget:
+                                </label>
+                                <input
+                                    type="number"
+                                    id="budget-input"
+                                    value={budget}
+                                    onChange={handleBudgetChange}
+                                    min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-amber-500 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                />
+                            </div>
+                            {/* Skill Icons */}
+                            <p className="text-amber-500">Total Cost: {totalCost} / {budget}</p>
+                            <div className="flex space-x-2 ">
                                 {skillIcons.map((skillIcon, index) => (
                                     <div key={index} className="relative">
                                         <Image
@@ -265,15 +384,19 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                                             height={50}
                                             className="rounded-full cursor-pointer"
                                             onClick={() => handleSkillUpgrade(index)}
-                                        />
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto"
+                                            }} />
                                         <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
                                             {skillUpgrades[index].length}
                                         </div>
                                     </div>
                                 ))}
+
                             </div>
                         </div>
-                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4">
+                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">
                             <ItemGrid
                                 title="Weapon"
                                 items={weaponItems}
@@ -297,7 +420,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                         </div>
                     </div>
 
-                    <div className="w-full max-w-6xl mt-2">
+                    <div className="w-full  mt-2 select-none">
                         {errorMessage && (
                             <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
                                 {errorMessage}
