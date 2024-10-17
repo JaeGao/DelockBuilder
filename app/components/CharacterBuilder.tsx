@@ -106,14 +106,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         let totalStandardUpgrades = 0;
 
         for (let level = 1; level <= characterLevel; level++) {
-            const levelInfo = character.data.m_mapLevelInfo[level.toString() as keyof typeof character.data.m_mapLevelInfo];
+            const levelInfo = (character.data as any).m_mapLevelInfo[level.toString()];
 
             if (levelInfo) {
                 if (level === characterLevel) {
                     setBudget(levelInfo.m_unRequiredGold);
                 }
 
-                if (levelInfo.m_mapBonusCurrencies && levelInfo.m_mapBonusCurrencies.EAbilityPoints) {
+                if (levelInfo.m_mapBonusCurrencies && 'EAbilityPoints' in levelInfo.m_mapBonusCurrencies) {
                     newAbilityPoints += levelInfo.m_mapBonusCurrencies.EAbilityPoints;
                 }
 
@@ -124,28 +124,25 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
         }
 
         if (totalStandardUpgrades > 0) {
-            const levelUpgrades = character.data.m_mapStandardLevelUpUpgrades;
+            const levelUpgrades = (character.data as any).m_mapStandardLevelUpUpgrades;
 
-            // Calculate the base melee damage increase
-            const meleeDamageIncrease = levelUpgrades.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL * totalStandardUpgrades;
+            const meleeDamageIncrease = (levelUpgrades.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
 
-            newLeveledStats.EBulletDamage += levelUpgrades.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL * totalStandardUpgrades;
+            newLeveledStats.EBulletDamage += (levelUpgrades.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
             newLeveledStats.ELightMeleeDamage += meleeDamageIncrease;
 
-            // Calculate the heavy melee damage increase
-            // First, get the ratio of base heavy melee to base light melee
             const heavyToLightRatio = initialStats.EHeavyMeleeDamage / initialStats.ELightMeleeDamage;
 
-            // Then, apply this ratio to the melee damage increase
             newLeveledStats.EHeavyMeleeDamage += meleeDamageIncrease * heavyToLightRatio;
 
-            newLeveledStats.EMaxHealth += levelUpgrades.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL * totalStandardUpgrades;
+            newLeveledStats.EMaxHealth += (levelUpgrades.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL || 0) * totalStandardUpgrades;
         }
 
         setLeveledStats(newLeveledStats);
         setAbilityPoints(newAbilityPoints);
 
-    }, [characterLevel, character.data.m_mapLevelInfo, character.data.m_mapStandardLevelUpUpgrades, initialStats]);
+    }, [characterLevel, character.data, initialStats]);
+
     const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newLevel = parseInt(event.target.value, 10);
         setCharacterLevel(newLevel);
