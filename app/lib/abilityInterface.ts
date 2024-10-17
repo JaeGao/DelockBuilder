@@ -52,6 +52,7 @@ export interface skillProperties {
 export interface skillDisplayGroups {
     key: string;
     name: string;
+    [key: string]: string;
 }
 
 export interface skillUpgrades {
