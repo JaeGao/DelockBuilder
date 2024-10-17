@@ -2,6 +2,9 @@ export interface heroesWithName {
     name: string;
     data: heroData;
 }
+export interface heroNameMap {
+    [key: string]: string;
+}
 
 export interface allHeroes {
     [key: string]: heroData;

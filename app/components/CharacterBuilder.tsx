@@ -17,6 +17,7 @@ interface ItemModifier {
 }
 
 interface CharacterBuilderProps {
+    characterNameFromMap: string
     character: heroesWithName;
     items: upgradesWithName[];
     initialStats: allStats;
@@ -24,10 +25,10 @@ interface CharacterBuilderProps {
 }
 
 
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, initialStats, abilities }) => {
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMap, character, items, initialStats, abilities }) => {
 
     const heroName = character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
-
+    const actualname = characterNameFromMap;
 
     // Getting Skills Data
     let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
@@ -329,12 +330,12 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ character, items, i
                     <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap  mr-8 px-3 ">
                         <div className="mb-2 px-6 flex flex-col items-center float-left select-none ">
                             <div className="">
-                                <h2 className="text-3xl font-bold mb-4">{heroName}</h2>
+                                <h2 className="text-3xl font-bold mb-4">{actualname}</h2>
                             </div>
                             {character.data.m_strIconHeroCard && (
                                 <Image
                                     src={character.data.m_strIconHeroCard as string}
-                                    alt={heroName}
+                                    alt={actualname}
                                     width={120}
                                     height={120}
                                     className="rounded-full mb-2 object-none select-none pointer-events-none"
