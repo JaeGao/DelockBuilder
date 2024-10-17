@@ -47,8 +47,8 @@ const getCategoryActiveColor = (category: string): string => {
         case 'Spirit':
             return 'bg-[#dbb2f7]';
         case 'Utility':
-        case 'Save':
-            return 'bg-[#b1f571]';
+        // case 'Save':
+        //     return 'bg-[#b1f571]';
         case 'Builder':
             return 'bg-[#4d9bfc]';
         default:
@@ -100,10 +100,10 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
 }) => {
     const buildname = useRef<HTMLInputElement>(null);
     const buildAuthor = useRef<HTMLInputElement>(null);
-    const SaveImportTEMP = useRef<HTMLTextAreaElement>(null);
+    // const SaveImportTEMP = useRef<HTMLTextAreaElement>(null);
     let pageinfo = {};
     const [activeCategory, setActiveCategory] = useState('Weapon');
-    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder', 'Save'];
+    const categories = ['Weapon', 'Vitality', 'Spirit', 'Builder'];
     const [isDraggingToBuilder, setIsDraggingToBuilder] = useState(false);
     const [builderItems, setBuilderItems] = useState<upgradesWithName[]>([]);
     const [builderBoxes, setBuilderBoxes] = useState<BuilderBoxProps[]>([]);
@@ -198,22 +198,22 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
             builderBoxes.some(box => box.items.some(boxItem => boxItem.name === item.name));
     }, [builderItems, builderBoxes]);
 
-    const handleSave = () => {
-        let build = {
-            buildname: buildname.current?.value,
-            buildAuthor: buildAuthor.current?.value,
-            buildBoxes: builderBoxes.map(
-                box => ({
-                    title: box.title,
-                    description: box.description,
-                    items: box.items.map(item => item.name)
-                })
-            ),
-            inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.name))
-        };
-        pageinfo = build;
-        return build
-    }
+    // const handleSave = () => {
+    //     let build = {
+    //         buildname: buildname.current?.value,
+    //         buildAuthor: buildAuthor.current?.value,
+    //         buildBoxes: builderBoxes.map(
+    //             box => ({
+    //                 title: box.title,
+    //                 description: box.description,
+    //                 items: box.items.map(item => item.name)
+    //             })
+    //         ),
+    //         inbuild: equipediItemsByCategory?.map(items => items.map(item => item?.name))
+    //     };
+    //     pageinfo = build;
+    //     return build
+    // }
 
     const handleImport = (importjson: any) => {
         if (importjson.value !== '') {
@@ -333,7 +333,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                             {category}
                         </button>)
                 ))}
-                {(process.env.NEXT_PUBLIC_SAVE_TOGGLE === "true") ? <div className="flex justify-end md:flex-grow">
+                {/* {(process.env.NEXT_PUBLIC_SAVE_TOGGLE === "true") ? <div className="flex justify-end md:flex-grow">
                     <button
                         key={'Save'}
                         className={`px-2 md:px-2 py-2 text-sm font-medium rounded ${activeCategory === 'Save' ? `${getCategoryActiveColor('Save')} text-black` : 'bg-blue-500 text-white'} `}
@@ -341,7 +341,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                     >
                         Save/Find Build
                     </button>
-                </div> : <div key={'null'}></div>}
+                </div> : <div key={'null'}></div>} */}
             </div>
             <div className="flex flex-col w-full">
                 {activeCategory === 'Save' ? (<div className='p-4 bg-gray-900 rounded-lg'>
@@ -370,7 +370,7 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                         Submit
                     </button>
 
-                    <textarea
+                    {/* <textarea
                         key={'SaveImportTEMP'}
                         ref={SaveImportTEMP}
                         placeholder='Paste Build Here'
@@ -383,10 +383,11 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                         onClick={() => { handleImport(SaveImportTEMP.current) }}
                     >
                         Import
-                    </button>
+                    </button> */}
                 </div>
                 ) : activeCategory === 'Builder' ? (
                     <BuilderTab
+                        allItems={items}
                         items={builderItems}
                         boxes={builderBoxes}
                         onAddItem={addItemToBuilder}
@@ -394,6 +395,8 @@ export const ItemsDisplay: React.FC<ItemsDisplayProps> = ({
                         onAddBox={addNewBox}
                         onRemoveBox={removeBox}
                         onMoveItem={moveItemBetweenBoxes}
+                        setBuilderItems={setBuilderItems}
+                        setBuilderBoxes={setBuilderBoxes}
                     />
                 ) : (
                     <div className="flex">

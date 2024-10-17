@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { upgradesWithName } from '../lib/itemInterfaces';
@@ -14,6 +14,9 @@ interface BuilderBoxProps {
 interface BuilderTabProps {
     items: upgradesWithName[];
     boxes: BuilderBoxProps[];
+    allItems: upgradesWithName[];
+    setBuilderItems: React.Dispatch<React.SetStateAction<upgradesWithName[]>>;
+    setBuilderBoxes: React.Dispatch<React.SetStateAction<BuilderBoxProps[]>>;
     onAddItem: (item: upgradesWithName) => void;
     onRemoveItem: (item: upgradesWithName) => void;
     onAddBox: (title: string, description: string) => void;
@@ -108,13 +111,18 @@ const BuilderTab: React.FC<BuilderTabProps> = ({
     items,
     boxes,
     onAddItem,
+    allItems,
     onRemoveItem,
     onAddBox,
     onRemoveBox,
-    onMoveItem
+    onMoveItem,
+    setBuilderItems,
+    setBuilderBoxes
 }) => {
     const [newBoxTitle, setNewBoxTitle] = useState('');
     const [newBoxDescription, setNewBoxDescription] = useState('');
+    const [buildId, setBuildId] = useState<string | null>(null);
+    const [loadBuildId, setLoadBuildId] = useState('');
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -134,14 +142,92 @@ const BuilderTab: React.FC<BuilderTabProps> = ({
         }
     };
 
-    const addNewBox = () => {
+    const addNewBox = useCallback(() => {
         if (newBoxTitle) {
             onAddBox(newBoxTitle, newBoxDescription);
             setNewBoxTitle('');
             setNewBoxDescription('');
         }
-    };
+    }, [newBoxTitle, newBoxDescription, onAddBox]);
 
+    const saveBuild = useCallback(async () => {
+        const buildData = {
+            boxes: boxes.map(box => ({
+                id: box.id,
+                title: box.title,
+                description: box.description,
+                items: box.items.map(item => item.name)
+            })),
+            items: items.map(item => item.name)
+        };
+
+        console.log('Saving build data:', JSON.stringify(buildData, null, 2));
+
+        try {
+            const response = await fetch('/api/builds', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(buildData),
+            });
+
+            if (response.ok) {
+                const { id } = await response.json();
+                setBuildId(id);
+                console.log(`Build saved successfully with ID: ${id}`);
+                alert(`Build saved! Your build ID is: ${id}`);
+            } else {
+                const errorData = await response.json();
+                console.error('Error saving build:', errorData);
+                alert(`Error saving build: ${errorData.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error saving build:', error);
+            alert('Error saving build');
+        }
+    }, [boxes, items]);
+    const loadBuild = useCallback(async () => {
+        console.log(`Attempting to load build with ID: ${loadBuildId}`);
+        try {
+            const response = await fetch(`/api/builds?id=${loadBuildId}`);
+            if (response.ok) {
+                const buildData = await response.json();
+                console.log('Loaded build data:', JSON.stringify(buildData, null, 2));
+
+                // Clear existing boxes and items
+                setBuilderBoxes([]);
+                setBuilderItems([]);
+
+                // Add loaded boxes and their items
+                const newBoxes = buildData.boxes.map((box: any) => ({
+                    ...box,
+                    items: box.items.map((itemName: string) =>
+                        allItems.find(i => i.name === itemName)
+                    ).filter(Boolean) // Remove any undefined items
+                }));
+
+                setBuilderBoxes(newBoxes);
+
+                // Add unassigned items
+                const newUnassignedItems = buildData.items
+                    .map((itemName: string) => allItems.find(i => i.name === itemName))
+                    .filter(Boolean); // Remove any undefined items
+
+                setBuilderItems(newUnassignedItems);
+
+                console.log('Build loaded successfully');
+                alert('Build loaded successfully');
+            } else {
+                const errorData = await response.json();
+                console.error('Error loading build:', errorData);
+                alert(`Build not found: ${errorData.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error loading build:', error);
+            alert('Error loading build');
+        }
+    }, [loadBuildId, allItems, setBuilderBoxes, setBuilderItems]);
     return (
         <div className="p-4 bg-gray-900 rounded-lg">
             <div className="mb-4">
@@ -230,6 +316,31 @@ const BuilderTab: React.FC<BuilderTabProps> = ({
                     ))}
                 </SortableContext>
             </DndContext>
+
+            <div className="mt-4">
+                <button
+                    onClick={saveBuild}
+                    className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                >
+                    Save Build
+                </button>
+                {buildId && (
+                    <p className="text-green-500 mt-2">Build saved! ID: {buildId}</p>
+                )}
+                <input
+                    type="text"
+                    value={loadBuildId}
+                    onChange={(e) => setLoadBuildId(e.target.value)}
+                    placeholder="Enter build ID"
+                    className="w-full p-2 mt-2 bg-gray-700 text-white rounded"
+                />
+                <button
+                    onClick={loadBuild}
+                    className="bg-green-500 text-white px-4 py-2 rounded mt-2"
+                >
+                    Load Build
+                </button>
+            </div>
         </div>
     );
 };
