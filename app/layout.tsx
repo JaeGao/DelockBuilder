@@ -24,17 +24,7 @@ export const viewport: Viewport = {
   maximumScale: 0.5,
   userScalable: false,
 };
-export function robots(): MetadataRoute.Robots {
-  return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/private/', '/admin/', '/api/'],
-      },
-    ],
-  }
-}
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Deadlock Stats Calculator & Build Optimizer | Ultimate Hero Loadout Planner",
