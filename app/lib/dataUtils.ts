@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { allHeroes, heroData, heroesWithName, heroDatamSS } from './herointerfaces';
+import { allHeroes, heroData, heroesWithName, heroDatamSS, heroNameMap } from './herointerfaces';
 import { RootObject, AWithKey, ESlotSignature1 } from './abilityInterface';
 import statMap from './statmap.json';
 import { start } from 'repl';
@@ -96,13 +96,13 @@ const nameMap: IGNameMap = require('../data/Items/ItemNameDict.json');
 let cachedCharacters: heroesWithName[] | null = null;
 let cachedItems: upgradesWithName[] | null = null;
 export let cachedAbilities: AWithKey[] | null = null;
-let cachedSkillNameMap: skillnamemap[] | null = null;
 
 // Caching variables for raw JSON data
 let cachedCharactersJson: allHeroes | null = null;
 let cachedItemsJson: upgradesWithName | null = null;
 let cachedAbilitiesJson: RootObject | null = null;
 let cachedSkillNameMapJson: skillnamemap | null = null;
+let cachedCharacterNameMapJson: heroNameMap | null = null;
 
 export function convertImagePath(imagePath: string): string {
     const cleanPath = imagePath.replace(/^panorama:"/, '').replace(/"$/, '');
@@ -118,6 +118,14 @@ export function convertImagePath(imagePath: string): string {
 async function readJsonFile<T>(filePath: string): Promise<T> {
     const data = await fs.readFile(filePath, 'utf8');
     return JSON.parse(data) as T;
+}
+
+
+export async function getCharacterNameMap(): Promise<heroNameMap> {
+    if (!cachedCharacterNameMapJson) {
+        cachedCharacterNameMapJson = await readJsonFile<heroNameMap>(path.join(process.cwd(), 'app', 'data', 'CharactersV2', 'heronamesmap.json'));
+    }
+    return cachedCharacterNameMapJson;
 }
 
 async function getCharactersJson(): Promise<allHeroes> {
