@@ -29,7 +29,6 @@ const getCategoryColor = (itemCat: string | undefined): string => {
     if (itemCat.includes('_WeaponMod')) return 'bg-[#FCAC4D]';
     if (itemCat.includes('_Armor')) return 'bg-[#86c921]';
     if (itemCat.includes('_Tech')) return 'bg-[#de9cff]';
-    if (itemCat.includes('mods_utility')) return 'bg-[#4d9bfc]';
     return 'bg-gray-400';
 };
 
