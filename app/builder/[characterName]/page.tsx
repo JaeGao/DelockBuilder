@@ -9,7 +9,6 @@ export default async function BuilderPage({ params }: { params: { characterName:
     const abilities = await getAbilitiesbyHero();
     const initialStats = await getHeroStartingStats(params.characterName);
     const characterNameMap = await getCharacterNameMap();
-    console.log(params.characterName);
 
 
     if (!character) {
