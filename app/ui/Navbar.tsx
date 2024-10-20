@@ -5,38 +5,28 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <>
-      <button
-        className={`fixed top-4 z-50 text-custom-beige transition-all duration-300 left-4`}
-        onClick={toggleSidebar}
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-      <nav className={`bg-gray-800 h-full w-1/5 max-w-60 min-w-36 fixed left-0 top-0 p-4 z-40 transition-transform duration-300 ease-in-out transform 
-        ${isOpen ? 'translate-x-100' : '-translate-x-full'}`}>
-        <div className="flex flex-col h-full">
-          <Link href="/" className="text-custom-beige text-2xl font-bold mb-8 mt-6">
-            Deadlock Calculator
+      <nav className=' bg-white border-gray-200 dark:bg-gray-900'>
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-start p-4">
+
+          <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse pr-10">
+            <span className="self-center whitespace-nowrap text-custom-beige text-2xl font-bold hover:text-amber-500">Deadlock Calculator</span>
           </Link>
-          <ul className="flex flex-col space-y-4 flex-grow">
-            <li>
-              <Link href="/" className="text-custom-beige hover:text-gray-300 block">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/items" className="text-custom-beige hover:text-gray-300 block">
-                Items
-              </Link>
-            </li>
-          </ul>
+          <div className='hidden w-full md:block md:w-auto'>
+            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              <li>
+                <Link href="/" className="text-custom-beige block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-500 md:p-0  md:dark:hover:text-amber-500 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/items" className="text-custom-beige block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-500 md:p-0 md:dark:hover:text-amber-500 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                  Items
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </nav>
     </>

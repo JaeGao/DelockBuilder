@@ -67,7 +67,7 @@ export default function RootLayout({
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
       <body className="text-custom-beige">
         <div className="flex">
-          <main className="flex-1 p-2">
+          <main className="flex-1">
             {children}
           </main>
         </div>
