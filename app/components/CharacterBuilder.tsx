@@ -319,137 +319,162 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
     );
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-900">
             <Navbar />
-            <div className="flex mt-4 ">
-                <div className={`p-4 flex flex-col 2xl:flex-row w-full pr-[max(17%,200px)] mr-10`}>
-                    <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap  mr-8 px-3 ">
-                        <div className="mb-2 px-6 flex flex-col items-center float-left select-none ">
-                            <div className="">
-                                <h2 className="text-3xl font-bold mb-4">{actualname}</h2>
-                            </div>
-                            {character.data.m_strIconHeroCard && (
-                                <Image
-                                    src={character.data.m_strIconHeroCard as string}
-                                    alt={actualname}
-                                    width={120}
-                                    height={120}
-                                    className="rounded-full mb-2 object-none select-none pointer-events-none"
-                                    style={{
-                                        maxWidth: "100%",
-                                        height: "auto"
-                                    }} />
-                            )}
-                            {/* Level Slider */}
-                            <div className="w-full mb-4">
-                                <label htmlFor="level-slider" className="block text-m font-medium  text-amber-500">
-                                    Character Level: <span className='text-[#70F8C1]'>{characterLevel}</span>
-                                </label>
-                                <input
-                                    type="range"
-                                    id="level-slider"
-                                    min="1"
-                                    max={maxLevel}
-                                    value={characterLevel}
-                                    onChange={handleLevelChange}
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-amber-500 [&::-webkit-slider-thumb]:bg-amber-500"
-                                />
-                            </div>
-                            {/* Budget Input */}
-                            <div className="w-full mb-4 ">
-                                <label htmlFor="budget-input" className="block text-sm font-medium  text-amber-500">
-                                    Budget:
-                                </label>
-                                <input
-                                    type="number"
-                                    id="budget-input"
-                                    value={budget}
-                                    onChange={handleBudgetChange}
-                                    min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
-                                    className="bg-amber-500 border border-amber-500 text-gray-900 text-sm rounded-lg focus:ring-amber-600 focus:border-amber-500 block w-full p-2 dark:bg-custom-bg dark:border-amber-500 dark:placeholder-[#70F8C1] dark:text-[#70F8C1] dark:focus:ring-amber-600 dark:focus:border-amber-500 text-center"
-                                />
-                            </div>
-                            {/* Skill Icons */}
-                            <p className="text-amber-500 mb-3">Total Cost: <span className='text-[#70F8C1]'>{totalCost}</span><span className='text-lg font-bold'> / </span><span className='text-[#70F8C1]'>{budget}</span></p>
-                            <div className="flex space-x-2 p-4">
-                                {skillIcons.map((skillIcon, index) => (
-                                    <div key={index} className="relative border-2 border-[#dbb2f7] rounded-full p-1">
-                                        <Image
-                                            src={skillIcon}
-                                            alt={`Skill ${index + 1}`}
-                                            width={50}
-                                            height={50}
-                                            className="rounded-full cursor-pointer"
-                                            onClick={() => handleSkillUpgrade(index)}
-                                            style={{
-                                                maxWidth: "100%",
-                                                height: "auto"
-                                            }} />
-                                        <div className="absolute bottom-0 right-0 bg-[#8A55B3] rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
-                                            {skillUpgrades[index].length}
+
+            {/* Main layout container */}
+            <div className="flex min-h-[calc(100vh-64px)]"> {/* Adjust 64px based on your navbar height */}
+                {/* Main content area that will shrink with sidebar */}
+                <div className="flex-1 p-4 transition-all duration-300 mr-[300px]">
+                    {/* Content wrapper */}
+                    <div className="flex flex-col xl:flex-row gap-8 max-w-[2000px] mx-auto">
+                        {/* Left column - Character info and equipment grids */}
+                        <div className="xl:w-auto flex flex-col">
+                            {/* Character info section */}
+                            <div className="mb-6 flex flex-col items-center">
+                                <h2 className="text-3xl font-bold mb-4 text-white">{actualname}</h2>
+
+                                {/* Character image */}
+                                {character.data.m_strIconHeroCard && (
+                                    <Image
+                                        src={character.data.m_strIconHeroCard as string}
+                                        alt={actualname}
+                                        width={120}
+                                        height={120}
+                                        className="rounded-full mb-4 object-none select-none pointer-events-none"
+                                        style={{
+                                            maxWidth: "100%",
+                                            height: "auto"
+                                        }}
+                                    />
+                                )}
+
+                                {/* Level slider */}
+                                <div className="w-full max-w-sm mb-4">
+                                    <label className="block text-m font-medium text-amber-500 mb-2">
+                                        Character Level: <span className="text-[#70F8C1]">{characterLevel}</span>
+                                    </label>
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max={maxLevel}
+                                        value={characterLevel}
+                                        onChange={handleLevelChange}
+                                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-amber-500"
+                                    />
+                                </div>
+
+                                {/* Budget input */}
+                                <div className="w-full max-w-sm mb-4">
+                                    <label className="block text-sm font-medium text-amber-500 mb-2">
+                                        Budget:
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={budget}
+                                        onChange={handleBudgetChange}
+                                        min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
+                                        className="w-full p-2 bg-custom-bg border border-amber-500 text-[#70F8C1] rounded-lg text-center"
+                                    />
+                                </div>
+
+                                {/* Cost display */}
+                                <p className="text-amber-500 mb-4">
+                                    Total Cost: <span className="text-[#70F8C1]">{totalCost}</span>
+                                    <span className="text-lg font-bold"> / </span>
+                                    <span className="text-[#70F8C1]">{budget}</span>
+                                </p>
+
+                                {/* Skill icons */}
+                                <div className="flex space-x-2 mb-6">
+                                    {skillIcons.map((skillIcon, index) => (
+                                        <div key={index} className="relative border-2 border-[#dbb2f7] rounded-full p-1">
+                                            <Image
+                                                src={skillIcon}
+                                                alt={`Skill ${index + 1}`}
+                                                width={50}
+                                                height={50}
+                                                className="rounded-full cursor-pointer hover:scale-105 transition-transform"
+                                                onClick={() => handleSkillUpgrade(index)}
+                                                style={{
+                                                    maxWidth: "100%",
+                                                    height: "auto"
+                                                }}
+                                            />
+                                            <div className="absolute bottom-0 right-0 bg-[#8A55B3] rounded-full w-5 h-5 flex items-center justify-center text-white text-xs">
+                                                {skillUpgrades[index].length}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
+                            </div>
 
+                            {/* Equipment grids */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <ItemGrid
+                                    title="Weapon"
+                                    items={weaponItems}
+                                    onItemToggle={(item) => handleItemToggle(item)}
+                                />
+                                <ItemGrid
+                                    title="Vitality"
+                                    items={vitalityItems}
+                                    onItemToggle={(item) => handleItemToggle(item)}
+                                />
+                                <ItemGrid
+                                    title="Spirit"
+                                    items={spiritItems}
+                                    onItemToggle={(item) => handleItemToggle(item)}
+                                />
+                                <ItemGrid
+                                    title="Flex"
+                                    items={utilityItems}
+                                    onItemToggle={(item) => handleItemToggle(item)}
+                                />
                             </div>
                         </div>
-                        <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">
-                            <ItemGrid
-                                title="Weapon"
-                                items={weaponItems}
-                                onItemToggle={(item) => handleItemToggle(item)}
-                            />
-                            <ItemGrid
-                                title="Vitality"
-                                items={vitalityItems}
-                                onItemToggle={(item) => handleItemToggle(item)}
-                            />
-                            <ItemGrid
-                                title="Spirit"
-                                items={spiritItems}
-                                onItemToggle={(item) => handleItemToggle(item)}
-                            />
-                            <ItemGrid
-                                title="Flex"
-                                items={utilityItems}
-                                onItemToggle={(item) => handleItemToggle(item)}
-                            />
-                        </div>
-                    </div>
 
-                    <div className="w-full  mt-2 select-none">
-                        {errorMessage && (
-                            <div className="bg-red-500 text-white p-1 mb-2 rounded text-sm">
-                                {errorMessage}
-                            </div>
-                        )}
-                        <input
-                            type="text"
-                            placeholder="Search upgrade items..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-8 p-2 mb-4 bg-gray-700 text-white rounded"
-                        />
-                        <div className="mb-4">
-                            <h3 className="text-xl font-bold mb-2">Available Items</h3>
-                            <ItemsDisplay
-                                items={filteredItems}
-                                onItemSelect={handleItemToggle}
-                                equippedItems={allEquippedItems}
-                                equipediItemsByCategory={getEquippedItemsbyCategory()}
+                        {/* Right column - Items section */}
+                        <div className="flex-1">
+                            {errorMessage && (
+                                <div className="bg-red-500 text-white p-2 mb-4 rounded">
+                                    {errorMessage}
+                                </div>
+                            )}
+
+                            <input
+                                type="text"
+                                placeholder="Search upgrade items..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full p-2 mb-4 bg-gray-700 text-white rounded"
                             />
+
+                            <div>
+                                <h3 className="text-xl font-bold mb-4 text-white">Available Items</h3>
+                                <ItemsDisplay
+                                    items={filteredItems}
+                                    onItemSelect={handleItemToggle}
+                                    equippedItems={allEquippedItems}
+                                    equipediItemsByCategory={getEquippedItemsbyCategory()}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <StatsSidebar
-                    characterStats={currentStats}
-                    characterName={heroName}
-                    characterClass={character.data._class as string}
-                    characterSkillsData={skillStats}
-                    skillLabels={skillDG}
-                    skillImages={skillIcons}
-                    skillUpgrades={skillUpgradeInfo}
-                />
+
+                {/* Stats sidebar - Fixed width */}
+                <div className="fixed top-0 right-0 w-[300px] h-screen overflow-y-auto">
+                    <StatsSidebar
+                        characterStats={currentStats}
+                        characterName={heroName}
+                        characterClass={character.data._class as string}
+                        characterSkillsData={skillStats}
+                        skillLabels={skillDG}
+                        skillImages={skillIcons}
+                        skillUpgrades={skillUpgradeInfo}
+                    />
+                </div>
             </div>
         </div>
     );
