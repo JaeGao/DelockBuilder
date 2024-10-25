@@ -14,10 +14,10 @@ with open(vdata_file_path, 'r', encoding='utf-8') as file:
 try:
     # Parse the KV3 content
     json_output = kv3_to_json(vdata_content)
-    
+
     # Print or save the JSON output
     print(json_output)
-    
+
     # Optionally, save to a file
     with open('abilities.json', 'w', encoding='utf-8') as json_file:
         json_file.write(json_output)
