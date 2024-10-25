@@ -367,7 +367,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "NonPlayerBulletResist": {
-                "m_strValue": "30",
+                "m_strValue": "25",
                 "m_strCSSClass": "bullet_damage",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST_NON_HERO",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic | APUsageFlag_ModifierConditional"
@@ -480,7 +480,7 @@
                 }
             },
             "AbilityDuration": {
-                "m_strValue": "30",
+                "m_strValue": "35",
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "duration",
                 "m_bCanSetTokenOverride": true,
@@ -730,7 +730,7 @@
         "m_strCancelAbilityKey": "+in_cancel_ability",
         "m_mapAbilityProperties": {
             "AbilityCooldown": {
-                "m_strValue": 0.4,
+                "m_strValue": "0.35",
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "cooldown",
                 "m_bCanSetTokenOverride": true,
@@ -886,11 +886,6 @@
             "ProcChance": {
                 "m_strValue": "25"
             },
-            "ProcCooldown": {
-                "m_strValue": "0.35",
-                "m_strCSSClass": "cooldown",
-                "m_bIsHidden": true
-            },
             "ChainCount": {
                 "m_strValue": "2"
             },
@@ -984,6 +979,7 @@
                             }
                         ],
                         "m_vecAbilityProperties": [
+                            "AbilityCooldown",
                             "BonusPerChain",
                             "ProcChance",
                             "ChainRadius",
@@ -1695,14 +1691,14 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "BonusBulletSpeedPercent": {
-                "m_strValue": "25",
+                "m_strValue": "20",
                 "m_eDisplayUnits": "EDisplayUnit_Normal",
                 "m_strCSSClass": "bullet_damage",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BONUS_BULLET_SPEED_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BaseAttackDamagePercent": {
-                "m_strValue": "12",
+                "m_strValue": "13",
                 "m_strCSSClass": "bullet_damage",
                 "m_eDisplayUnits": "EDisplayUnit_Normal",
                 "m_eDisplayType": "EBaseWeaponDamageIncrease",
@@ -1710,7 +1706,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BulletShieldMaxHealth": {
-                "m_strValue": "50",
+                "m_strValue": "65",
                 "m_strCSSClass": "bullet_armor_up",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_SHIELD_HEALTH_MAX",
                 "m_eDisplayType": "EBulletShieldHealth"
@@ -2449,10 +2445,9 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BONUS_WEAPON_DAMAGE_LONG_RANGE_MIN_RANGE",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
-            "BonusClipSizePercent": {
-                "m_strValue": "25",
-                "m_eDisplayType": "EClipSizeIncrease",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT",
+            "ReloadSpeedMultipler": {
+                "m_strValue": "-20",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_RELOAD_SPEED",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BulletShieldMaxHealth": {
@@ -2525,7 +2520,7 @@
                 "m_vecSectionAttributes": [
                     {
                         "m_vecAbilityProperties": [
-                            "BonusClipSizePercent",
+                            "ReloadSpeedMultipler",
                             "BulletShieldMaxHealth"
                         ]
                     }
@@ -2556,7 +2551,7 @@
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "LongRangeBonusWeaponPower",
                         "LongRangeBonusWeaponPowerMinRange",
-                        "BonusClipSizePercent"
+                        "ReloadSpeedMultipler"
                     ]
                 }
             },
@@ -5086,6 +5081,9 @@
             "StealPerHit": {
                 "m_strValue": "1"
             },
+            "StealPerKill": {
+                "m_strValue": "1"
+            },
             "StackLostPerDeath": {
                 "m_strValue": "2"
             },
@@ -5108,7 +5106,7 @@
                 "m_strCSSClass": "cooldown"
             },
             "HealthSteal": {
-                "m_strValue": "50",
+                "m_strValue": "55",
                 "m_strCSSClass": "healing"
             },
             "ParticleRadius": {
@@ -5677,10 +5675,9 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_ZOOM_INCREASE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
-            "BonusClipSizePercent": {
-                "m_strValue": "20",
-                "m_eDisplayType": "EClipSizeIncrease",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT",
+            "ReloadSpeedMultipler": {
+                "m_strValue": "-20",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_RELOAD_SPEED",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BulletShieldMaxHealth": {
@@ -5753,7 +5750,7 @@
                 "m_vecSectionAttributes": [
                     {
                         "m_vecAbilityProperties": [
-                            "BonusClipSizePercent",
+                            "ReloadSpeedMultipler",
                             "BonusAttackRangePercent",
                             "BonusZoomPercent",
                             "BulletShieldMaxHealth"
@@ -5788,7 +5785,7 @@
                         "LongRangeBonusWeaponPowerMinRange",
                         "BonusAttackRangePercent",
                         "BonusZoomPercent",
-                        "BonusClipSizePercent"
+                        "ReloadSpeedMultipler"
                     ]
                 }
             },
@@ -6414,7 +6411,7 @@
         "m_strCancelAbilityKey": "+in_cancel_ability",
         "m_mapAbilityProperties": {
             "AbilityCooldown": {
-                "m_strValue": 5.25,
+                "m_strValue": 5.75,
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "cooldown",
                 "m_bCanSetTokenOverride": true,
@@ -6685,7 +6682,10 @@
                     "m_bShouldApplyAbilityCooldown": true,
                     "m_TracerAdditionParticle": "resource_name:\"particles/items/crackshot_tracer.vpcf\"",
                     "m_bRequiresTargetFilter": true,
-                    "m_nAbilityTargetTypes": "CITADEL_UNIT_TARGET_ALL_ENEMY"
+                    "m_nAbilityTargetTypes": "CITADEL_UNIT_TARGET_ALL_ENEMY",
+                    "m_sStartSound": "soundevent:\"\"",
+                    "m_OnBulletRolledProcSound": "soundevent:\"Mods.Tech.MysticShot.Proc\"",
+                    "m_bCanBeEvaded": false
                 }
             },
             {
@@ -6696,7 +6696,8 @@
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "BaseAttackDamagePercent",
                         "SpiritPower"
-                    ]
+                    ],
+                    "m_sStartSound": "soundevent:\"\""
                 }
             }
         ],
@@ -6983,7 +6984,8 @@
                                 "SlowPercent"
                             ]
                         }
-                    }
+                    },
+                    "m_bCanBeEvaded": false
                 }
             },
             {
@@ -10390,7 +10392,7 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "RestoreDelay": {
-                "m_strValue": "11"
+                "m_strValue": "10"
             },
             "HealLifePercentOutOfCombat": {
                 "m_strValue": "4"
@@ -10405,13 +10407,13 @@
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "BaseAttackDamagePercent": {
-                "m_strValue": "25",
+                "m_strValue": "27",
                 "m_strCSSClass": "bullet_damage",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "BonusHealth": {
-                "m_strValue": "325",
+                "m_strValue": "365",
                 "m_strCSSClass": "health",
                 "m_eDisplayType": "EMaxHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
@@ -10540,6 +10542,9 @@
                 }
             }
         ],
+        "m_vecComponentItems": [
+            "upgrade_health"
+        ],
         "m_eShopFilters": "EShopFilterWeaponDamage | EShopFilterDurability | EShopFilterHealing | EShopFilterMovement"
     },
     "upgrade_damage_recycler": {
@@ -10654,13 +10659,10 @@
                 "m_strCSSClass": "cast"
             },
             "TechPower": {
-                "m_strValue": "18",
+                "m_strValue": "0",
                 "m_strDisableValue": "0",
                 "m_bCanSetTokenOverride": true,
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER",
-                "m_strCSSClass": "tech_damage",
-                "m_eDisplayType": "ETechPower",
-                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER"
             },
             "WeaponPower": {
                 "m_strValue": "0",
@@ -10709,6 +10711,13 @@
                 "m_strCSSClass": "health",
                 "m_eDisplayType": "EMaxHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
+                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+            },
+            "CooldownReduction": {
+                "m_strValue": "12",
+                "m_eDisplayType": "ETechCooldown",
+                "m_strCSSClass": "cooldown",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_COOLDOWN_REDUCTION_PERCENTAGE",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             }
         },
@@ -10779,7 +10788,7 @@
                         ],
                         "m_vecAbilityProperties": [
                             "BonusHealth",
-                            "TechPower",
+                            "CooldownReduction",
                             "BaseAttackDamagePercent"
                         ]
                     }
@@ -10796,7 +10805,7 @@
                         "BulletLifestealPercent",
                         "BonusHealth",
                         "BaseAttackDamagePercent",
-                        "TechPower"
+                        "CooldownReduction"
                     ]
                 }
             }
@@ -11167,7 +11176,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "SlowResistancePercent": {
-                "m_strValue": "35",
+                "m_strValue": "30",
                 "m_strCSSClass": "move_speed",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SLOW_RESISTANCE",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
@@ -11414,7 +11423,7 @@
                 "m_strCSSClass": "cast"
             },
             "TechPower": {
-                "m_strValue": "8",
+                "m_strValue": "12",
                 "m_strDisableValue": "0",
                 "m_bCanSetTokenOverride": true,
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER",
@@ -11681,7 +11690,7 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "BonusFireRate": {
-                "m_strValue": "9",
+                "m_strValue": "10",
                 "m_eDisplayType": "EFireRate",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_FIRE_RATE",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
@@ -11921,7 +11930,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BonusHealth": {
-                "m_strValue": "25",
+                "m_strValue": "35",
                 "m_strCSSClass": "health",
                 "m_eDisplayType": "EMaxHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
@@ -13119,7 +13128,7 @@
                 "m_strCSSClass": "cast"
             },
             "TechPower": {
-                "m_strValue": "28",
+                "m_strValue": "30",
                 "m_strDisableValue": "0",
                 "m_bCanSetTokenOverride": true,
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER",
@@ -14081,7 +14090,7 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "NonImbuedTechRangeMultiplier": {
-                "m_strValue": "25",
+                "m_strValue": "26",
                 "m_strCSSClass": "distance",
                 "m_eDisplayType": "ETechRange",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_RANGE_PERCENT",
@@ -14113,7 +14122,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BulletResist": {
-                "m_strValue": "12",
+                "m_strValue": "13",
                 "m_eDisplayType": "EBulletArmorDamageReduction",
                 "m_strCSSClass": "bullet_armor_up",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST",
@@ -14342,21 +14351,21 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "TechRangeMultiplier": {
-                "m_strValue": "18",
+                "m_strValue": "15",
                 "m_strCSSClass": "distance",
                 "m_eDisplayType": "ETechRange",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_RANGE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "TechRadiusMultiplier": {
-                "m_strValue": "16",
+                "m_strValue": "15",
                 "m_strCSSClass": "distance",
                 "m_eDisplayType": "ETechRadius",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_RADIUS_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BulletResist": {
-                "m_strValue": "6",
+                "m_strValue": "7",
                 "m_eDisplayType": "EBulletArmorDamageReduction",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
@@ -15063,11 +15072,9 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
-            "BulletResist": {
-                "m_strValue": "5",
-                "m_eDisplayType": "EBulletArmorDamageReduction",
-                "m_strCSSClass": "bullet_armor_up",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST",
+            "MeleeResistPercent": {
+                "m_strValue": "15",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_MELEE_DAMAGE_REDUCTION_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             }
         },
@@ -15135,7 +15142,7 @@
                     {
                         "m_vecAbilityProperties": [
                             "BonusHealth",
-                            "BulletResist"
+                            "MeleeResistPercent"
                         ]
                     }
                 ]
@@ -15179,7 +15186,7 @@
                     },
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "BonusHealth",
-                        "BulletResist"
+                        "MeleeResistPercent"
                     ]
                 }
             }
@@ -15334,7 +15341,7 @@
                 }
             },
             "AbilityLifestealPercentHero": {
-                "m_strValue": "15",
+                "m_strValue": "14",
                 "m_strCSSClass": "healing",
                 "m_eDisplayType": "ETechLifesteal",
                 "m_subclassScaleFunction": {
@@ -15348,20 +15355,20 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "TechResist": {
-                "m_strValue": "15",
+                "m_strValue": "14",
                 "m_eDisplayType": "ETechArmorDamageReduction",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "TechRangeMultiplier": {
-                "m_strValue": "15",
+                "m_strValue": "14",
                 "m_strCSSClass": "distance",
                 "m_eDisplayType": "ETechRange",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_RANGE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "TechRadiusMultiplier": {
-                "m_strValue": "15",
+                "m_strValue": "14",
                 "m_strCSSClass": "distance",
                 "m_eDisplayType": "ETechRadius",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_RADIUS_PERCENT",
@@ -15487,8 +15494,7 @@
                             "m_sExpiredSound": "soundevent:\"Item.Tech.Reverb.End\"",
                             "m_DamageParticle": "resource_name:\"particles/upgrades/magic_reverb_aoe_damage.vpcf\"",
                             "m_eDrawOverheadStatus": "OVERHEAD_DRAW_FOR_EVERYONE",
-                            "m_bReverseHudProgressBar": true,
-                            "m_bIsBuildup": true
+                            "m_bReverseHudProgressBar": true
                         }
                     },
                     "m_SlowModifier": {
@@ -15900,13 +15906,13 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "MinimumDamage": {
-                "m_strValue": "125"
+                "m_strValue": "200"
             },
             "ReProcLockoutTime": {
                 "m_strValue": "5"
             },
             "MaxHealthDamage": {
-                "m_strValue": "7",
+                "m_strValue": "9",
                 "m_strCSSClass": "tech_damage",
                 "m_strLocTokenOverride": "MagicShockDamage",
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
@@ -16713,7 +16719,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "MovementSpeedSlow": {
-                "m_strValue": "30",
+                "m_strValue": "25",
                 "m_strCSSClass": "slow",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_SLOW_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
@@ -16726,7 +16732,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BonusHealth": {
-                "m_strValue": "100",
+                "m_strValue": "140",
                 "m_eDisplayType": "EMaxHealth",
                 "m_strCSSClass": "health",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
@@ -16989,7 +16995,7 @@
                 "m_strLocTokenOverride": "EscalatingExposureProcCooldown"
             },
             "MagicIncreasePerStack": {
-                "m_strValue": "5",
+                "m_strValue": "4",
                 "m_strCSSClass": "tech_armor_down"
             },
             "TechResist": {
@@ -17528,6 +17534,12 @@
                 "m_eDisplayType": "EBaseHealthRegen",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_REGEN_PER_SECOND",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+            },
+            "TechShieldMaxHealth": {
+                "m_strValue": "75",
+                "m_strCSSClass": "tech_armor_up",
+                "m_eDisplayType": "ETechShieldHealth",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX"
             }
         },
         "m_bitsPostCastEnabledStateMask": "MODIFIER_STATE_BUSY_WITH_ACTION",
@@ -17595,6 +17607,7 @@
                     {
                         "m_strLocString": "#upgrade_magic_tempo_desc",
                         "m_vecAbilityProperties": [
+                            "TechShieldMaxHealth",
                             "BonusHealthRegen"
                         ],
                         "m_vecElevatedAbilityProperties": [
@@ -17607,12 +17620,13 @@
         "m_AutoIntrinsicModifiers": [
             {
                 "subclass": {
-                    "_class": "modifier_intrinsic_base",
+                    "_class": "modifier_regenerating_tech_shield",
                     "_my_subclass_name": "intrinsic",
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "CooldownReduction",
                         "BonusHealthRegen"
-                    ]
+                    ],
+                    "m_bIsHidden": true
                 }
             }
         ],
@@ -17765,7 +17779,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "TechShieldMaxHealth": {
-                "m_strValue": "100",
+                "m_strValue": "150",
                 "m_strCSSClass": "tech_armor_up",
                 "m_eDisplayType": "ETechShieldHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX"
@@ -17993,7 +18007,7 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "SlowPercent": {
-                "m_strValue": "25",
+                "m_strValue": "20",
                 "m_strCSSClass": "slow",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_SLOW_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
@@ -18088,7 +18102,7 @@
             "m_flSpeed": 2106,
             "m_particle": "resource_name:\"particles/upgrades/upgrade_containment_projectile.vpcf\"",
             "m_HitSound": "soundevent:\"Mods.Tech.Immobilize.Cast\"",
-            "m_LoopingSound": "soundevent:\"Mods.Tech.Immobilize.Select_Lp\""
+            "m_LoopingSound": "soundevent:\"Mods.Tech.Immobilize.Proj_Lp\""
         },
         "m_flTargetingConeAngle": 45,
         "m_previewParticle": "resource_name:\"particles/upgrades/upgrade_containment_projectile_preview.vpcf\"",
@@ -18108,10 +18122,12 @@
                     "SlowPercent",
                     "GroundDashReductionPercent"
                 ],
-                "m_sAmbientLoopingSound": "soundevent:\"Status.MoveRestrict\"",
+                "m_sAmbientLoopingSound": "soundevent:\"Mods.Tech.Immobilize.Debuff_Lp\"",
                 "m_eHudDisplayLocation": "DISPLAY_HUD_LEFT",
                 "m_strSmallIconCssClass": "containment",
-                "m_eDrawOverheadStatus": "OVERHEAD_DRAW_FOR_EVERYONE"
+                "m_eDrawOverheadStatus": "OVERHEAD_DRAW_FOR_EVERYONE",
+                "m_sStartSound": "soundevent:\"Mods.Tech.Immobilize.Hit\"",
+                "m_sExpiredSound": "soundevent:\"Mods.Tech.Immobilize.Debuff_End\""
             }
         },
         "m_vecTooltipSectionInfo": [
@@ -18387,7 +18403,7 @@
         "m_projectileInfo": {
             "m_flTriggerRadius": 15,
             "m_bHideWarningParticle": 1,
-            "m_flSpeed": 1200,
+            "m_flSpeed": 1560,
             "m_particle": "resource_name:\"particles/items/withering_whip_projectile.vpcf\"",
             "m_HitSound": "soundevent:\"Mods.Tech.TargetDisarm.Hit\"",
             "m_LoopingSound": "soundevent:\"Mods.Weapon.TargetedSilence.Projectile.Lp\""
@@ -18617,7 +18633,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BonusSprintSpeed": {
-                "m_strValue": "2m",
+                "m_strValue": "1m",
                 "m_strCSSClass": "move_speed",
                 "m_eDisplayType": "ESprintSpeed",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_SPRINT_SPEED_BONUS",
@@ -18702,7 +18718,7 @@
                     "m_strLocToken": "#upgrade_rescue_beam_pull",
                     "m_eHintSide": "EButtonSide_Right",
                     "m_strContext": "rescue_pull",
-                    "m_eButton1": "EButtonHint_Attack"
+                    "m_nButton1": "IN_ATTACK"
                 }
             ]
         },
@@ -18728,7 +18744,11 @@
                 "_my_subclass_name": "rescume_beam_pull",
                 "m_bIsHidden": true,
                 "m_PullSound": "soundevent:\"Mods.Armor.RescueBeam.Pull.Start\"",
-                "m_sAmbientLoopingSound": "soundevent:\"\""
+                "m_sAmbientLoopingSound": "soundevent:\"\"",
+                "m_flPullSpeedMin": 500.0,
+                "m_flPullSpeedMax": 2000.0,
+                "m_flPullDistanceMin": 100.0,
+                "m_flPullDistanceMax": 1000.0
             }
         },
         "m_vecTooltipSectionInfo": [
@@ -18791,7 +18811,7 @@
         "m_strCancelAbilityKey": "+in_cancel_ability",
         "m_mapAbilityProperties": {
             "AbilityCooldown": {
-                "m_strValue": 212.0,
+                "m_strValue": 240.0,
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "cooldown",
                 "m_bCanSetTokenOverride": true,
@@ -18927,13 +18947,6 @@
                 "m_strValue": "50",
                 "m_strCSSClass": "healing",
                 "m_eDisplayType": "EMaxHealth"
-            },
-            "CooldownReduction": {
-                "m_strValue": "15",
-                "m_eDisplayType": "ETechCooldown",
-                "m_strCSSClass": "cooldown",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_COOLDOWN_REDUCTION_PERCENTAGE",
-                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             }
         },
         "m_bitsPostCastEnabledStateMask": "MODIFIER_STATE_BUSY_WITH_ACTION",
@@ -19009,7 +19022,6 @@
                             "SpawnTimePenalty"
                         ],
                         "m_vecAbilityProperties": [
-                            "CooldownReduction",
                             "TechPower"
                         ]
                     }
@@ -19038,7 +19050,6 @@
                     "_class": "modifier_intrinsic_base",
                     "_my_subclass_name": "modifier_intrinsic_base",
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
-                        "CooldownReduction",
                         "TechPower",
                         "SpawnTimePenalty"
                     ]
@@ -19572,7 +19583,7 @@
                 "_class": "modifier_citadel_delayed_stun",
                 "_my_subclass_name": "modifier_citadel_delayed_stun",
                 "m_HitParticle": "resource_name:\"particles/upgrades/knockdown_hit.vpcf\"",
-                "m_strParticleStatusEffect": "resource_name:\"particles/upgrades/knock_down_debuff_counter.vpcf\"",
+                "m_strParticleStatusEffect": "resource_name:\"\"",
                 "m_sExpiredSound": "soundevent:\"Mods.Tech.Knockdown.Impact\"",
                 "m_sAmbientLoopingSound": "soundevent:\"Mods.Tech.Knockdown.Delay\"",
                 "m_bDurationReducible": false,
@@ -19582,7 +19593,8 @@
                 "m_nAttributes": "MODIFIER_ATTRIBUTE_MULTIPLE",
                 "m_eDrawOverheadStatus": "OVERHEAD_DRAW_FOR_EVERYONE",
                 "m_strSmallIconCssClass": "delayed_stun",
-                "m_bIsBuildup": true
+                "m_bIsBuildup": true,
+                "m_strParticleEffect": "resource_name:\"particles/upgrades/knock_down_debuff_counter.vpcf\""
             }
         },
         "m_CastParticle": "resource_name:\"particles/upgrades/knock_down_cast.vpcf\"",
@@ -19766,11 +19778,11 @@
                 "m_bCanSetTokenOverride": true,
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
-            "BulletResist": {
+            "TechResist": {
                 "m_strValue": "15",
-                "m_eDisplayType": "EBulletArmorDamageReduction",
-                "m_strCSSClass": "bullet_armor_up",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST",
+                "m_eDisplayType": "ETechArmorDamageReduction",
+                "m_strCSSClass": "tech_armor_up",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BaseAttackDamagePercent": {
@@ -19903,7 +19915,7 @@
                 "m_vecSectionAttributes": [
                     {
                         "m_vecAbilityProperties": [
-                            "BulletResist",
+                            "TechResist",
                             "BaseAttackDamagePercent"
                         ],
                         "m_vecImportantAbilityProperties": []
@@ -19940,7 +19952,7 @@
                     "_class": "modifier_intrinsic_base",
                     "_my_subclass_name": "modifier_intrinsic_base",
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
-                        "BulletResist",
+                        "TechResist",
                         "BaseAttackDamagePercent"
                     ]
                 }
@@ -21348,7 +21360,7 @@
         "m_strCancelAbilityKey": "+in_cancel_ability",
         "m_mapAbilityProperties": {
             "AbilityCooldown": {
-                "m_strValue": 26.0,
+                "m_strValue": 45.0,
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "cooldown",
                 "m_bCanSetTokenOverride": true,
@@ -21601,7 +21613,7 @@
         "m_bDisabled": "false",
         "m_strCSSClass": "rocketBooster",
         "m_strAbilityImage": "panorama:\"file://{images}/hud/abilities/lash/lash_death_slam.psd\"",
-        "m_AbilityBehaviorsBits": "CITADEL_ABILITY_BEHAVIOR_NO_TARGET | CITADEL_ABILITY_BEHAVIOR_REQUIRE_PREDICTION | CITADEL_ABILITY_BEHAVIOR_DISPLAYS_DAMAGE_IMPACT | CITADEL_ABILITY_BEHAVIOR_MOVEMENT",
+        "m_AbilityBehaviorsBits": "CITADEL_ABILITY_BEHAVIOR_NO_TARGET | CITADEL_ABILITY_BEHAVIOR_REQUIRE_PREDICTION | CITADEL_ABILITY_BEHAVIOR_DISPLAYS_DAMAGE_IMPACT | CITADEL_ABILITY_BEHAVIOR_MOVEMENT | CITADEL_ABILITY_BEHAVIOR_REQUIRE_ABILITY_BUTTON_TO_CANCEL",
         "m_nAbilityTargetTypes": "CITADEL_UNIT_TARGET_ALL_ENEMY",
         "m_LaunchParticle": "resource_name:\"particles/upgrades/rocket_boots.vpcf\"",
         "m_AoEPreviewParticle": "resource_name:\"\"",
@@ -21674,7 +21686,8 @@
                 {
                     "m_strLocToken": "#upgrade_rocket_booster_drop_down",
                     "m_eHintSide": "EButtonSide_Right",
-                    "m_strContext": "trigger"
+                    "m_strContext": "trigger",
+                    "m_bButton1IsSlot": true
                 }
             ]
         },
@@ -22772,7 +22785,6 @@
                 "m_strHudMessageText": "",
                 "m_bIsHidden": false,
                 "m_BuffParticle": "resource_name:\"particles/upgrades/infuser_buff.vpcf\"",
-                "m_sStartSound": "soundevent:\"Mods.Armor.Stimpack.Cast\"",
                 "m_sAmbientLoopingSound": "soundevent:\"Mods.Armor.Stimpack.Dur.Lp\"",
                 "m_sExpiredSound": "soundevent:\"Mods.Armor.Stimpack.End\"",
                 "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
@@ -23720,13 +23732,14 @@
                 "_class": "modifier_base",
                 "_my_subclass_name": "modifier_fleetfoot_boots",
                 "m_sLocalizationName": "modifier_fleetfoot_boots",
-                "m_strParticleStatusEffect": "resource_name:\"particles/abilities/kali/kali_speed_boost_buff.vpcf\"",
+                "m_strParticleStatusEffect": "resource_name:\"\"",
                 "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                     "ActiveBonusMoveSpeed"
                 ],
                 "m_bIsHidden": false,
                 "m_eDrawOverheadStatus": "OVERHEAD_DRAW_FOR_EVERYONE",
-                "m_strSmallIconCssClass": "fleetfoot_boots"
+                "m_strSmallIconCssClass": "fleetfoot_boots",
+                "m_strParticleEffect": "resource_name:\"particles/upgrades/upgrade_fleet_foot_boost_buff.vpcf\""
             }
         },
         "m_FleetfootBootsBonusClipModifier": {
@@ -24205,17 +24218,11 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
-            "TechResist": {
+            "BulletResist": {
                 "m_strValue": "15",
-                "m_eDisplayType": "ETechArmorDamageReduction",
-                "m_strCSSClass": "tech_armor_up",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST",
-                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
-            },
-            "BonusMoveSpeed": {
-                "m_strValue": "1m",
-                "m_strCSSClass": "move_speed",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_MAX",
+                "m_eDisplayType": "EBulletArmorDamageReduction",
+                "m_strCSSClass": "bullet_armor_up",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "SpiritPower": {
@@ -24297,7 +24304,7 @@
                 "m_ShieldParticle": "resource_name:\"particles/upgrades/unstoppable_buff.vpcf\"",
                 "m_PlayerShieldParticle": "resource_name:\"particles/upgrades/unstoppable_buff_player.vpcf\"",
                 "m_strParticleStatusEffect": "resource_name:\"particles/status_fx/status_fx_unstoppable.vpcf\"",
-                "m_nStatusEffectPriority": 25,
+                "m_nStatusEffectPriority": 20,
                 "m_bIsHiddenOverhead": false,
                 "m_sLocalizationName": "modifier_unstoppable",
                 "m_nDisabledStateMask": "MODIFIER_STATE_DISARMED | MODIFIER_STATE_MUTED | MODIFIER_STATE_SILENCED | MODIFIER_STATE_SILENCE_MOVEMENT_ABILITES | MODIFIER_STATE_SLOWED | MODIFIER_STATE_GLITCHED | MODIFIER_STATE_MELEE_DISABLED_DEBUFF | MODIFIER_STATE_DASH_DISABLED_DEBUFF",
@@ -24311,8 +24318,7 @@
                     {
                         "m_vecAbilityProperties": [
                             "BonusHealth",
-                            "TechResist",
-                            "BonusMoveSpeed",
+                            "BulletResist",
                             "SpiritPower"
                         ]
                     }
@@ -24343,8 +24349,7 @@
                     "m_bIsHidden": true,
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "BonusHealth",
-                        "TechResist",
-                        "BonusMoveSpeed",
+                        "BulletResist",
                         "SpiritPower"
                     ]
                 }
@@ -24513,7 +24518,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "SlowPercent": {
-                "m_strValue": "35",
+                "m_strValue": "30",
                 "m_strCSSClass": "slow",
                 "m_UsageFlags": "APUsageFlag_ModifierConditional",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_SLOW_PERCENT"
@@ -24524,7 +24529,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "Radius": {
-                "m_strValue": "14m",
+                "m_strValue": "12m",
                 "m_strCSSClass": "distance",
                 "m_subclassScaleFunction": {
                     "subclass": {
@@ -24864,6 +24869,10 @@
                     }
                 }
             },
+            "NPCDamageMult": {
+                "m_strValue": "2",
+                "m_strCSSClass": "tech_damage"
+            },
             "TechResist": {
                 "m_strValue": "10",
                 "m_eDisplayType": "ETechArmorDamageReduction",
@@ -25113,10 +25122,13 @@
                 "m_strCSSClass": "cast"
             },
             "TechPower": {
-                "m_strValue": "0",
+                "m_strValue": "6",
                 "m_strDisableValue": "0",
                 "m_bCanSetTokenOverride": true,
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER"
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER",
+                "m_eDisplayType": "ETechPower",
+                "m_strCSSClass": "tech_damage",
+                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "WeaponPower": {
                 "m_strValue": "0",
@@ -25124,23 +25136,23 @@
                 "m_bCanSetTokenOverride": true,
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
-            "BonusSpirit": {
-                "m_strValue": "14",
-                "m_eDisplayType": "ETechPower",
-                "m_strCSSClass": "tech_damage",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER",
-                "m_UsageFlags": "APUsageFlag_ModifierConditional"
-            },
-            "BonusSpiritDuration": {
-                "m_strValue": "10",
+            "BuffDuration": {
+                "m_strValue": "5",
                 "m_strCSSClass": "duration",
                 "m_subclassScaleFunction": {
                     "subclass": {
                         "_class": "scale_function_single_stat",
-                        "_my_subclass_name": "BonusSpiritDuration_scale_function",
+                        "_my_subclass_name": "BuffDuration_scale_function",
                         "m_eSpecificStatScaleType": "ETechDuration"
                     }
                 }
+            },
+            "TechResist": {
+                "m_strValue": "40",
+                "m_eDisplayType": "ETechArmorDamageReduction",
+                "m_strCSSClass": "tech_armor_up",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST",
+                "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "DampingFactor": {
                 "m_strValue": "3"
@@ -25152,6 +25164,13 @@
                 "m_strValue": "0m",
                 "m_eDisplayUnits": "EDisplayUnit_MetersPerSecond",
                 "m_strCSSClass": "slow",
+                "m_eDisplayType": "EMaxMoveSpeed"
+            },
+            "BonusMoveSpeed": {
+                "m_strValue": "3m",
+                "m_strCSSClass": "move_speed",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_MAX",
+                "m_UsageFlags": "APUsageFlag_ModifierConditional",
                 "m_eDisplayType": "EMaxMoveSpeed"
             }
         },
@@ -25218,6 +25237,16 @@
         "m_CastParticle": "resource_name:\"\"",
         "m_vecTooltipSectionInfo": [
             {
+                "m_eAbilitySectionType": "EArea_Innate",
+                "m_vecSectionAttributes": [
+                    {
+                        "m_vecAbilityProperties": [
+                            "TechPower"
+                        ]
+                    }
+                ]
+            },
+            {
                 "m_eAbilitySectionType": "EArea_Active",
                 "m_vecSectionAttributes": [
                     {
@@ -25228,9 +25257,10 @@
                             }
                         ],
                         "m_vecAbilityProperties": [
+                            "TechResist",
+                            "BonusMoveSpeed",
                             "AbilityCooldown",
-                            "BonusSpirit",
-                            "BonusSpiritDuration"
+                            "BuffDuration"
                         ]
                     }
                 ]
@@ -25251,20 +25281,34 @@
                         "_class": "modifier_base",
                         "_my_subclass_name": "modifier_shifting_veil_buff",
                         "m_sLocalizationName": "modifier_shifting_veil_buff",
-                        "m_strHudMessageText": "#shifting_veil_bonus_spirit",
+                        "m_strHudMessageText": "#shifting_veil_bonus",
                         "m_strParticleEffect": "resource_name:\"particles/upgrades/spirit_power_amplification_buff.vpcf\"",
                         "m_LoopingSound": "soundevent:\"\"",
                         "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
-                            "BonusSpirit"
+                            "TechResist",
+                            "BonusMoveSpeed"
                         ]
                     }
                 },
                 "m_EmpParticle": "resource_name:\"\"",
                 "m_EmpPlayerParticle": "resource_name:\"\"",
                 "m_EmpStatusParticle": "resource_name:\"\"",
-                "m_strParticleStatusEffect": "resource_name:\"particles/status_fx/status_fx_ethereal_shift.vpcf\""
+                "m_strParticleStatusEffect": "resource_name:\"particles/status_fx/status_fx_ethereal_shift.vpcf\"",
+                "m_nStatusEffectPriority": 25
             }
         },
+        "m_AutoIntrinsicModifiers": [
+            {
+                "subclass": {
+                    "_class": "modifier_base",
+                    "_my_subclass_name": "intrinsic_stats",
+                    "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
+                        "TechPower"
+                    ],
+                    "m_bIsHidden": true
+                }
+            }
+        ],
         "m_eShopFilters": "EShopFilterFireRate"
     },
     "upgrade_glitch": {
@@ -25673,7 +25717,7 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "BonusAbilityDurationPercent": {
-                "m_strValue": "16",
+                "m_strValue": "14",
                 "m_strCSSClass": "duration",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
@@ -25690,6 +25734,14 @@
                 "m_strCSSClass": "healing",
                 "m_eDisplayType": "EBaseHealthRegen",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_REGEN_PER_SECOND",
+                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+            },
+            "BaseAttackDamagePercent": {
+                "m_strValue": "8",
+                "m_strCSSClass": "bullet_damage",
+                "m_eDisplayUnits": "EDisplayUnit_Normal",
+                "m_eDisplayType": "EBaseWeaponDamageIncrease",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             }
         },
@@ -25758,6 +25810,7 @@
                     {
                         "m_strLocString": "#upgrade_arcane_extension_desc",
                         "m_vecAbilityProperties": [
+                            "BaseAttackDamagePercent",
                             "BonusHealth",
                             "BonusHealthRegen"
                         ],
@@ -25775,6 +25828,7 @@
                     "_class": "modifier_intrinsic_base",
                     "_my_subclass_name": "intrinsic",
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
+                        "BaseAttackDamagePercent",
                         "BonusAbilityDurationPercent",
                         "BonusHealth",
                         "BonusHealthRegen"
@@ -25907,14 +25961,14 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "ImbuedBonusDuration": {
-                "m_strValue": "32",
+                "m_strValue": "33",
                 "m_strCSSClass": "duration",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE",
                 "m_eApplyFilter": "EApplyFilter_OnlyIfImbued",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "NonImbuedBonusDuration": {
-                "m_strValue": "26",
+                "m_strValue": "27",
                 "m_strCSSClass": "duration",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BONUS_ABILITY_DURATION_PERCENTAGE",
                 "m_eDisplayType": "ETechDuration",
@@ -26472,7 +26526,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BonusHealth": {
-                "m_strValue": "150",
+                "m_strValue": "175",
                 "m_eDisplayType": "EMaxHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
@@ -26877,8 +26931,8 @@
                     {
                         "m_vecAbilityProperties": [
                             "BonusMeleeDamagePercent",
-                            "BonusHealth",
-                            "BulletResist"
+                            "BulletResist",
+                            "BonusHealth"
                         ]
                     }
                 ]
@@ -27345,7 +27399,7 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_WEAPON_POWER"
             },
             "BaseAttackDamagePercent": {
-                "m_strValue": "15",
+                "m_strValue": "12",
                 "m_eDisplayType": "EBaseWeaponDamageIncrease",
                 "m_eDisplayUnits": "EDisplayUnit_Normal",
                 "m_strCSSClass": "",
@@ -27354,7 +27408,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BonusHealth": {
-                "m_strValue": "100",
+                "m_strValue": "75",
                 "m_strCSSClass": "health",
                 "m_eDisplayType": "EMaxHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
@@ -27915,7 +27969,7 @@
                 "m_strCSSClass": "cast"
             },
             "TechPower": {
-                "m_strValue": "60",
+                "m_strValue": "65",
                 "m_strDisableValue": "0",
                 "m_bCanSetTokenOverride": true,
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_POWER",
@@ -27936,7 +27990,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BaseAttackDamagePercent": {
-                "m_strValue": "25",
+                "m_strValue": "30",
                 "m_strCSSClass": "bullet_damage",
                 "m_eDisplayUnits": "EDisplayUnit_Normal",
                 "m_eDisplayType": "EBaseWeaponDamageIncrease",
@@ -28194,6 +28248,12 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SLIDE_DISTANCE_SCALE",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
+            "SlowResistancePercent": {
+                "m_strValue": "20",
+                "m_strCSSClass": "move_speed",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SLOW_RESISTANCE",
+                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+            },
             "BonusMoveSpeed": {
                 "m_strValue": "2m",
                 "m_strCSSClass": "move_speed",
@@ -28275,6 +28335,7 @@
                         "m_vecAbilityProperties": [
                             "BonusFireRate",
                             "SlideScale",
+                            "SlowResistancePercent",
                             "BonusHealth"
                         ]
                     }
@@ -28319,7 +28380,8 @@
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "BonusFireRate",
                         "SlideScale",
-                        "BonusHealth"
+                        "BonusHealth",
+                        "SlowResistancePercent"
                     ]
                 }
             }
@@ -28696,13 +28758,6 @@
                 "m_eDisplayType": "EClipSizeIncrease",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
-            },
-            "BonusHealth": {
-                "m_strValue": "25",
-                "m_strCSSClass": "health",
-                "m_eDisplayType": "EMaxHealth",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
-                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             }
         },
         "m_bitsPostCastEnabledStateMask": "MODIFIER_STATE_BUSY_WITH_ACTION",
@@ -28772,8 +28827,7 @@
                             "BonusHealthRegen"
                         ],
                         "m_vecAbilityProperties": [
-                            "BonusClipSizePercent",
-                            "BonusHealth"
+                            "BonusClipSizePercent"
                         ]
                     }
                 ]
@@ -28786,8 +28840,7 @@
                     "_my_subclass_name": "modifier_intrinsic_base",
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "BonusHealthRegen",
-                        "BonusClipSizePercent",
-                        "BonusHealth"
+                        "BonusClipSizePercent"
                     ]
                 }
             }
@@ -28934,7 +28987,7 @@
                 "m_strConditionalLocTokenOverride": "#SurgeOfPower_conditional"
             },
             "BonusMoveSpeed": {
-                "m_strValue": "3m",
+                "m_strValue": "2m",
                 "m_strCSSClass": "move_speed",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_MAX",
                 "m_UsageFlags": "APUsageFlag_ModifierConditional",
@@ -28957,6 +29010,19 @@
                 "m_eDisplayType": "EMaxHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_HEALTH_MAX",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+            },
+            "MoveWhileShootingSpeedPenaltyReductionPercent": {
+                "m_strValue": "100",
+                "m_strCSSClass": "move_speed",
+                "m_bIsHidden": true,
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_WHILE_SHOOTING_PENALTY_REDUCTION_PERCENT",
+                "m_UsageFlags": "APUsageFlag_ModifierConditional"
+            },
+            "MoveWhileZoomedSpeedPenaltyReductionPercent": {
+                "m_strValue": "100",
+                "m_strCSSClass": "move_speed",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_MOVEMENT_SPEED_WHILE_ZOOMED_PENALTY_REDUCTION_PERCENT",
+                "m_UsageFlags": "APUsageFlag_ModifierConditional"
             }
         },
         "m_bitsPostCastEnabledStateMask": "MODIFIER_STATE_BUSY_WITH_ACTION",
@@ -29069,7 +29135,9 @@
                             "m_bIsHidden": true,
                             "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                                 "FireRateBonus",
-                                "BonusMoveSpeed"
+                                "BonusMoveSpeed",
+                                "MoveWhileShootingSpeedPenaltyReductionPercent",
+                                "MoveWhileZoomedSpeedPenaltyReductionPercent"
                             ],
                             "m_strHudMessageText": "#upgrade_magic_storm",
                             "m_strParticleEffect": "resource_name:\"particles/upgrades/magic_storm_buff.vpcf\""
@@ -30502,13 +30570,13 @@
                 "m_strCSSClass": "duration"
             },
             "BulletShieldMaxHealth": {
-                "m_strValue": "200",
+                "m_strValue": "250",
                 "m_strCSSClass": "bullet_armor_up",
                 "m_eDisplayType": "EBulletShieldHealth",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_SHIELD_HEALTH_MAX"
             },
             "TechShieldMaxHealth": {
-                "m_strValue": "200",
+                "m_strValue": "250",
                 "m_strCSSClass": "tech_armor_up",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_SHIELD_HEALTH_MAX",
                 "m_eDisplayType": "ETechShieldHealth"
@@ -30842,7 +30910,7 @@
                 "m_UsageFlags": "APUsageFlag_ModifierConditional"
             },
             "BonusClipSizePercent": {
-                "m_strValue": "15",
+                "m_strValue": "20",
                 "m_eDisplayType": "EClipSizeIncrease",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
@@ -30984,7 +31052,7 @@
                 "_my_subclass_name": "vex_shield",
                 "m_bIsHidden": true,
                 "m_strParticleEffect": "resource_name:\"particles/upgrades/vex_shield_buff.vpcf\"",
-                "m_sStartSound": "soundevent:\"Architect.Translocate.Start\"",
+                "m_sStartSound": "soundevent:\"Mods.Armor.SpellShield.Break\"",
                 "m_sLocalizationName": "upgrade_vex_barrier_shield"
             }
         },
@@ -30996,7 +31064,7 @@
         "m_strCancelAbilityKey": "+in_cancel_ability",
         "m_mapAbilityProperties": {
             "AbilityCooldown": {
-                "m_strValue": 5.5,
+                "m_strValue": 6,
                 "m_strDisableValue": "0",
                 "m_strCSSClass": "cooldown",
                 "m_bCanSetTokenOverride": true,
@@ -31129,7 +31197,7 @@
                 "m_strValue": "100"
             },
             "BaseAttackDamagePercent": {
-                "m_strValue": "7",
+                "m_strValue": "6",
                 "m_eDisplayType": "EBaseWeaponDamageIncrease",
                 "m_strCSSClass": "bullet_damage",
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT",
@@ -31432,11 +31500,16 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
-            "BulletResist": {
-                "m_strValue": "18",
-                "m_eDisplayType": "EBulletArmorDamageReduction",
-                "m_strCSSClass": "bullet_armor_up",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST",
+            "MeleeResistPercent": {
+                "m_strValue": "25",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_MELEE_DAMAGE_REDUCTION_PERCENT",
+                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
+            },
+            "TechResist": {
+                "m_strValue": "12",
+                "m_eDisplayType": "ETechArmorDamageReduction",
+                "m_strCSSClass": "tech_armor_up",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             }
         },
@@ -31505,7 +31578,8 @@
                         "m_vecAbilityProperties": [
                             "BonusClipSizePercent",
                             "BaseAttackDamagePercent",
-                            "BulletResist"
+                            "MeleeResistPercent",
+                            "TechResist"
                         ]
                     }
                 ]
@@ -31519,7 +31593,8 @@
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                         "BonusClipSizePercent",
                         "BaseAttackDamagePercent",
-                        "BulletResist"
+                        "MeleeResistPercent",
+                        "TechResist"
                     ]
                 }
             }
@@ -31660,11 +31735,11 @@
                 "m_eProvidedPropertyType": "MODIFIER_VALUE_BASEATTACK_DAMAGE_PERCENT",
                 "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
-            "ReloadSpeedMultipler": {
-                "m_strValue": "-20",
-                "m_eProvidedPropertyType": "MODIFIER_VALUE_RELOAD_SPEED",
-                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic",
-                "m_bIsNegativeAttribute": false
+            "BonusClipSizePercent": {
+                "m_strValue": "18",
+                "m_eDisplayType": "EClipSizeIncrease",
+                "m_eProvidedPropertyType": "MODIFIER_VALUE_AMMO_CLIP_SIZE_PERCENT",
+                "m_UsageFlags": "APUsageFlag_ModifierIntrinsic"
             },
             "BulletLifestealPercent": {
                 "m_strValue": "20",
@@ -31754,7 +31829,7 @@
                         "m_vecElevatedAbilityProperties": [],
                         "m_vecAbilityProperties": [
                             "BaseAttackDamagePercent",
-                            "ReloadSpeedMultipler"
+                            "BonusClipSizePercent"
                         ],
                         "m_strLocString": ""
                     }
@@ -31788,7 +31863,7 @@
                     "_class": "modifier_intrinsic_base",
                     "_my_subclass_name": "modifier_intrinsic_base",
                     "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
-                        "ReloadSpeedMultipler",
+                        "BonusClipSizePercent",
                         "BaseAttackDamagePercent"
                     ],
                     "m_nEnabledStateMask": ""
@@ -32051,7 +32126,6 @@
         "m_flSummonVisualDuration": 2.0,
         "m_flBurstSpeedBonus": 200.0,
         "m_flBurstSpeedDuration": 0.5,
-        "m_strCastSound": "soundevent:\"Mods.Armor.RocketBoots.Cast\"",
         "m_SummonFlyingCarpetModifier": {
             "subclass": {
                 "_class": "modifier_base",
@@ -32093,9 +32167,9 @@
                 "m_sLocalizationName": "modifier_magiccarpet",
                 "m_eHudDisplayLocation": "DISPLAY_HUD_CENTER",
                 "m_strHudMessageText": "#modifier_magiccarpet",
-                "m_sStartSound": "soundevent:\"Inferno.FlameDash.Modifier.Start\"",
-                "m_sAmbientLoopingSound": "soundevent:\"Inferno.FlameDash.Modifier.Lp\"",
-                "m_sExpiredSound": "soundevent:\"Inferno.FlameDash.Modifier.Stop\"",
+                "m_sStartSound": "soundevent:\"Item.MagicCarpet.Cast\"",
+                "m_sAmbientLoopingSound": "soundevent:\"Item.MagicCarpet.Lp\"",
+                "m_sExpiredSound": "soundevent:\"Item.MagicCarpet.End\"",
                 "m_vecAutoRegisterModifierValueFromAbilityPropertyName": [
                     "FlyMoveSpeed"
                 ],
@@ -32186,6 +32260,7 @@
                 }
             }
         ],
-        "m_eShopFilters": "EShopFilterMovement"
+        "m_eShopFilters": "EShopFilterMovement",
+        "m_strCastDelaySound": "soundevent:\"Item.MagicCarpet.Cast_Delay\""
     }
 }
