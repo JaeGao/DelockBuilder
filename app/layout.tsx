@@ -1,8 +1,9 @@
-// app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
+import { Analytics } from "@vercel/analytics/react";
+
 const Deadlock = localFont({
   src: './fonts/Deadlock-Black.otf',
   variable: '--font-Deadlock-black'
@@ -34,7 +35,6 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Deadlock Stats Calculator & Build Optimizer",
       description: "Master Deadlock with our advanced build planner. Optimize heroes, analyze items, and share builds effortlessly.",
     },
-
     other: {
       "application-name": "Deadlock Build Optimizer",
       "og:type": "website",
@@ -71,6 +71,7 @@ export default function RootLayout({
             {children}
           </main>
         </div>
+        <Analytics />
       </body>
     </html>
   );
