@@ -1,5 +1,5 @@
 'use client';
-
+import { calculateClientCharacterStats } from '@/app/lib/clientCharacterStats';
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import ItemGrid from './ItemGrid';
@@ -7,20 +7,25 @@ import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
 import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData, skillnamemap } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import { heroesWithName, m_MLI } from '../lib/herointerfaces';
+import { heroesWithName } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
+
 interface CharacterBuilderProps {
-    characterNameFromMap: string
+    characterNameFromMap: string;
     character: heroesWithName;
     items: upgradesWithName[];
     initialStats: allStats;
     abilities: AWithKey[];
 }
 
-
-const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMap, character, items, initialStats, abilities }) => {
-
+const CharacterBuilder: React.FC<CharacterBuilderProps> = ({
+    characterNameFromMap,
+    character,
+    items,
+    initialStats,
+    abilities
+}) => {
     const heroName = character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
     const actualname = characterNameFromMap;
 
@@ -28,23 +33,23 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
     let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
     let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
     let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Stores the property name and key to use for StatsSidebar
-    let skillIcons: Array<string> = [] //Stores skill icon paths in array
+    let skillIcons: Array<string> = []; //Stores skill icon paths in array
     let skillUpgradeInfo = [[], [], [], []] as skillUpgrades[][]; // Stores upgrade tiers for each skill
     let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data for each skill
 
     // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
-
     for (let i = 0; i < abilities.length; i++) {
         if (abilities[i].heroname === character.name) {
-            heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
-            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
-            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
-            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))];
+            heroSkills = [
+                JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
+                JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
+                JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
+                JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))
+            ];
             break;
         }
-
-
     }
+
     // Retrieves non-zero skill properties & skill image path
     heroSkills.forEach((element, index) => {
         for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
@@ -57,17 +62,15 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         }
 
         skillUpgradeInfo[index] = element.m_vecAbilityUpgrades;
-
         skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+    });
 
-    })
-
+    // Process skill display groups
     for (let i = 0; i < skillProps.length; i++) {
         const sProp = skillProps[i];
         let skey: keyof typeof sProp;
         for (skey in sProp) {
             let slabel: string;
-
             if (skey.includes("Ability")) {
                 slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
             } else {
@@ -77,9 +80,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 key: skey,
                 name: slabel,
                 skillName: heroSkills[i]._class
-            })
+            });
         }
     }
+
+    // State declarations
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
@@ -87,16 +92,15 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
     const [utilityItems, setUtilityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [currentStats, setCurrentStats] = useState<allStats>(initialStats);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [skillUpgrades, setskillUpgrades] = useState<skillUpgrades[][]>(
-        skillUpgradeInfo.map(() => [])
-    );
+    const [skillUpgrades, setskillUpgrades] = useState<skillUpgrades[][]>(skillUpgradeInfo.map(() => []));
     const [skillStats, setSkillStats] = useState<skillProperties[]>(skillProps);
     const [characterLevel, setCharacterLevel] = useState(1);
     const [budget, setBudget] = useState(0);
-    const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
+    const [totalCost, setTotalCost] = useState(0);
     const [leveledStats, setLeveledStats] = useState<allStats>(initialStats);
     const [abilityPoints, setAbilityPoints] = useState<number>(0);
 
+    // Calculate level-based stats
     useEffect(() => {
         let newLeveledStats = { ...initialStats };
         let newAbilityPoints = 0;
@@ -122,24 +126,101 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
 
         if (totalStandardUpgrades > 0) {
             const levelUpgrades = (character.data as any).m_mapStandardLevelUpUpgrades;
-
             const meleeDamageIncrease = (levelUpgrades.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
 
             newLeveledStats.EBulletDamage += (levelUpgrades.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
             newLeveledStats.ELightMeleeDamage += meleeDamageIncrease;
 
             const heavyToLightRatio = initialStats.EHeavyMeleeDamage / initialStats.ELightMeleeDamage;
-
             newLeveledStats.EHeavyMeleeDamage += meleeDamageIncrease * heavyToLightRatio;
-
             newLeveledStats.EMaxHealth += (levelUpgrades.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL || 0) * totalStandardUpgrades;
         }
 
         setLeveledStats(newLeveledStats);
         setAbilityPoints(newAbilityPoints);
-
     }, [characterLevel, character.data, initialStats]);
 
+    // Calculate stats and total cost
+    // Calculate stats and total cost
+    useEffect(() => {
+        try {
+            // Only recalculate if we have valid stats and items
+            if (!leveledStats || !character) return;
+
+            const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
+                (item): item is upgradesWithName => item !== null
+            );
+
+            // Get weapon stats - moved outside of dependencies
+            const weaponInfo = abilities.find(ability =>
+                ability.heroname === character.name
+            )?.adata.ESlot_Weapon_Primary?.m_WeaponInfo;
+
+            // Calculate total cost
+            const newTotalCost = allEquippedItems.reduce((sum, item) => {
+                const tierCost = {
+                    "EModTier_1": 500,
+                    "EModTier_2": 1250,
+                    "EModTier_3": 3000,
+                    "EModTier_4": 6200
+                };
+                return sum + (tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0);
+            }, 0);
+
+            // Calculate character stats
+            const { characterStats: newStats, skillStats: newSkillStats } = calculateClientCharacterStats(
+                character,
+                allEquippedItems,
+                leveledStats,
+                heroSkills,
+                skillProps,
+                skillUpgrades,
+                skillScaling,
+                weaponInfo
+            );
+
+            // Batch state updates
+            setCurrentStats(prevStats => {
+                // Only update if stats have actually changed
+                if (JSON.stringify(prevStats) === JSON.stringify(newStats)) {
+                    return prevStats;
+                }
+                return newStats;
+            });
+
+            setSkillStats(prevSkillStats => {
+                // Only update if skill stats have actually changed
+                if (JSON.stringify(prevSkillStats) === JSON.stringify(newSkillStats)) {
+                    return prevSkillStats;
+                }
+                return newSkillStats;
+            });
+
+            setTotalCost(prevTotalCost => {
+                // Only update if total cost has actually changed
+                if (prevTotalCost === newTotalCost) {
+                    return prevTotalCost;
+                }
+                return newTotalCost;
+            });
+
+        } catch (error) {
+            console.error('Error calculating stats:', error);
+            setErrorMessage((error as Error).message || 'Error calculating stats');
+        }
+    }, [
+        character,
+        weaponItems,
+        vitalityItems,
+        spiritItems,
+        utilityItems,
+        skillUpgrades,
+        leveledStats
+        // Removed dependencies that don't need to trigger recalculation
+        // heroSkills, skillProps, skillScaling, abilities are static after initial setup
+    ]);
+
+    // Event handlers
     const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newLevel = parseInt(event.target.value, 10);
         setCharacterLevel(newLevel);
@@ -150,61 +231,19 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         setBudget(Math.max(newBudget, character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']));
     };
 
+    const handleSkillUpgrade = (skillIndex: number) => {
+        setskillUpgrades(prevUpgrades => {
+            const newUpgrades = [...prevUpgrades];
+            const currentUpgradeLevel = newUpgrades[skillIndex].length;
 
-
-    useEffect(() => {
-        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-            (item): item is upgradesWithName => item !== null
-        );
-
-        fetch('/api/calculateStats', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                characterName: character.name.replace(/^hero_/, ''),
-                equippedItems: allEquippedItems,
-                characterStatInput: leveledStats, // Use leveledStats instead of currentStats
-                heroSkills: heroSkills,
-                skillProperties: skillProps,
-                skillUpgrades: skillUpgrades,
-                skillScaleData: skillScaling,
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.error || 'Network response was not ok') });
-                }
-                return response.json();
-            })
-            .then(newStats => {
-                setCurrentStats(newStats.characterStats);
-                setSkillStats(newStats.skillStats);
-            })
-            .catch(error => {
-                console.error('Error calculating stats:', error);
-                setErrorMessage(error.message || 'Error calculating stats');
-            });
-    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades, leveledStats]);
-
-    const [totalCost, setTotalCost] = useState(0);
-
-    useEffect(() => {
-        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-            (item): item is upgradesWithName => item !== null
-        );
-        const newTotalCost = allEquippedItems.reduce((sum, item) => {
-            const tierCost = {
-                "EModTier_1": 500,
-                "EModTier_2": 1250,
-                "EModTier_3": 3000,
-                "EModTier_4": 6200
-            };
-            return sum + (tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0);
-        }, 0);
-        setTotalCost(newTotalCost);
-    }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
+            if (currentUpgradeLevel < skillUpgradeInfo[skillIndex].length) {
+                newUpgrades[skillIndex] = skillUpgradeInfo[skillIndex].slice(0, currentUpgradeLevel + 1);
+            } else {
+                newUpgrades[skillIndex] = [];
+            }
+            return newUpgrades;
+        });
+    };
 
     const handleItemToggle = (item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
@@ -238,7 +277,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         ].findIndex(equippedItem => equippedItem?.name === item.name);
 
         if (existingIndex !== -1) {
-            // Item is already equipped, so unequip it
             const gridToUpdate = existingIndex < 4 ? setWeaponItems :
                 existingIndex < 8 ? setVitalityItems :
                     existingIndex < 12 ? setSpiritItems :
@@ -250,7 +288,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 return newGrid;
             });
         } else {
-            // Item is not equipped, so try to equip it
             const tierCost = {
                 "EModTier_1": 500,
                 "EModTier_2": 1250,
@@ -267,14 +304,12 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
 
             const emptyIndex = primaryGrid.findIndex(slot => slot === null);
             if (emptyIndex !== -1) {
-                // There's space in the primary grid
                 setPrimaryGrid(prev => {
                     const newGrid = [...prev];
                     newGrid[emptyIndex] = item;
                     return newGrid;
                 });
             } else if (category !== 'Utility') {
-                // Primary grid is full, try to place in utility grid
                 const utilityEmptyIndex = utilityItems.findIndex(slot => slot === null);
                 if (utilityEmptyIndex !== -1) {
                     setUtilityItems(prev => {
@@ -293,27 +328,16 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         }
     };
 
-
-    const handleSkillUpgrade = (skillIndex: number) => {
-        setskillUpgrades(prevUpgrades => {
-            const newUpgrades = [...prevUpgrades];
-            const currentUpgradeLevel = newUpgrades[skillIndex].length;
-
-            if (currentUpgradeLevel < skillUpgradeInfo[skillIndex].length) {
-                newUpgrades[skillIndex] = skillUpgradeInfo[skillIndex].slice(0, currentUpgradeLevel + 1);
-            } else {
-                newUpgrades[skillIndex] = [];
-            }
-            //console.log(`Skill ${skillIndex + 1} upgraded. New state:`, newUpgrades);
-            return newUpgrades;
-        });
-    };
-
+    // Helper functions
     const getEquippedItemsbyCategory = () => { return [weaponItems, vitalityItems, spiritItems, utilityItems] };
+
+    // Filtered items for search
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Get max level
+    const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
     const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
         (item): item is upgradesWithName => item !== null
     );
