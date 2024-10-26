@@ -1,7 +1,6 @@
-// builder/page.tsx
+//page.tsx
 import { getCharacter, getItems, getAbilitiesbyHero, getHeroStartingStats, getCharacterNameMap } from '../../lib/dataUtils';
 import CharacterBuilder from '../../components/CharacterBuilder';
-import { extractItemModifiers } from '../../lib/dataUtils';
 
 export default async function BuilderPage({ params }: { params: { characterName: string } }) {
     const character = await getCharacter(params.characterName);
@@ -9,7 +8,6 @@ export default async function BuilderPage({ params }: { params: { characterName:
     const abilities = await getAbilitiesbyHero();
     const initialStats = await getHeroStartingStats(params.characterName);
     const characterNameMap = await getCharacterNameMap();
-
 
     if (!character) {
         return <div>Character not found</div>;

@@ -10,6 +10,7 @@ import { upgradesWithName } from '../lib/itemInterfaces';
 import { heroesWithName, m_MLI } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
+import { calculateAllStats } from '../lib/clientUtils';
 
 interface ItemModifier {
     itemkey: string;
@@ -159,40 +160,40 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
 
 
     useEffect(() => {
-        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-            (item): item is upgradesWithName => item !== null
-        );
+        try {
+            const { characterStats, skillStats } = calculateAllStats(
+                character,
+                weaponItems,
+                vitalityItems,
+                spiritItems,
+                utilityItems,
+                leveledStats,
+                heroSkills,
+                skillProps,
+                skillUpgrades,
+                skillScaling,
+                abilities // This will now work correctly with AWithKey[]
+            );
 
-        fetch('/api/calculateStats', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                characterName: character.name.replace(/^hero_/, ''),
-                equippedItems: allEquippedItems,
-                characterStatInput: leveledStats, // Use leveledStats instead of currentStats
-                heroSkills: heroSkills,
-                skillProperties: skillProps,
-                skillUpgrades: skillUpgrades,
-                skillScaleData: skillScaling,
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.error || 'Network response was not ok') });
-                }
-                return response.json();
-            })
-            .then(newStats => {
-                setCurrentStats(newStats.characterStats);
-                setSkillStats(newStats.skillStats);
-            })
-            .catch(error => {
-                console.error('Error calculating stats:', error);
-                setErrorMessage(error.message || 'Error calculating stats');
-            });
-    }, [character, weaponItems, vitalityItems, spiritItems, utilityItems, skillUpgrades, leveledStats]);
+            setCurrentStats(characterStats);
+            setSkillStats(skillStats);
+        } catch (error) {
+            console.error('Error calculating stats:', error);
+            setErrorMessage(error instanceof Error ? error.message : 'Error calculating stats');
+        }
+    }, [
+        character,
+        weaponItems,
+        vitalityItems,
+        spiritItems,
+        utilityItems,
+        skillUpgrades,
+        leveledStats,
+        abilities,
+        heroSkills,
+        skillProps,
+        skillScaling
+    ]);
 
     const [totalCost, setTotalCost] = useState(0);
 
@@ -335,10 +336,12 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                     {/* Content wrapper */}
                     <div className="flex flex-col xl:flex-row gap-8 max-w-[2000px] mx-auto">
                         {/* Left column - Character info and equipment grids */}
-                        <div className="xl:w-auto flex flex-col">
+                        <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap">
                             {/* Character info section */}
-                            <div className="mb-6 flex flex-col items-center">
-                                <h2 className="text-3xl font-bold mb-4 text-white">{actualname}</h2>
+                            <div className="mb-2 px-6 flex flex-col items-center float-left select-none">
+                                <div>
+                                    <h2 className="text-3xl font-bold mb-4 text-white">{actualname}</h2>
+                                </div>
 
                                 {/* Character image */}
                                 {character.data.m_strIconHeroCard && (
@@ -347,7 +350,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                         alt={actualname}
                                         width={120}
                                         height={120}
-                                        className="rounded-full mb-4 object-none select-none pointer-events-none"
+                                        className="rounded-full mb-2 object-none select-none pointer-events-none"
                                         style={{
                                             maxWidth: "100%",
                                             height: "auto"
@@ -356,43 +359,45 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                 )}
 
                                 {/* Level slider */}
-                                <div className="w-full max-w-sm mb-4">
-                                    <label className="block text-m font-medium text-amber-500 mb-2">
+                                <div className="w-full mb-4">
+                                    <label htmlFor="level-slider" className="block text-m font-medium text-amber-500">
                                         Character Level: <span className="text-[#70F8C1]">{characterLevel}</span>
                                     </label>
                                     <input
                                         type="range"
+                                        id="level-slider"
                                         min="1"
                                         max={maxLevel}
                                         value={characterLevel}
                                         onChange={handleLevelChange}
-                                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-amber-500"
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-amber-500 [&::-webkit-slider-thumb]:bg-amber-500"
                                     />
                                 </div>
 
                                 {/* Budget input */}
-                                <div className="w-full max-w-sm mb-4">
-                                    <label className="block text-sm font-medium text-amber-500 mb-2">
+                                <div className="w-full mb-4">
+                                    <label htmlFor="budget-input" className="block text-sm font-medium text-amber-500">
                                         Budget:
                                     </label>
                                     <input
                                         type="number"
+                                        id="budget-input"
                                         value={budget}
                                         onChange={handleBudgetChange}
                                         min={character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']}
-                                        className="w-full p-2 bg-custom-bg border border-amber-500 text-[#70F8C1] rounded-lg text-center"
+                                        className="bg-amber-500 border border-amber-500 text-gray-900 text-sm rounded-lg focus:ring-amber-600 focus:border-amber-500 block w-full p-2 dark:bg-custom-bg dark:border-amber-500 dark:placeholder-[#70F8C1] dark:text-[#70F8C1] dark:focus:ring-amber-600 dark:focus:border-amber-500 text-center"
                                     />
                                 </div>
 
                                 {/* Cost display */}
-                                <p className="text-amber-500 mb-4">
+                                <p className="text-amber-500 mb-3">
                                     Total Cost: <span className="text-[#70F8C1]">{totalCost}</span>
                                     <span className="text-lg font-bold"> / </span>
                                     <span className="text-[#70F8C1]">{budget}</span>
                                 </p>
 
                                 {/* Skill icons */}
-                                <div className="flex space-x-2 mb-6">
+                                <div className="flex space-x-2 p-4">
                                     {skillIcons.map((skillIcon, index) => (
                                         <div key={index} className="relative border-2 border-[#dbb2f7] rounded-full p-1">
                                             <Image
@@ -400,7 +405,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                                 alt={`Skill ${index + 1}`}
                                                 width={50}
                                                 height={50}
-                                                className="rounded-full cursor-pointer hover:scale-105 transition-transform"
+                                                className="rounded-full cursor-pointer"
                                                 onClick={() => handleSkillUpgrade(index)}
                                                 style={{
                                                     maxWidth: "100%",
@@ -416,7 +421,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                             </div>
 
                             {/* Equipment grids */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">
                                 <ItemGrid
                                     title="Weapon"
                                     items={weaponItems}
