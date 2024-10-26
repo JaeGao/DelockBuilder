@@ -10,7 +10,7 @@ import { upgradesWithName } from '../lib/itemInterfaces';
 import { heroesWithName, m_MLI } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
-import { calculateAllStats } from '../lib/clientutils';
+import { calculateAllStats } from '../lib/clientUtils';
 
 interface ItemModifier {
     itemkey: string;
