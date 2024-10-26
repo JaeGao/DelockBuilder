@@ -23,17 +23,16 @@ export default async function Home() {
   return (
     <div>
       <Navbar />
-
       <div className="p-12">
         <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
-        <KofiWidget />
+
         <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {characters.map(({ data: character, name }) => {
             const heroName = getHeroName(name);
             const mappedname = charnamemap[name];
             return (
               <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
-                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
+                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors min-h-full">
                   {hasSelectionImage(character) && (
                     <Image
                       src={character.m_strIconHeroCard}
@@ -52,7 +51,9 @@ export default async function Home() {
             );
           })}
         </div>
+        <div className='!min-h-fit'><KofiWidget /></div>
       </div>
+
     </div>
   );
 }
