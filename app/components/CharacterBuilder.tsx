@@ -323,6 +323,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
     const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
         (item): item is upgradesWithName => item !== null
     );
+
     return (
         <div className="min-h-screen bg-gray-900">
             <Navbar />
