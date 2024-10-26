@@ -23,9 +23,10 @@ export default async function Home() {
   return (
     <div>
       <Navbar />
-      <KofiWidget />
+
       <div className="p-12">
         <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
+        <KofiWidget />
         <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {characters.map(({ data: character, name }) => {
             const heroName = getHeroName(name);
