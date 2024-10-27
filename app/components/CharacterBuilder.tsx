@@ -324,11 +324,11 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         return [weaponItems, vitalityItems, spiritItems, utilityItems];
     }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
     return (
-        <div className="min-h-screen bg-gray-900">
+        <div className="flex-1 flex flex-col bg-gray-900">
             <Navbar />
 
             {/* Main layout container */}
-            <div className="flex min-h-[calc(100vh-64px)]"> {/* Adjust 64px based on your navbar height */}
+            <div className="flex-1 flex relative"> {/* Adjust 64px based on your navbar height */}
                 {/* Main content area that will shrink with sidebar */}
                 <div className="flex-1 p-4 transition-all duration-300 mr-[300px]">
                     {/* Content wrapper */}
@@ -473,16 +473,18 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 </div>
 
                 {/* Stats sidebar - Fixed width */}
-                <div className="fixed top-0 right-0 w-[300px] h-screen overflow-y-auto">
-                    <StatsSidebar
-                        characterStats={currentStats}
-                        characterName={heroName}
-                        characterClass={character.data._class as string}
-                        characterSkillsData={skillStats}
-                        skillLabels={skillDG}
-                        skillImages={skillIcons}
-                        skillUpgrades={skillUpgradeInfo}
-                    />
+                <div className="absolute top-0 right-0 bottom-0 w-[300px] border-l border-gray-700">
+                    <div className="h-full overflow-y-auto">
+                        <StatsSidebar
+                            characterStats={currentStats}
+                            characterName={heroName}
+                            characterClass={character.data._class as string}
+                            characterSkillsData={skillStats}
+                            skillLabels={skillDG}
+                            skillImages={skillIcons}
+                            skillUpgrades={skillUpgradeInfo}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
