@@ -65,14 +65,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
-      <head>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1757813105299185"
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
-        />
-      </head>
+      <Script
+        async
+        src="https://pagead2.googlesyndecode.com/pagead/js/adsbygoogle.js?client=ca-pub-1757813105299185"
+        strategy="afterInteractive"
+        crossOrigin="anonymous"
+      />
       <body className="text-custom-beige">
         <div className="flex">
           <main className="flex-1 p-2">
