@@ -328,7 +328,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
             <Navbar />
 
             {/* Main layout container */}
-            <div className="flex-1 flex relative"> {/* Adjust 64px based on your navbar height */}
+            <div className="flex-1 flex relative">
                 {/* Main content area that will shrink with sidebar */}
                 <div className="flex-1 p-4 transition-all duration-300 mr-[300px]">
                     {/* Content wrapper */}
@@ -473,7 +473,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 </div>
 
                 {/* Stats sidebar - Fixed width */}
-                <div className="absolute top-0 right-0 bottom-0 w-[300px] border-l border-gray-700">
+                <div className="absolute top-0 right-0 bottom-0 lg:w-[300px] sm:w-[220px] border-l border-gray-700">
                     <div className="h-full overflow-y-auto">
                         <StatsSidebar
                             characterStats={currentStats}
