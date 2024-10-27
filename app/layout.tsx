@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";
-import { MetadataRoute } from 'next';
 import { Analytics } from "@vercel/analytics/react";
+import Script from 'next/script';
 
 const Deadlock = localFont({
   src: './fonts/Deadlock-Black.otf',
@@ -65,10 +65,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
-      <script async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.PUBLIC_GOOGLE_ADS_CLIENT_ID}}"
-        strategy="lazyOnload"
-        crossOrigin="anonymous"`}></script>
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1757813105299185"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="text-custom-beige">
         <div className="flex">
           <main className="flex-1 p-2">
