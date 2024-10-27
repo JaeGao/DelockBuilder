@@ -1,21 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from "next/image";
 import ItemGrid from './ItemGrid';
 import StatsSidebar from './StatsSidebar';
 import { ItemsDisplay, getCategory } from './ItemsDisplay';
-import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData, skillnamemap } from '../lib/abilityInterface';
+import { AWithKey, SkillsData, skillProperties, skillDisplayGroups, skillUpgrades, skillScaleData } from '../lib/abilityInterface';
 import { upgradesWithName } from '../lib/itemInterfaces';
-import { heroesWithName, m_MLI } from '../lib/herointerfaces';
+import { heroesWithName } from '../lib/herointerfaces';
 import { allStats } from '../lib/dataUtils';
 import Navbar from '../ui/Navbar';
 import { calculateAllStats } from '../lib/clientUtils';
-
-interface ItemModifier {
-    itemkey: string;
-    modifiers: { [key: string]: number };
-}
 
 interface CharacterBuilderProps {
     characterNameFromMap: string
@@ -25,68 +20,81 @@ interface CharacterBuilderProps {
     abilities: AWithKey[];
 }
 
-
 const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMap, character, items, initialStats, abilities }) => {
-
-    const heroName = character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
+    const heroName = useMemo(() =>
+        character.name.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase()),
+        [character.name]
+    );
     const actualname = characterNameFromMap;
 
-    // Getting Skills Data
-    let heroSkills = [] as SkillsData[]; // Array of ESlot_Signature_# from HeroAbilityStats.json
-    let skillProps = [{}, {}, {}, {}] as skillProperties[]; // Stores non-zero properties from m_mapAbilityProperties in each skill
-    let skillDG = [[], [], [], []] as skillDisplayGroups[][]; // Stores the property name and key to use for StatsSidebar
-    let skillIcons: Array<string> = [] //Stores skill icon paths in array
-    let skillUpgradeInfo = [[], [], [], []] as skillUpgrades[][]; // Stores upgrade tiers for each skill
-    let skillScaling = [{}, {}, {}, {}] as skillScaleData[]; // Stores Scaling data for each skill
+    // Memoize skills data initialization
+    const {
+        heroSkills,
+        skillProps,
+        skillDG,
+        skillIcons,
+        skillUpgradeInfo,
+        skillScaling
+    } = useMemo(() => {
+        let heroSkills = [] as SkillsData[];
+        let skillProps = [{}, {}, {}, {}] as skillProperties[];
+        let skillDG = [[], [], [], []] as skillDisplayGroups[][];
+        let skillIcons: Array<string> = [];
+        let skillUpgradeInfo = [[], [], [], []] as skillUpgrades[][];
+        let skillScaling = [{}, {}, {}, {}] as skillScaleData[];
 
-    // Retrieve all ESlot_Signature_# parts from HeroAbilityStats.json
+        // Find matching ability data
+        const abilityData = abilities.find(ability => ability.heroname === character.name);
+        if (abilityData) {
+            heroSkills = [
+                JSON.parse(JSON.stringify(abilityData.adata.ESlot_Signature_1)),
+                JSON.parse(JSON.stringify(abilityData.adata.ESlot_Signature_2)),
+                JSON.parse(JSON.stringify(abilityData.adata.ESlot_Signature_3)),
+                JSON.parse(JSON.stringify(abilityData.adata.ESlot_Signature_4))
+            ];
 
-    for (let i = 0; i < abilities.length; i++) {
-        if (abilities[i].heroname === character.name) {
-            heroSkills = [JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_1)),
-            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_2)),
-            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_3)),
-            JSON.parse(JSON.stringify(abilities[i].adata.ESlot_Signature_4))];
-            break;
-        }
+            // Process skill properties and icons
+            heroSkills.forEach((element, index) => {
+                for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
+                    if (parseFloat(value.m_strValue) !== 0) {
+                        skillProps[index][skey] = parseFloat(value.m_strValue);
+                        if (value.m_subclassScaleFunction && value.m_subclassScaleFunction.subclass.m_bFunctionDisabled !== true) {
+                            skillScaling[index][skey] = value.m_subclassScaleFunction.subclass;
+                        }
+                    }
+                }
 
+                skillUpgradeInfo[index] = element.m_vecAbilityUpgrades;
+                skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
+            });
 
-    }
-    // Retrieves non-zero skill properties & skill image path
-    heroSkills.forEach((element, index) => {
-        for (const [skey, value] of Object.entries(element.m_mapAbilityProperties)) {
-            if (parseFloat(value.m_strValue) !== 0) {
-                skillProps[index][skey] = parseFloat(value.m_strValue);
-                if (value.m_subclassScaleFunction && value.m_subclassScaleFunction.subclass.m_bFunctionDisabled !== true) {
-                    skillScaling[index][skey] = value.m_subclassScaleFunction.subclass;
+            // Generate skill display groups
+            for (let i = 0; i < skillProps.length; i++) {
+                const sProp = skillProps[i];
+                for (const skey in sProp) {
+                    let slabel = skey.includes("Ability")
+                        ? skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim()
+                        : skey.replace(/([A-Z])/g, ' $1').trim();
+
+                    skillDG[i].push({
+                        key: skey,
+                        name: slabel,
+                        skillName: heroSkills[i]._class
+                    });
                 }
             }
         }
 
-        skillUpgradeInfo[index] = element.m_vecAbilityUpgrades;
+        return {
+            heroSkills,
+            skillProps,
+            skillDG,
+            skillIcons,
+            skillUpgradeInfo,
+            skillScaling
+        };
+    }, [character.name, abilities]);
 
-        skillIcons[index] = element.m_strAbilityImage.replace(/^panorama:"/, '').replace(/"$/, '').replace('.psd', '_psd.png');
-
-    })
-
-    for (let i = 0; i < skillProps.length; i++) {
-        const sProp = skillProps[i];
-        let skey: keyof typeof sProp;
-        for (skey in sProp) {
-            let slabel: string;
-
-            if (skey.includes("Ability")) {
-                slabel = skey.replace("Ability", '').replace(/([A-Z])/g, ' $1').trim();
-            } else {
-                slabel = skey.replace(/([A-Z])/g, ' $1').trim();
-            }
-            skillDG[i].push({
-                key: skey,
-                name: slabel,
-                skillName: heroSkills[i]._class
-            })
-        }
-    }
     const [searchTerm, setSearchTerm] = useState('');
     const [weaponItems, setWeaponItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
     const [vitalityItems, setVitalityItems] = useState<(upgradesWithName | null)[]>(Array(4).fill(null));
@@ -100,10 +108,46 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
     const [skillStats, setSkillStats] = useState<skillProperties[]>(skillProps);
     const [characterLevel, setCharacterLevel] = useState(1);
     const [budget, setBudget] = useState(0);
-    const maxLevel = Object.keys(character.data.m_mapLevelInfo).length;
+    const maxLevel = useMemo(() =>
+        Object.keys(character.data.m_mapLevelInfo).length,
+        [character.data.m_mapLevelInfo]
+    );
+
     const [leveledStats, setLeveledStats] = useState<allStats>(initialStats);
     const [abilityPoints, setAbilityPoints] = useState<number>(0);
 
+    // Memoize all equipped items
+    const allEquippedItems = useMemo(() =>
+        [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
+            (item): item is upgradesWithName => item !== null
+        ),
+        [weaponItems, vitalityItems, spiritItems, utilityItems]
+    );
+
+    // Calculate total cost with useMemo
+    const totalCost = useMemo(() => {
+        const tierCost = {
+            "EModTier_1": 500,
+            "EModTier_2": 1250,
+            "EModTier_3": 3000,
+            "EModTier_4": 6200
+        };
+
+        return allEquippedItems.reduce((sum, item) =>
+            sum + (tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0),
+            0
+        );
+    }, [allEquippedItems]);
+
+    // Memoize filtered items
+    const filteredItems = useMemo(() =>
+        items.filter((item) =>
+            item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ),
+        [items, searchTerm]
+    );
+
+    // Memoize level calculations
     useEffect(() => {
         let newLeveledStats = { ...initialStats };
         let newAbilityPoints = 0;
@@ -129,36 +173,19 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
 
         if (totalStandardUpgrades > 0) {
             const levelUpgrades = (character.data as any).m_mapStandardLevelUpUpgrades;
-
             const meleeDamageIncrease = (levelUpgrades.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
 
             newLeveledStats.EBulletDamage += (levelUpgrades.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL || 0) * totalStandardUpgrades;
             newLeveledStats.ELightMeleeDamage += meleeDamageIncrease;
-
-            const heavyToLightRatio = initialStats.EHeavyMeleeDamage / initialStats.ELightMeleeDamage;
-
-            newLeveledStats.EHeavyMeleeDamage += meleeDamageIncrease * heavyToLightRatio;
-
+            newLeveledStats.EHeavyMeleeDamage += meleeDamageIncrease * (initialStats.EHeavyMeleeDamage / initialStats.ELightMeleeDamage);
             newLeveledStats.EMaxHealth += (levelUpgrades.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL || 0) * totalStandardUpgrades;
         }
 
         setLeveledStats(newLeveledStats);
         setAbilityPoints(newAbilityPoints);
-
     }, [characterLevel, character.data, initialStats]);
 
-    const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newLevel = parseInt(event.target.value, 10);
-        setCharacterLevel(newLevel);
-    };
-
-    const handleBudgetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newBudget = parseInt(event.target.value, 10);
-        setBudget(Math.max(newBudget, character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold']));
-    };
-
-
-
+    // Memoize stat calculations
     useEffect(() => {
         try {
             const { characterStats, skillStats } = calculateAllStats(
@@ -172,7 +199,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 skillProps,
                 skillUpgrades,
                 skillScaling,
-                abilities // This will now work correctly with AWithKey[]
+                abilities
             );
 
             setCurrentStats(characterStats);
@@ -189,63 +216,51 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
         utilityItems,
         skillUpgrades,
         leveledStats,
-        abilities,
         heroSkills,
         skillProps,
-        skillScaling
+        skillScaling,
+        abilities
     ]);
 
-    const [totalCost, setTotalCost] = useState(0);
+    // Memoize handlers
+    const handleLevelChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setCharacterLevel(parseInt(event.target.value, 10));
+    }, []);
 
-    useEffect(() => {
-        const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-            (item): item is upgradesWithName => item !== null
-        );
-        const newTotalCost = allEquippedItems.reduce((sum, item) => {
-            const tierCost = {
-                "EModTier_1": 500,
-                "EModTier_2": 1250,
-                "EModTier_3": 3000,
-                "EModTier_4": 6200
-            };
-            return sum + (tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0);
-        }, 0);
-        setTotalCost(newTotalCost);
-    }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
+    const handleBudgetChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const newBudget = parseInt(event.target.value, 10);
+        const minBudget = character.data.m_mapLevelInfo[characterLevel.toString() as keyof typeof character.data.m_mapLevelInfo]['m_unRequiredGold'];
+        setBudget(Math.max(newBudget, minBudget));
+    }, [character.data.m_mapLevelInfo, characterLevel]);
 
-    const handleItemToggle = (item: upgradesWithName) => {
+    const handleSkillUpgrade = useCallback((skillIndex: number) => {
+        setskillUpgrades(prevUpgrades => {
+            const newUpgrades = [...prevUpgrades];
+            const currentUpgradeLevel = newUpgrades[skillIndex].length;
+
+            if (currentUpgradeLevel < skillUpgradeInfo[skillIndex].length) {
+                newUpgrades[skillIndex] = skillUpgradeInfo[skillIndex].slice(0, currentUpgradeLevel + 1);
+            } else {
+                newUpgrades[skillIndex] = [];
+            }
+            return newUpgrades;
+        });
+    }, [skillUpgradeInfo]);
+
+    const handleItemToggle = useCallback((item: upgradesWithName) => {
         const category = getCategory(item.desc.m_eItemSlotType as string || '');
-        let primaryGrid: (upgradesWithName | null)[];
-        let setPrimaryGrid: React.Dispatch<React.SetStateAction<(upgradesWithName | null)[]>>;
+        const tierCost = {
+            "EModTier_1": 500,
+            "EModTier_2": 1250,
+            "EModTier_3": 3000,
+            "EModTier_4": 6200
+        };
 
-        switch (category) {
-            case 'Weapon':
-                primaryGrid = weaponItems;
-                setPrimaryGrid = setWeaponItems;
-                break;
-            case 'Vitality':
-                primaryGrid = vitalityItems;
-                setPrimaryGrid = setVitalityItems;
-                break;
-            case 'Spirit':
-                primaryGrid = spiritItems;
-                setPrimaryGrid = setSpiritItems;
-                break;
-            default:
-                primaryGrid = utilityItems;
-                setPrimaryGrid = setUtilityItems;
-                break;
-        }
-
-        const existingIndex = [
-            ...weaponItems,
-            ...vitalityItems,
-            ...spiritItems,
-            ...utilityItems
-        ].findIndex(equippedItem => equippedItem?.name === item.name);
+        const existingIndex = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems]
+            .findIndex(equippedItem => equippedItem?.name === item.name);
 
         if (existingIndex !== -1) {
-            // Item is already equipped, so unequip it
+            // Unequip logic
             const gridToUpdate = existingIndex < 4 ? setWeaponItems :
                 existingIndex < 8 ? setVitalityItems :
                     existingIndex < 12 ? setSpiritItems :
@@ -257,13 +272,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 return newGrid;
             });
         } else {
-            // Item is not equipped, so try to equip it
-            const tierCost = {
-                "EModTier_1": 500,
-                "EModTier_2": 1250,
-                "EModTier_3": 3000,
-                "EModTier_4": 6200
-            };
+            // Equip logic
             const itemCost = tierCost[item.desc.m_iItemTier as keyof typeof tierCost] || 0;
 
             if (totalCost + itemCost > budget) {
@@ -272,59 +281,48 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 return;
             }
 
-            const emptyIndex = primaryGrid.findIndex(slot => slot === null);
-            if (emptyIndex !== -1) {
-                // There's space in the primary grid
-                setPrimaryGrid(prev => {
-                    const newGrid = [...prev];
-                    newGrid[emptyIndex] = item;
-                    return newGrid;
-                });
-            } else if (category !== 'Utility') {
-                // Primary grid is full, try to place in utility grid
-                const utilityEmptyIndex = utilityItems.findIndex(slot => slot === null);
-                if (utilityEmptyIndex !== -1) {
-                    setUtilityItems(prev => {
+            const updateGrid = (setPrimaryGrid: React.Dispatch<React.SetStateAction<(upgradesWithName | null)[]>>, primaryGrid: (upgradesWithName | null)[]) => {
+                const emptyIndex = primaryGrid.findIndex(slot => slot === null);
+                if (emptyIndex !== -1) {
+                    setPrimaryGrid(prev => {
                         const newGrid = [...prev];
-                        newGrid[utilityEmptyIndex] = item;
+                        newGrid[emptyIndex] = item;
                         return newGrid;
                     });
-                } else {
-                    setErrorMessage('No empty slots available!');
-                    setTimeout(() => setErrorMessage(null), 3000);
+                    return true;
                 }
-            } else {
+                return false;
+            };
+
+            let equipped = false;
+            switch (category) {
+                case 'Weapon':
+                    equipped = updateGrid(setWeaponItems, weaponItems);
+                    break;
+                case 'Vitality':
+                    equipped = updateGrid(setVitalityItems, vitalityItems);
+                    break;
+                case 'Spirit':
+                    equipped = updateGrid(setSpiritItems, spiritItems);
+                    break;
+                default:
+                    equipped = updateGrid(setUtilityItems, utilityItems);
+                    break;
+            }
+
+            if (!equipped && category !== 'Utility') {
+                equipped = updateGrid(setUtilityItems, utilityItems);
+            }
+
+            if (!equipped) {
                 setErrorMessage('No empty slots available!');
                 setTimeout(() => setErrorMessage(null), 3000);
             }
         }
-    };
-
-
-    const handleSkillUpgrade = (skillIndex: number) => {
-        setskillUpgrades(prevUpgrades => {
-            const newUpgrades = [...prevUpgrades];
-            const currentUpgradeLevel = newUpgrades[skillIndex].length;
-
-            if (currentUpgradeLevel < skillUpgradeInfo[skillIndex].length) {
-                newUpgrades[skillIndex] = skillUpgradeInfo[skillIndex].slice(0, currentUpgradeLevel + 1);
-            } else {
-                newUpgrades[skillIndex] = [];
-            }
-            //console.log(`Skill ${skillIndex + 1} upgraded. New state:`, newUpgrades);
-            return newUpgrades;
-        });
-    };
-
-    const getEquippedItemsbyCategory = () => { return [weaponItems, vitalityItems, spiritItems, utilityItems] };
-    const filteredItems = items.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const allEquippedItems = [...weaponItems, ...vitalityItems, ...spiritItems, ...utilityItems].filter(
-        (item): item is upgradesWithName => item !== null
-    );
-
+    }, [weaponItems, vitalityItems, spiritItems, utilityItems, totalCost, budget]);
+    const getEquippedItemsbyCategory = useCallback(() => {
+        return [weaponItems, vitalityItems, spiritItems, utilityItems];
+    }, [weaponItems, vitalityItems, spiritItems, utilityItems]);
     return (
         <div className="min-h-screen bg-gray-900">
             <Navbar />
@@ -491,4 +489,4 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
     );
 };
 
-export default CharacterBuilder;
+export default React.memo(CharacterBuilder);
