@@ -22,6 +22,7 @@ export interface ItemModifiers {
 export interface ModifierValues {
     [key: string]: number;
 }
+
 interface AP2 {
     m_eProvidedPropertyType?: string;
     m_strValue?: string;
@@ -43,7 +44,6 @@ interface mMAP {
     [key: string]: AP2;
 }
 
-// Update the scale data interface to be more specific
 interface ScaleFunction {
     _class?: string;
     m_eSpecificStatScaleType?: string;
@@ -72,12 +72,10 @@ interface AbilityProperties {
     [key: string]: PropertyValue;
 }
 
-// Client-side version of extractItemModifiers with proper typing
 function extractItemModifiersClient(item: upgrades): ItemModifiers {
     const modifiers: ItemModifiers = {};
     if (!item.m_mapAbilityProperties) return modifiers;
 
-    // Cast to unknown first, then to mMAP
     const properties = item.m_mapAbilityProperties as unknown as mMAP;
 
     for (const [key, value] of Object.entries(properties)) {
@@ -95,27 +93,42 @@ function extractItemModifiersClient(item: upgrades): ItemModifiers {
 
                 if (isNaN(numericValue)) continue;
 
+
+                if (propertyType === "MODIFIER_VALUE_TECH_LIFESTEAL" ||
+                    propertyType === "MODIFIER_VALUE_BULLET_LIFESTEAL") {
+                    const statKey = propertyType === "MODIFIER_VALUE_TECH_LIFESTEAL" ?
+                        "ETechLifesteal" : "EBulletLifesteal";
+                    modifiers[statKey] = numericValue;
+                    continue;
+                }
+
                 const isBasicModifier = statInfo.mod_type !== 'skip'
                     && statInfo.mod_type !== 'percent'
                     && value.m_UsageFlags !== "APUsageFlag_ModifierConditional"
                     && value.m_eApplyFilter !== "EApplyFilter_OnlyIfImbued"
-                    && !(key.includes("When") || key.includes("With") || key.includes("Charged") || key.includes("Active"));
+                    && !(key.includes("When") || key.includes("With") ||
+                        key.includes("Charged") || key.includes("Active"));
 
-                if (isBasicModifier && item.itemkey !== "Divine Barrier" && item.itemkey !== "Crippling Headshot") {
+                if (isBasicModifier && item.itemkey !== "Divine Barrier" &&
+                    item.itemkey !== "Crippling Headshot") {
                     modifiers[statInfo.stat] = numericValue;
-                } else if (statInfo.mod_type !== 'skip' && statInfo.mod_type === 'percent') {
+                } else if (statInfo.mod_type !== 'skip' &&
+                    statInfo.mod_type === 'percent') {
                     modifiers[statInfo.stat + '_percent'] = numericValue;
-                } else if (isBasicModifier && item.itemkey === "Divine Barrier" && key !== "BonusMoveSpeed") {
+                } else if (isBasicModifier && item.itemkey === "Divine Barrier" &&
+                    key !== "BonusMoveSpeed") {
                     modifiers[statInfo.stat] = numericValue;
-                } else if (isBasicModifier && item.itemkey === "Crippling Headshot" && !key.includes("ResistReduction")) {
+                } else if (isBasicModifier && item.itemkey === "Crippling Headshot" &&
+                    !key.includes("ResistReduction")) {
                     modifiers[statInfo.stat] = numericValue;
                 }
             }
         }
     }
     return modifiers;
+}
 
-} export function calculateClientStats(
+export function calculateClientStats(
     character: heroesWithName,
     equippedItems: upgradesWithName[],
     characterStatInput: allStats,
@@ -168,10 +181,20 @@ function extractItemModifiersClient(item: upgrades): ItemModifiers {
         Object.entries(itemModifiers).forEach(([stat, value]) => {
             if (stat.includes('_percent')) {
                 modifierValues[stat] = (modifierValues[stat] || 0) + value;
-            } else if (stat === "EBulletArmorDamageReduction" || stat === "ETechArmorDamageReduction") {
+            } else if (
+                stat === "EBulletArmorDamageReduction" ||
+                stat === "ETechArmorDamageReduction"
+            ) {
                 modifierValues[stat] = modifierValues[stat] === undefined ?
                     (1 - value / 100) :
                     modifierValues[stat] * (1 - value / 100);
+            } else if (
+                stat === "ETechLifesteal" ||
+                stat === "EBulletLifesteal"
+            ) {
+                modifierValues[stat] = modifierValues[stat] === undefined ?
+                    value :
+                    modifierValues[stat] + value * (1 - modifierValues[stat] / 100);
             } else if (stat === "ETechCooldown") {
                 modifierValues[stat] = modifierValues[stat] === undefined ?
                     (1 - value / 100) :
@@ -185,8 +208,16 @@ function extractItemModifiersClient(item: upgrades): ItemModifiers {
     // Sort modifiers for correct application order
     let mkey = Object.keys(modifierValues);
     mkey.sort((a, b) => {
-        return (a === "EMaxHealth_percent" || a === "EBaseWeaponDamageIncrease" || a === "EBulletArmorReduction")
-            ? 1 : ((b === "EMaxHealth_percent" || b === "EBaseWeaponDamageIncrease" || b === "EBulletArmorReduction") ? -1 : (a).localeCompare((b)));
+        const priorityStats = [
+            "EMaxHealth_percent",
+            "EBaseWeaponDamageIncrease",
+            "EBulletArmorReduction",
+            "ETechLifesteal",
+            "EBulletLifesteal"
+        ];
+        return (priorityStats.includes(a)) ? 1 :
+            (priorityStats.includes(b)) ? -1 :
+                a.localeCompare(b);
     });
 
     // Apply modifiers
@@ -199,6 +230,11 @@ function extractItemModifiersClient(item: upgrades): ItemModifiers {
                 newStats['EBulletDamage'] *= (1 + value / 100);
                 newStats['ELightMeleeDamage'] += (characterStatInput['ELightMeleeDamage'] * value / 200);
                 newStats['EHeavyMeleeDamage'] += (characterStatInput['EHeavyMeleeDamage'] * value / 200);
+                break;
+            }
+            case "ETechLifesteal":
+            case "EBulletLifesteal": {
+                newStats[key] = value;
                 break;
             }
             case "EFireRate": {
@@ -218,7 +254,8 @@ function extractItemModifiersClient(item: upgrades): ItemModifiers {
                     }
                 }
                 break;
-            } case "EClipSizeIncrease": {
+            }
+            case "EClipSizeIncrease": {
                 newStats[key] += value;
                 newStats["EClipSize"] *= (1 + value / 100);
                 break;
@@ -321,7 +358,9 @@ function extractItemModifiersClient(item: upgrades): ItemModifiers {
                     }
                 });
             }
-        });// Apply scaling to skill properties
+        });
+
+        // Apply scaling to skill properties
         for (const spkey in element) {
             if (scaleData[spkey]) {
                 const scale = scaleData[spkey];

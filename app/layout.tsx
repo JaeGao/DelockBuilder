@@ -28,15 +28,15 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Deadlock Stats Calculator & Build Optimizer | Ultimate Hero Loadout Planner",
-    description: "Revolutionize your Deadlock gameplay with our cutting-edge stats calculator and build optimizer. Features include out-of-game character optimization, detailed item cost analysis, build effectiveness insights, and cloud-based build sharing. Simplify loadout planning with our user-friendly interface inspired by popular RPG talent calculators. Perfect for min-maxing, theorycrafting, and adapting to various in-game soul economies. Save time, maximize efficiency, and dominate the battlefield!",
+    title: "Best Deadlock Stats Calculator Hero Loadout Planner",
+    description: "Experiment with your Deadlock gameplay. Features include out-of-game character optimization, budgeting. Perfect for min-maxing, theorycrafting, and adapting to various in-game soul economies. Save time, maximize efficiency.",
     keywords: "Deadlock, build calculator, stats optimizer, item planner, hero loadout, game strategy, build sharing, soul economy, min-maxing, theorycrafting, Valve game, competitive gaming, esports tool, character builds, gear optimization",
     openGraph: {
       title: "Deadlock Stats Calculator & Build Optimizer",
-      description: "Master Deadlock with our advanced build planner. Optimize heroes, analyze items, and share builds effortlessly.",
+      description: "Optimize heroes, analyze items, and share builds (work in progress).",
     },
     other: {
-      "application-name": "Deadlock Build Optimizer",
+      "application-name": "Deadlock Builder",
       "og:type": "website",
       "og:locale": "en_US",
       "og:site_name": "Deadlock Stats Calculator",
@@ -65,6 +65,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
+      <script async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.PUBLIC_GOOGLE_ADS_CLIENT_ID}}"
+        strategy="lazyOnload"
+        crossOrigin="anonymous"`}></script>
       <body className="text-custom-beige">
         <div className="flex">
           <main className="flex-1 p-2">
