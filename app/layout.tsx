@@ -65,6 +65,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
+      <script async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.PUBLIC_GOOGLE_ADS_CLIENT_ID}}"
+        strategy="lazyOnload"
+        crossOrigin="anonymous"`}></script>
       <body className="text-custom-beige">
         <div className="flex">
           <main className="flex-1 p-2">
