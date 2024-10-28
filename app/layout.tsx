@@ -28,8 +28,8 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Best Deadlock Stats Calculator Hero Loadout Planner",
-    description: "Experiment with your Deadlock gameplay. Features include out-of-game character optimization, budgeting. Perfect for min-maxing, theorycrafting, and adapting to various in-game soul economies. Save time, maximize efficiency.",
+    title: "Deadlock Stats Calculator Hero Loadout Planner",
+    description: "Deadlock Build Calculator. Features include out-of-game character optimization, budgeting. min-max, theorycraft, and adapt to various in-game soul economies. Save time, maximize efficiency.",
     keywords: "Deadlock, build calculator, stats optimizer, item planner, hero loadout, game strategy, build sharing, soul economy, min-maxing, theorycrafting, Valve game, competitive gaming, esports tool, character builds, gear optimization",
     openGraph: {
       title: "Deadlock Stats Calculator & Build Optimizer",
