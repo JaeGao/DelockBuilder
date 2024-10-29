@@ -23,41 +23,43 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex-grow p-4 md:p-12">
-        <div className="mb-6">
-          <h1 className="text-4xl text-center font-bold">Character Selection</h1>
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 md:p-12">
-          {characters.map(({ data: character, name }) => {
-            const heroName = getHeroName(name);
-            const mappedname = charnamemap[name];
-            return (
-              <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
-                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
-                  {hasSelectionImage(character) && (
-                    <Image
-                      src={character.m_strIconHeroCard}
-                      alt={mappedname}
-                      width={100}
-                      height={100}
-                      className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
-                      style={{
-                        maxWidth: "100%",
-                        height: "auto"
-                      }} />
-                  )}
-                  <p className="text-center">{mappedname}</p>
-                </div>
-              </Link>
-            );
-          })}
+      {/* Main content */}
+      <div className="flex-1">
+        <div className="p-4 md:p-12">
+          <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 md:p-12">
+            {characters.map(({ data: character, name }) => {
+              const heroName = getHeroName(name);
+              const mappedname = charnamemap[name];
+              return (
+                <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
+                  <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
+                    {hasSelectionImage(character) && (
+                      <Image
+                        src={character.m_strIconHeroCard}
+                        alt={mappedname}
+                        width={100}
+                        height={100}
+                        className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
+                        style={{
+                          maxWidth: "100%",
+                          height: "auto"
+                        }} />
+                    )}
+                    <p className="text-center">{mappedname}</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Fixed bottom section for ads and Ko-fi */}
+      {/* Fixed bottom section */}
       <footer className="w-full mt-auto">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="py-4">
             <AdDisplay />
           </div>
