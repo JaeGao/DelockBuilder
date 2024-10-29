@@ -81,7 +81,7 @@ export default async function Home() {
       </div>
 
       {/* Spacer to prevent content from being hidden behind fixed bottom section */}
-      <div className="h-48" />
+      <div className="h-24" />
     </div>
   );
 }
