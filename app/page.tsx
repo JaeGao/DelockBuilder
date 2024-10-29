@@ -60,6 +60,10 @@ export default async function Home() {
               </Link>
             );
           })}
+          {/* Ad slot in the grid */}
+          <div className="min-h-full">
+            <AdDisplay />
+          </div>
         </div>
 
         {/* Bottom section with Ko-fi and Ad */}
