@@ -1,19 +1,21 @@
-import Script from "next/script";
+'use client';
+
+import React, { useEffect } from 'react';
 
 const GoogleAdsense = () => {
-    if (process.env.NODE_ENV !== "production") {
-        console.log('AdSense disabled in development');
-        return null;
-    }
+    useEffect(() => {
+        try {
+            const script = document.createElement('script');
+            script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1757813105299185";
+            script.async = true;
+            script.crossOrigin = "anonymous";
+            document.head.appendChild(script);
+        } catch (error) {
+            console.error('Error loading AdSense:', error);
+        }
+    }, []);
 
-    return (
-        <Script
-            async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1757813105299185"
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-        />
-    );
+    return null;
 };
 
 export default GoogleAdsense;
