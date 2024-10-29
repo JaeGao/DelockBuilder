@@ -21,46 +21,67 @@ export default async function Home() {
   characters.sort((a, b) => getHeroName(a.name).localeCompare(getHeroName(b.name), undefined, { numeric: true, sensitivity: 'base' }));
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="p-12">
+
+      {/* Main content */}
+      <div className="flex-1 p-6 md:p-12">
         <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
 
-
-
-        <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 md:p-12">
           {characters.map(({ data: character, name }) => {
             const heroName = getHeroName(name);
             const mappedname = charnamemap[name];
             return (
               <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
-                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors min-h-full">
+                <div className="bg-gray-800/30 backdrop-blur-sm p-4 rounded-xl hover:bg-gray-700/40 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl min-h-full border border-gray-700/30">
                   {hasSelectionImage(character) && (
                     <Image
                       src={character.m_strIconHeroCard}
                       alt={mappedname}
                       width={100}
                       height={100}
-                      className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
+                      className="object-contain h-24 w-24 mx-auto mb-2 rounded-full shadow-md"
                       style={{
                         maxWidth: "100%",
                         height: "auto"
                       }} />
                   )}
-                  <p className="text-center">{mappedname}</p>
+                  <p className="text-center font-medium">{mappedname}</p>
                 </div>
               </Link>
             );
           })}
-          {/* Ad placement */}
-          <div className="my-4">
-            <AdDisplay />
+        </div>
+      </div>
+
+      {/* Fixed bottom section with glassmorphism */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        {/* Gradient overlay for smooth transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/80 to-transparent -z-10" />
+
+        {/* Content container with glass effect */}
+        <div className="backdrop-blur-md bg-gray-900/70 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-gray-700/30">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Ad Container */}
+            <div className="w-full py-3">
+              <div className="rounded-lg overflow-hidden shadow-lg">
+                <AdDisplay />
+              </div>
+            </div>
+
+            {/* Ko-fi Container */}
+            <div className="w-full py-2">
+              <div className="rounded-lg overflow-hidden">
+                <KofiWidget />
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className='!min-h-fit'><KofiWidget /></div>
-
       </div>
+
+      {/* Spacer to prevent content from being hidden behind fixed bottom section */}
+      <div className="h-48" />
     </div>
   );
 }
