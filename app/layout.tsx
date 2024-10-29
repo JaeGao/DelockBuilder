@@ -67,12 +67,15 @@ export default function RootLayout({
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
       <head>
         <meta name="google-adsense-account" content="ca-pub-1757813105299185" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className="text-custom-beige min-h-screen">
-        <GoogleAdsense />
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <main className="flex-1 flex flex-col">
+            {children}
+          </main>
+        </div>
         <Analytics />
+        <GoogleAdsense />
       </body>
     </html>
   );

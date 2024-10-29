@@ -21,55 +21,43 @@ export default async function Home() {
   characters.sort((a, b) => getHeroName(a.name).localeCompare(getHeroName(b.name), undefined, { numeric: true, sensitivity: 'base' }));
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div>
       <Navbar />
+      <div className="p-12">
+        <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
 
-      {/* Main content - will grow to fill available space */}
-      <main className="flex-1">
-        <div className="p-4 md:p-12">
-          <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 md:p-12">
-            {characters.map(({ data: character, name }) => {
-              const heroName = getHeroName(name);
-              const mappedname = charnamemap[name];
-              return (
-                <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
-                  <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
-                    {hasSelectionImage(character) && (
-                      <Image
-                        src={character.m_strIconHeroCard}
-                        alt={mappedname}
-                        width={100}
-                        height={100}
-                        className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto"
-                        }} />
-                    )}
-                    <p className="text-center">{mappedname}</p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+        {/* Ad placement */}
+        <div className="my-4">
+          <AdDisplay />
         </div>
-      </main>
 
-      {/* Footer section - will stay at bottom */}
-      <footer className="w-full sticky bottom-0 bg-gray-900 mt-auto">
-        <div className="max-w-7xl mx-auto">
-          {/* Ad Container */}
-          <div className="py-4">
-            <AdDisplay />
-          </div>
-          {/* Ko-fi Container */}
-          <div className="py-2">
-            <KofiWidget />
-          </div>
+        <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {characters.map(({ data: character, name }) => {
+            const heroName = getHeroName(name);
+            const mappedname = charnamemap[name];
+            return (
+              <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
+                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors min-h-full">
+                  {hasSelectionImage(character) && (
+                    <Image
+                      src={character.m_strIconHeroCard}
+                      alt={mappedname}
+                      width={100}
+                      height={100}
+                      className="object-contain h-24 w-24 mx-auto mb-2 rounded-full"
+                      style={{
+                        maxWidth: "100%",
+                        height: "auto"
+                      }} />
+                  )}
+                  <p className="text-center">{mappedname}</p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
-      </footer>
+        <div className='!min-h-fit'><KofiWidget /></div>
+      </div>
     </div>
   );
 }
