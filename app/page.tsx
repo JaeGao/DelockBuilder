@@ -5,9 +5,9 @@ import { getCharacters, getCharacterNameMap } from '@/app/lib/dataUtils';
 import { heroesWithName } from './lib/herointerfaces';
 import Navbar from './ui/Navbar';
 import KofiWidget from './components/kofi';
+import AdDisplay from './components/AdDisplay';
 
 function getHeroName(heroKey: string): string {
-  // Remove 'hero_' prefix and capitalize the first letter
   return heroKey.replace(/^hero_/, '').replace(/^\w/, c => c.toUpperCase());
 }
 
@@ -25,6 +25,8 @@ export default async function Home() {
       <Navbar />
       <div className="p-12">
         <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
+
+
 
         <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {characters.map(({ data: character, name }) => {
@@ -52,8 +54,11 @@ export default async function Home() {
           })}
         </div>
         <div className='!min-h-fit'><KofiWidget /></div>
+        {/* Ad placement */}
+        <div className="my-4">
+          <AdDisplay />
+        </div>
       </div>
-
     </div>
   );
 }
