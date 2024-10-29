@@ -330,14 +330,14 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
             {/* Main layout container */}
             <div className="flex-1 flex relative">
                 {/* Main content area that will shrink with sidebar */}
-                <div className="flex-1 p-4  mr-[300px]">
+                <div className="flex-1 p-4  mr-[350px]">
                     {/* Content wrapper */}
                     <div className="flex flex-col xl:flex-row gap-8 max-w-[2000px] mx-auto">
                         {/* Left column - Character info and equipment grids */}
                         <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap">
                             {/* Character info section */}
 
-                            <div className="mb-2 px-6 flex flex-col items-center float-left select-none">
+                            <div className="mb-2  flex flex-col items-center float-left select-none">
                                 <div>
                                     <h2 className="text-3xl font-bold mb-4 text-white">{actualname}</h2>
                                 </div>
@@ -476,7 +476,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                 </div>
 
                 {/* Stats sidebar - Fixed width */}
-                <div className="absolute top-0 right-0 bottom-0 lg:w-[300px] md:w-[270px] sm:w-[220px] border-l border-gray-700">
+                <div className="absolute top-0 right-0 bottom-0 lg:w-[350px] md:w-[270px] sm:w-[220px] border-l border-gray-700">
                     <div className="h-full overflow-y-auto">
                         <StatsSidebar
                             characterStats={currentStats}
