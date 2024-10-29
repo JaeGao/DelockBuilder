@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
@@ -8,10 +7,8 @@ const AdDisplay = () => {
 
     React.useEffect(() => {
         try {
-            const adsbygoogle = (window as any).adsbygoogle;
-            if (adsbygoogle) {
-                adsbygoogle.push({});
-            }
+            const adsbygoogle = (window as any).adsbygoogle || [];
+            adsbygoogle.push({});
         } catch (err) {
             console.error('AdSense error:', err);
         }
@@ -34,10 +31,10 @@ const AdDisplay = () => {
                     display: 'block',
                     width: '100%',
                     height: '100%',
-                    minHeight: '140px' // Matches approximate height of hero cards
+                    minHeight: '140px'
                 }}
                 data-ad-client="ca-pub-1757813105299185"
-                data-ad-slot="your-ad-slot-here"
+                data-ad-slot="5149825913"
                 data-ad-format="auto"
                 data-full-width-responsive="true"
             />
