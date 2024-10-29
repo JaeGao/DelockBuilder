@@ -1,5 +1,5 @@
 'use client';
-
+import Link from 'next/link';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from "next/image";
 import ItemGrid from './ItemGrid';
@@ -336,25 +336,28 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                         {/* Left column - Character info and equipment grids */}
                         <div className="flex flex-row min-w-fit 2xl:flex-col flex-wrap">
                             {/* Character info section */}
+
                             <div className="mb-2 px-6 flex flex-col items-center float-left select-none">
                                 <div>
                                     <h2 className="text-3xl font-bold mb-4 text-white">{actualname}</h2>
                                 </div>
+                                <Link href="/" className="text-custom-beige hover:text-gray-300 block">
+                                    {/* Character image */}
+                                    {character.data.m_strIconHeroCard && (
+                                        <Image
+                                            src={character.data.m_strIconHeroCard as string}
+                                            alt={actualname}
+                                            width={120}
+                                            height={120}
+                                            className="rounded-full mb-2 object-none select-none pointer-events-none"
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto"
+                                            }}
+                                        />
+                                    )}
+                                </Link>
 
-                                {/* Character image */}
-                                {character.data.m_strIconHeroCard && (
-                                    <Image
-                                        src={character.data.m_strIconHeroCard as string}
-                                        alt={actualname}
-                                        width={120}
-                                        height={120}
-                                        className="rounded-full mb-2 object-none select-none pointer-events-none"
-                                        style={{
-                                            maxWidth: "100%",
-                                            height: "auto"
-                                        }}
-                                    />
-                                )}
 
                                 {/* Level slider */}
                                 <div className="w-full mb-4">
