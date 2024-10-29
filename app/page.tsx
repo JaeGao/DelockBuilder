@@ -52,11 +52,12 @@ export default async function Home() {
               </Link>
             );
           })}
+          {/* Ad placement */}
+          <div className="my-4">
+            <AdDisplay />
+          </div>
         </div>
-        {/* Ad placement */}
-        <div className="my-4">
-          <AdDisplay />
-        </div>
+
         <div className='!min-h-fit'><KofiWidget /></div>
 
       </div>
