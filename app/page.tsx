@@ -61,12 +61,12 @@ export default async function Home() {
             );
           })}
 
-          {/* Ad integrated into the grid */}
-          <div className="min-h-full">
-            <AdDisplay />
-          </div>
         </div>
 
+        {/* Ad integrated into the grid */}
+        <div>
+          <AdDisplay />
+        </div>
         {/* Ko-fi widget section */}
         <div className="mt-8 max-w-2xl mx-auto">
           <KofiWidget />
