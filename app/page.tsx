@@ -60,16 +60,16 @@ export default async function Home() {
               </Link>
             );
           })}
-
         </div>
 
-        {/* Ad integrated into the grid */}
-        <div>
-          <AdDisplay />
-        </div>
-        {/* Ko-fi widget section */}
-        <div className="mt-8 max-w-2xl mx-auto">
-          <KofiWidget />
+        {/* Bottom section with Ko-fi and Ad */}
+        <div className="mt-12 space-y-8">
+          <div className="max-w-2xl mx-auto">
+            <KofiWidget />
+          </div>
+          <div className="max-w-[728px] mx-auto">
+            <AdDisplay />
+          </div>
         </div>
       </div>
     </div>
