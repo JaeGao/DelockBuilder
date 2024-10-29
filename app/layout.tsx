@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import Script from 'next/script';
+import GoogleAdsense from './components/GoogleAdsense';
 
 const Deadlock = localFont({
   src: './fonts/Deadlock-Black.otf',
@@ -65,12 +65,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
-      <Script
-        async
-        src="https://pagead2.googlesyndecode.com/pagead/js/adsbygoogle.js?client=ca-pub-1757813105299185"
-        strategy="afterInteractive"
-        crossOrigin="anonymous"
-      />
       <body className="text-custom-beige min-h-screen">
         <div className="min-h-screen flex flex-col">
           <main className="flex-1 flex flex-col">
@@ -78,6 +72,7 @@ export default function RootLayout({
           </main>
         </div>
         <Analytics />
+        <GoogleAdsense />
       </body>
     </html>
   );
