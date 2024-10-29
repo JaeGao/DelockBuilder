@@ -7,22 +7,18 @@ const AdDisplay = () => {
 
     useEffect(() => {
         try {
-            if (typeof window !== 'undefined' && adRef.current) {
-                // Clear any existing ads
-                const existingAds = document.querySelectorAll('ins.adsbygoogle');
-                existingAds.forEach((ad) => {
-                    if (ad !== adRef.current) {
-                        ad.remove();
-                    }
-                });
+            // Remove any auto-injected ads at the top
+            const autoAds = document.querySelectorAll('ins.adsbygoogle');
+            autoAds.forEach((ad) => {
+                const parent = ad.parentElement;
+                if (parent && !parent.classList.contains('ad-container')) {
+                    ad.remove();
+                }
+            });
 
-                // Push our specific ad
-                ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({
-                    google_ad_client: "ca-pub-1757813105299185",
-                    enable_page_level_ads: false,
-                    overlays: false,
-                    google_ad_slot: "5149825913"
-                });
+            // Initialize our specific ad
+            if (typeof window !== 'undefined' && adRef.current) {
+                ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
             }
         } catch (error) {
             console.error('AdSense error:', error);
@@ -30,7 +26,7 @@ const AdDisplay = () => {
     }, []);
 
     return (
-        <div id="bottom-ad-container">
+        <div className="ad-container w-full overflow-hidden">
             <ins
                 ref={adRef}
                 className="adsbygoogle"

@@ -21,11 +21,11 @@ export default async function Home() {
   characters.sort((a, b) => getHeroName(a.name).localeCompare(getHeroName(b.name), undefined, { numeric: true, sensitivity: 'base' }));
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Main content */}
-      <div className="flex-1">
+      {/* Main content - will grow to fill available space */}
+      <main className="flex-1">
         <div className="p-4 md:p-12">
           <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
 
@@ -55,14 +55,16 @@ export default async function Home() {
             })}
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* Fixed bottom section */}
-      <footer className="w-full mt-auto">
-        <div className="max-w-7xl mx-auto px-4">
+      {/* Footer section - will stay at bottom */}
+      <footer className="w-full sticky bottom-0 bg-gray-900 mt-auto">
+        <div className="max-w-7xl mx-auto">
+          {/* Ad Container */}
           <div className="py-4">
             <AdDisplay />
           </div>
+          {/* Ko-fi Container */}
           <div className="py-2">
             <KofiWidget />
           </div>
