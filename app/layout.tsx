@@ -19,12 +19,12 @@ const RetailReg = localFont({
   variable: '--font-Deadlock-Retail-reg'
 })
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 0.5,
-  maximumScale: 0.5,
-  userScalable: false,
-};
+// export const viewport: Viewport = {
+//   width: 'device-width',
+//   initialScale: 0.5,
+//   maximumScale: 0.5,
+//   userScalable: false,
+// };
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -67,17 +67,12 @@ export default function RootLayout({
     <html lang="en" className={`${Deadlock.variable} ${Retail.variable} ${RetailReg.variable}`}>
       <head>
         <meta name="google-adsense-account" content="ca-pub-1757813105299185" />
-        {/* Explicitly disable auto ads */}
-        <meta name="google-adsense" content="noautoads" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className="text-custom-beige min-h-screen">
-        <div className="min-h-screen flex flex-col">
-          <main className="flex-1 flex flex-col">
-            {children}
-          </main>
-        </div>
-        <Analytics />
         <GoogleAdsense />
+        {children}
+        <Analytics />
       </body>
     </html>
   );
