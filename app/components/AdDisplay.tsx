@@ -11,49 +11,56 @@ interface AdDisplayProps {
 const AdDisplay: React.FC<AdDisplayProps> = ({ format = 'responsive' }) => {
     const adRef = useRef<HTMLModElement>(null);
 
-    const adConfigs = {
-        responsive: {
-            'data-ad-slot': '5149825913',
-            style: { display: 'block', minHeight: '140px' },
-            'data-ad-format': 'auto',
-            'data-full-width-responsive': 'true',
-        },
+    const adStyles = {
         banner: {
-            'data-ad-slot': '5149825913', // Use your specific banner slot if different
-            style: { display: 'block', minHeight: '90px', width: '100%' },
-            'data-ad-format': 'horizontal',
-            'data-full-width-responsive': 'true',
+            display: 'block',
+            width: '100%',
+            height: '90px',
+            minWidth: '200px',
+            minHeight: '90px'
         },
         square: {
-            'data-ad-slot': '5149825913', // Use your specific square slot if different
-            style: { display: 'block', minHeight: '250px', width: '300px' },
-            'data-ad-format': 'rectangle',
-            'data-full-width-responsive': 'false',
+            display: 'block',
+            width: '300px',
+            height: '250px',
+            minWidth: '300px',
+            minHeight: '250px'
+        },
+        responsive: {
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            minWidth: '250px',
+            minHeight: '250px'
         }
     };
 
     useEffect(() => {
-        try {
-            if (typeof window !== 'undefined' && adRef.current) {
-                ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        // Wait for the container to be properly sized
+        const timer = setTimeout(() => {
+            try {
+                if (typeof window !== 'undefined' && adRef.current) {
+                    ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+                }
+            } catch (error) {
+                console.error('AdSense error:', error);
             }
-        } catch (error) {
-            console.error('AdSense error:', error);
-        }
+        }, 100); // Small delay to ensure container is sized
+
+        return () => clearTimeout(timer);
     }, []);
 
-    const config = adConfigs[format];
-
     return (
-        <div className="bg-gray-800/30 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-700/30 h-full">
+        <div className="bg-gray-800/30 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-700/30 flex items-center justify-center"
+            style={{ minHeight: adStyles[format].minHeight }}>
             <ins
                 ref={adRef}
                 className="adsbygoogle"
-                style={config.style}
+                style={adStyles[format]}
                 data-ad-client="ca-pub-1757813105299185"
-                data-ad-slot={config['data-ad-slot']}
-                data-ad-format={config['data-ad-format']}
-                data-full-width-responsive={config['data-full-width-responsive']}
+                data-ad-slot="5149825913"
+                data-ad-format={format === 'responsive' ? 'auto' : format}
+                data-full-width-responsive={format === 'responsive' ? 'true' : 'false'}
             />
         </div>
     );
