@@ -1,30 +1,47 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import { X } from 'lucide-react';
 
 const AdDisplay = () => {
-    const adRef = useRef<HTMLModElement>(null);
+    const [isVisible, setIsVisible] = useState(true);
 
-    useEffect(() => {
+    React.useEffect(() => {
         try {
-            if (typeof window !== 'undefined' && adRef.current) {
-                ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+            const adsbygoogle = (window as any).adsbygoogle;
+            if (adsbygoogle) {
+                adsbygoogle.push({});
             }
-        } catch (error) {
-            console.error('AdSense error:', error);
+        } catch (err) {
+            console.error('AdSense error:', err);
         }
     }, []);
 
+    if (!isVisible) return null;
+
     return (
-        <ins
-            ref={adRef}
-            className="adsbygoogle"
-            style={{ display: 'block' }}
-            data-ad-client="ca-pub-1757813105299185"
-            data-ad-slot="5149825913"
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-        />
+        <div className="bg-gray-800/30 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-700/30 relative h-full">
+            <button
+                onClick={() => setIsVisible(false)}
+                className="absolute top-2 right-2 p-1 rounded-full bg-gray-800/80 hover:bg-gray-700/80 transition-colors z-10"
+                aria-label="Close ad"
+            >
+                <X className="w-4 h-4" />
+            </button>
+            <ins
+                className="adsbygoogle"
+                style={{
+                    display: 'block',
+                    width: '100%',
+                    height: '100%',
+                    minHeight: '140px' // Matches approximate height of hero cards
+                }}
+                data-ad-client="ca-pub-1757813105299185"
+                data-ad-slot="your-ad-slot-here"
+                data-ad-format="auto"
+                data-full-width-responsive="true"
+            />
+        </div>
     );
 };
 
