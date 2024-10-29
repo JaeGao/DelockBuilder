@@ -67,11 +67,11 @@ export default async function Home() {
               })}
 
               {/* Grid ads appended at the end */}
-              <div className="xl:hidden">
-                <AdDisplay format="banner" />
+              <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg h-full border border-gray-700/30">
+                <AdDisplay format="square" />
               </div>
-              <div className="hidden md:block xl:hidden">
-                <AdDisplay format="banner" />
+              <div className="hidden md:block bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg h-full border border-gray-700/30">
+                <AdDisplay format="square" />
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default async function Home() {
             <div className="max-w-2xl mx-auto">
               <KofiWidget />
             </div>
-            <div>
+            <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border border-gray-700/30">
               <AdDisplay format="responsive" />
             </div>
           </div>
