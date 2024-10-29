@@ -21,10 +21,10 @@ const AdDisplay: React.FC<AdDisplayProps> = ({ format = 'responsive' }) => {
         },
         square: {
             display: 'block',
-            width: '100px',
-            height: '150px',
-            minWidth: '100px',
-            minHeight: '100px'
+            width: '300px',
+            height: '250px',
+            minWidth: '300px',
+            minHeight: '250px'
         },
         responsive: {
             display: 'block',
