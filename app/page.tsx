@@ -66,13 +66,7 @@ export default async function Home() {
                 );
               })}
 
-              {/* Grid ads - always visible */}
-              <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border border-gray-700/30 min-h-[120px] flex items-center justify-center">
-                <AdDisplay format="banner" />
-              </div>
-              <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border border-gray-700/30 min-h-[120px] flex items-center justify-center">
-                <AdDisplay format="banner" />
-              </div>
+
             </div>
           </div>
 
