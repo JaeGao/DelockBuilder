@@ -21,18 +21,20 @@ export default async function Home() {
   characters.sort((a, b) => getHeroName(a.name).localeCompare(getHeroName(b.name), undefined, { numeric: true, sensitivity: 'base' }));
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="p-12">
-        <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
+      <div className="flex-grow p-4 md:p-12">
+        <div className="mb-6">
+          <h1 className="text-4xl text-center font-bold">Character Selection</h1>
+        </div>
 
-        <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 md:p-12">
           {characters.map(({ data: character, name }) => {
             const heroName = getHeroName(name);
             const mappedname = charnamemap[name];
             return (
               <Link href={`/builder/${heroName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`} key={character.m_HeroID as string}>
-                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors min-h-full">
+                <div className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors">
                   {hasSelectionImage(character) && (
                     <Image
                       src={character.m_strIconHeroCard}
@@ -51,20 +53,19 @@ export default async function Home() {
             );
           })}
         </div>
+      </div>
 
-        {/* Bottom content container */}
-        <div className="mt-8 space-y-4">
-          {/* Ad placement at bottom */}
-          <div className="w-full max-w-4xl mx-auto">
+      {/* Fixed bottom section for ads and Ko-fi */}
+      <footer className="w-full mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="py-4">
             <AdDisplay />
           </div>
-
-          {/* Ko-fi widget below ad */}
-          <div className='!min-h-fit'>
+          <div className="py-2">
             <KofiWidget />
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
