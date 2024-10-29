@@ -34,7 +34,7 @@ export default async function Home() {
           {/* Left sidebar - only visible on xl screens */}
           <aside className="hidden xl:block w-[300px] flex-shrink-0">
             <div className="sticky top-4 p-4">
-              <AdDisplay />
+              <AdDisplay format="square" />
             </div>
           </aside>
 
@@ -74,16 +74,12 @@ export default async function Home() {
                   );
                 })}
 
-                {/* Grid ad slots with matching styling */}
-                <div className="xl:hidden">
-                  <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg h-full border border-gray-700/30 flex items-center justify-center">
-                    <AdDisplay />
-                  </div>
+                {/* Grid ads appended at the end */}
+                <div className="xl:hidden bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg h-full border border-gray-700/30">
+                  <AdDisplay format="banner" />
                 </div>
-                <div className="hidden md:block xl:hidden">
-                  <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg h-full border border-gray-700/30 flex items-center justify-center">
-                    <AdDisplay />
-                  </div>
+                <div className="hidden md:block xl:hidden bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg h-full border border-gray-700/30">
+                  <AdDisplay format="banner" />
                 </div>
               </div>
             </div>
@@ -94,7 +90,7 @@ export default async function Home() {
                 <KofiWidget />
               </div>
               <div className="mx-auto bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border border-gray-700/30">
-                <AdDisplay />
+                <AdDisplay format="responsive" />
               </div>
             </div>
           </main>
@@ -103,7 +99,7 @@ export default async function Home() {
           <aside className="hidden xl:block w-[300px] flex-shrink-0">
             <div className="sticky top-4 p-4">
               <div className="bg-gray-800/30 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border border-gray-700/30">
-                <AdDisplay />
+                <AdDisplay format="square" />
               </div>
             </div>
           </aside>
