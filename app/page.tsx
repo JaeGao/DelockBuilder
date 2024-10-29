@@ -26,10 +26,7 @@ export default async function Home() {
       <div className="p-12">
         <h1 className="text-4xl text-center font-bold mb-6">Character Selection</h1>
 
-        {/* Ad placement */}
-        <div className="my-4">
-          <AdDisplay />
-        </div>
+
 
         <div className="grid p-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {characters.map(({ data: character, name }) => {
@@ -56,7 +53,12 @@ export default async function Home() {
             );
           })}
         </div>
+        {/* Ad placement */}
+        <div className="my-4">
+          <AdDisplay />
+        </div>
         <div className='!min-h-fit'><KofiWidget /></div>
+
       </div>
     </div>
   );
