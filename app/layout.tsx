@@ -19,12 +19,12 @@ const RetailReg = localFont({
   variable: '--font-Deadlock-Retail-reg'
 })
 
-// export const viewport: Viewport = {
-//   width: 'device-width',
-//   initialScale: 0.5,
-//   maximumScale: 0.5,
-//   userScalable: false,
-// };
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 0.5,
+  maximumScale: 0.5,
+  userScalable: false,
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
