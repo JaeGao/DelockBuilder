@@ -46,7 +46,7 @@ async function connectToDatabase() {
     return cached.conn;
 }
 
-// Define the schema for a build
+// schema for a build
 const BuildSchema = new mongoose.Schema({
     id: String,
     boxes: [{
