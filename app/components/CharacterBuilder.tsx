@@ -389,7 +389,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                         className="bg-amber-500 border border-amber-500 text-gray-900 text-sm rounded-lg focus:ring-amber-600 focus:border-amber-500 block w-full p-2 dark:bg-custom-bg dark:border-amber-500 dark:placeholder-[#70F8C1] dark:text-[#70F8C1] dark:focus:ring-amber-600 dark:focus:border-amber-500 text-center"
                                     />
                                 </div>
-
                                 {/* Cost display */}
                                 <p className="text-amber-500 mb-3">
                                     Total Cost: <span className="text-[#70F8C1]">{totalCost}</span>
@@ -420,8 +419,6 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                                     ))}
                                 </div>
                             </div>
-
-                            {/* Equipment grids */}
                             <div className="justify-items-center grid md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-x-8 gap-y-2 2xl:gap-4 mb-4 select-none">
                                 <ItemGrid
                                     title="Weapon"
@@ -488,9 +485,18 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                             skillUpgrades={skillUpgradeInfo}
                         />
                     </div>
+                    <StatsSidebar
+                        characterStats={currentStats}
+                        characterName={heroName}
+                        characterClass={character.data._class as string}
+                        characterSkillsData={skillStats}
+                        skillLabels={skillDG}
+                        skillImages={skillIcons}
+                        skillUpgrades={skillUpgradeInfo}
+                    />
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
