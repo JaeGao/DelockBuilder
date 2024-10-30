@@ -25,6 +25,11 @@ const Navbar: React.FC = () => {
                   Items
                 </Link>
               </li>
+              <li>
+                <Link href="/builds" className="text-custom-beige block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-500 md:p-0 md:dark:hover:text-amber-500 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                  Builds
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
