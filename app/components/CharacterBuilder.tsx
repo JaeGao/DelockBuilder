@@ -496,7 +496,7 @@ const CharacterBuilder: React.FC<CharacterBuilderProps> = ({ characterNameFromMa
                     />
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
